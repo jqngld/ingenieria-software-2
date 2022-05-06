@@ -9,4 +9,4 @@ def home(request):
 
 def login(request):
 
-    return render(request, 'paciente/login.html')
+    return render(request, 'pacientes/login.html')
