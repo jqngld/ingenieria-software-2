@@ -4,7 +4,7 @@ from django.contrib.auth.models import User
 
 class UsuariosDetalles(models.Model):
 
-    user_id = models.OneToOneField(User, on_delete=models.CASCADE)
+    user_id = models.ForeignKey(User, on_delete=models.CASCADE)
     tipo_usuario = models.CharField(max_length=20, blank=False, null=False)
 
     class Meta:
