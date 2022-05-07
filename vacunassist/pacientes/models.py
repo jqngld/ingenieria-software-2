@@ -44,7 +44,7 @@ class VacunasDetalles(models.Model):
 
     vacuna_id = models.AutoField(primary_key=True)
     nombre = models.CharField('Nombre', max_length=100, blank=False, null=False)
-    efecividad = models.CharField('Efectividad', max_length=20, blank=False, null=False)
+    efectividad = models.CharField('Efectividad', max_length=20, blank=False, null=False)
     cantidad_dosis = models.CharField('Cantidad Dosis', max_length=50, blank=False, null=False)
 
     class Meta:
