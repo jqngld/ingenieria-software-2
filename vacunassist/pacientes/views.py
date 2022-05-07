@@ -1,8 +1,12 @@
-from django.http import HttpResponse
 from django.shortcuts import render
+from django.http import HttpResponse
 
-# Create your views here.from django.http import HttpResponse
 
-def saludo(request):
-    return HttpResponse("hola")
+def home(request):
 
+    return HttpResponse('Página home de pacientes.')
+
+
+def login(request):
+
+    return render(request, 'pacientes/login.html')
