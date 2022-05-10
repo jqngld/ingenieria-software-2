@@ -1,6 +1,7 @@
+from msilib.schema import Class
 from django.db import models
 from django.utils import timezone
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User, AbstractBaseUser
 
 
 class RolesUsuarios(models.Model):
@@ -16,13 +17,18 @@ class RolesUsuarios(models.Model):
         return '%s: %s' % (self.tipo_usuario, self.user.username)
 
 
-class PacientesDetalles(models.Model):
+class PacientesDetalles(AbstractBaseUser):
 
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    username = None
+    first_name = None
+    last_name = None
+
     paciente_id = models.AutoField(primary_key=True)
-    token = models.IntegerField('Token', blank=False, null=False)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
     dni = models.IntegerField('DNI', unique=True, blank=False, null=False)
     email = models.EmailField('Mail', unique=True, max_length=254, blank=True, null=False)
+    
+    token = models.IntegerField('Token', blank=False, null=False)
     sexo = models.CharField('Sexo', max_length=20, blank=False, null=False)
     nombre = models.CharField('Nombre', max_length=100, blank=False, null=False)
     apellido = models.CharField('Apellido',max_length=100, blank=False, null=False)
@@ -31,6 +37,10 @@ class PacientesDetalles(models.Model):
     es_paciente_riesgo = models.BooleanField('Paciente de Riesgo', default=False, blank=False, null=False)
     centro_vacunatorio = models.CharField('Centro Vacunatorio', max_length=50, blank=False, null=False)
     vacuna_f_a_aplicada = models.BooleanField('Vacuna F.A Aplicada', blank=False, null=False)
+
+    EMAIL_FIELD = 'email'
+    USERNAME_FIELD = 'email'
+    REQUIRED_FIELDS = []
 
     class Meta:
         verbose_name = 'Detalles Paciente'
