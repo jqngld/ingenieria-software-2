@@ -2,7 +2,7 @@ from django import forms
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
 from pacientes.models import Usuarios, PacientesDetalles
-
+from .models import Usuarios
 import string
 import random
 from datetime import datetime
@@ -54,7 +54,7 @@ class UserSignUpForm(UserCreationForm):
     fecha_vacunacion_fa = forms.DateField(required=False)
 
     class Meta:
-        model = User
+        model = Usuarios
         fields = ('nombre', 'apellido', 'email',
                   'password1', 'password2', 'dni', 'sexo',
                   'dia_nacimiento', 'mes_nacimiento', 'ano_nacimiento',
@@ -73,13 +73,12 @@ class UserSignUpForm(UserCreationForm):
             raise NotImplementedError("Can't create User and UserProfile without database save")
         self.username = self.cleaned_data['email']
         user = super(UserSignUpForm, self).save(commit=True)
-        user_roles = Usuarios(user=user, tipo_usuario='Paciente')
-        user_roles.save()
+        #user_roles = Usuarios(user=user, tipo_usuario='Paciente')
+        #user_roles.save()
         patient_details = PacientesDetalles(
             user=user,
             token = self.generate_token(),
             dni = self.cleaned_data['dni'],
-            email = self.cleaned_data['email'],
             sexo = self.cleaned_data['sexo'],
             nombre = self.cleaned_data['nombre'], 
             apellido = self.cleaned_data['apellido'],

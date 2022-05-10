@@ -1,7 +1,6 @@
-from django.shortcuts import render
-from django.contrib import messages
 from django.http import HttpResponse
-from django.contrib.auth.forms import UserCreationForm
+from django.shortcuts import redirect, render
+from .forms import UserSignUpForm
 
 def home(request):
 
@@ -13,15 +12,15 @@ def login(request):
     return render(request, 'pacientes/login.html')
 
 
-def register_credentials(request):
+def signup(request):
 
     if request.method == 'POST':
-        form = UserCreationForm(request.POST)
+        form = UserSignUpForm(request.POST)
         if form.is_valid():
-            username = form.cleaned_data['username']
-            messages.success(request, 'Usuario %s creado con éxito.' % (username))
+            form.save()
+            return redirect(request, 'pacientes/')
     else:
-        form = UserCreationForm()
+        form = UserSignUpForm()
 
     context = {'form' : form}
-    return render(request, 'pacientes/register_credentials.html', context)
+    return render(request, 'pacientes/signup.html', context)
