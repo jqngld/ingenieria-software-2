@@ -71,10 +71,9 @@ class UserSignUpForm(UserCreationForm):
     def save(self, commit=True):
         if not commit:
             raise NotImplementedError("Can't create User and UserProfile without database save")
-        self.username = self.cleaned_data['email']
         user = super(UserSignUpForm, self).save(commit=True)
-        #user_roles = Usuarios(user=user, tipo_usuario='Paciente')
-        #user_roles.save()
+        user.tipo_usuario = 'paciente'
+        user.save()
         patient_details = PacientesDetalles(
             user=user,
             token = self.generate_token(),

@@ -18,7 +18,7 @@ def signup(request):
         form = UserSignUpForm(request.POST)
         if form.is_valid():
             form.save()
-            return redirect(request, 'pacientes/')
+            return redirect('/pacientes/')
     else:
         form = UserSignUpForm()
 
