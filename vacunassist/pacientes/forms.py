@@ -68,6 +68,12 @@ class UserSignUpForm(UserCreationForm):
         length_of_string = 4
         return ''.join(random.choice(string.digits) for _ in range(length_of_string))
 
+    def clean_dni(self):
+        dni = self.cleaned_data.get('dni')
+        if PacientesDetalles.objects.filter(dni=dni).exists():
+            raise forms.ValidationError('Ya existe un usuario con este DNI.')
+        return dni
+
     def save(self, commit=True):
         if not commit:
             raise NotImplementedError("Can't create User and UserProfile without database save")
