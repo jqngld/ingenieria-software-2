@@ -1,8 +1,12 @@
 from django import forms
-from django.contrib.auth.models import User
+from django.conf import settings
 from django.contrib.auth.forms import UserCreationForm
+from django.template.loader import get_template
+from django.core.mail import EmailMultiAlternatives
+from email.mime.image import MIMEImage
 from pacientes.models import Usuarios, PacientesDetalles
 from .models import Usuarios
+import os
 import string
 import random
 from datetime import datetime
@@ -68,6 +72,39 @@ class UserSignUpForm(UserCreationForm):
         length_of_string = 4
         return ''.join(random.choice(string.digits) for _ in range(length_of_string))
 
+    def send_register_email(self, token):
+        subject = 'Registro de Usuario Exitoso.'
+        from_email = 'VacunAssist <%s>' % (settings.EMAIL_HOST_USER)
+        to_email = '%s' % (self.cleaned_data['email'])
+        reply_to_email = 'noreply@vacunassist.com'
+
+        image_dir = 'static/img'
+        image_name = 'vacunassist-logo.png'
+
+        context = {
+                    'nombre' : self.cleaned_data.get('nombre'),
+                    'token'  : token
+                    }
+
+        text_content = get_template('pacientes/mail_bienvenida.txt')
+        html_content = get_template('pacientes/mail_bienvenida.html')
+        text_content = text_content.render(context)
+        html_content = html_content.render(context)
+
+        email = EmailMultiAlternatives(subject, text_content, from_email, to=[to_email,], reply_to=[reply_to_email,])
+        email.mixed_subtype = 'related'
+        email.content_subtype = 'html'
+        email.attach_alternative(html_content, 'text/html')
+
+        file_path = os.path.join(image_dir, image_name)
+        with open(file_path, 'rb') as f:
+            image = MIMEImage(f.read())
+            image.add_header('Content-ID', '<%s>' % (image_name))
+            image.add_header('Content-Disposition', 'inline', filename=image_name)
+            email.attach(image)
+
+        email.send(fail_silently=False)
+
     def clean_dni(self):
         dni = self.cleaned_data.get('dni')
         if PacientesDetalles.objects.filter(dni=dni).exists():
@@ -80,9 +117,10 @@ class UserSignUpForm(UserCreationForm):
         user = super(UserSignUpForm, self).save(commit=True)
         user.tipo_usuario = 'paciente'
         user.save()
+        token = self.generate_token()
         patient_details = PacientesDetalles(
             user=user,
-            token = self.generate_token(),
+            token = token,
             dni = self.cleaned_data['dni'],
             sexo = self.cleaned_data['sexo'],
             nombre = self.cleaned_data['nombre'], 
@@ -92,4 +130,5 @@ class UserSignUpForm(UserCreationForm):
             centro_vacunatorio = self.cleaned_data['centro_vacunatorio']
         )
         patient_details.save()
+        self.send_register_email(token)
         return user, patient_details

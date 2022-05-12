@@ -1,0 +1,9 @@
+¡{{ nombre }}, Bienvenido a VacunAssist! Tu cuenta fue creada con éxito.
+
+Para iniciar sesión, vas a necesitar el siguiente token de seguridad: {{ token }}
+
+Te recomendamos que lo guardes en un sitio seguro.
+
+¡Muchas gracias por elegirnos!
+
+VacunAssist.
