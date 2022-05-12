@@ -1,6 +1,7 @@
 from django.http import HttpResponse
 from django.shortcuts import redirect, render
-from .forms import UserSignUpForm
+from .forms import UserSignUpForm 
+from django.contrib.auth.forms import AuthenticationForm , UserCreationForm
 
 def home(request):
 
@@ -8,8 +9,12 @@ def home(request):
 
 
 def login(request):
+    form = AuthenticationForm()
+    context = {'form' : form}
+    return render(request, 'pacientes/login.html', context)
 
-    return render(request, 'pacientes/login.html')
+   
+
 
 
 def signup(request):
@@ -24,3 +29,5 @@ def signup(request):
 
     context = {'form' : form}
     return render(request, 'pacientes/signup.html', context)
+
+
