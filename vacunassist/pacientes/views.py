@@ -10,7 +10,7 @@ def login(request):
     return render(request, 'pacientes/login.html')
 
 def mail(request):
-    return render(request, 'pacientes/mail_bienvenida.html')
+    return render(request, 'pacientes/multiple_steps_form.html')
 
 def signup(request):
 

@@ -13,14 +13,292 @@
 
 </head>
 <body>
-    
+
     <form method="POST">
-        <div class="form-group">
-            {% csrf_token %}
-            {{ form.as_p }}
+        {% csrf_token %}
+
+        <div class="row my-3 mx-3">
+            <h3>Registro de Usuario</h3>
         </div>
-        <button type="submit" class="btn btn-primary" id="submit">Continuar</button>
+
+        <fieldset id="first-step">
+            <div class="row my-3 mx-3">
+                <h6>Información de inicio de sesión</h6>
+            </div>
+
+            <div class="row my-3 mx-3">
+                <div class="col-md-2">
+                    <div class="fieldWrapper">
+                        <!-- {{ form.nombre.label_tag }} -->
+                        {{ form.nombre }}
+                        {{ form.nombre.errors }}
+                        {% if form.nombre.help_text %}
+                        <p class="help">{{ form.nombre.help_text|safe }}</p>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="fieldWrapper">
+                        <!-- {{ form.apellido.label_tag }} -->
+                        {{ form.apellido }}
+                        {{ form.apellido.errors }}
+                        {% if form.apellido.help_text %}
+                        <p class="help">{{ form.apellido.help_text|safe }}</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            
+            <div class="row my-3 mx-3">
+                <div class="col-md-4">
+                    <div class="fieldWrapper">
+                        <!-- {{ form.email.label_tag }} -->
+                        {{ form.email }}
+                        {{ form.email.errors }}
+                        {% if form.email.help_text %}
+                        <p class="help">{{ form.email.help_text|safe }}</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <div class="row my-3 mx-3">
+                <div class="col-md-4">
+                    <div class="fieldWrapper">
+                        <!-- {{ form.password1.label_tag }} -->
+                        {{ form.password1 }}
+                        {{ form.password1.errors }}
+                        {% if form.password1.help_text %}
+                        <p class="help">{{ form.password1.help_text|safe }}</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            <div class="row my-3 mx-3">
+                <div class="col-md-4">
+                    <div class="fieldWrapper">
+                        <!-- {{ form.password2.label_tag }} -->
+                        {{ form.password2 }}
+                        {{ form.password2.errors }}
+                        {% if form.password2.help_text %}
+                        <p class="help">{{ form.password2.help_text|safe }}</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <div class="row my-3 mx-3">
+                <div class="col-sm-2">
+                    <!-- <button type="submit" class="btn btn-primary">Siguiente</button> -->
+                    <button class="btn btn-dark" onclick="myFunction()">Siguiente</button>
+                </div>
+            </div>
+
+        </fieldset>
+
+        <fieldset id="second-step" style="display: none;">
+
+            <div class="row my-3 mx-3">
+                <h6>Información Personal</h6>
+            </div>
+
+            <div class="row my-3 mx-3">
+                <div class="col-md-1">
+                    <div class="fieldWrapper">
+                        <!-- {{ form.nombre.label_tag }} -->
+                        {{ form.dia_nacimiento }}
+                        {{ form.dia_nacimiento.errors }}
+                        {% if form.dia_nacimiento.help_text %}
+                        <p class="help">{{ form.dia_nacimiento.help_text|safe }}</p>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="fieldWrapper">
+                        <!-- {{ form.apellido.label_tag }} -->
+                        {{ form.mes_nacimiento }}
+                        {{ form.mes_nacimiento.errors }}
+                        {% if form.mes_nacimiento.help_text %}
+                        <p class="help">{{ form.mes_nacimiento.help_text|safe }}</p>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="col-md-1">
+                    <div class="fieldWrapper">
+                        <!-- {{ form.apellido.label_tag }} -->
+                        {{ form.ano_nacimiento }}
+                        {{ form.ano_nacimiento.errors }}
+                        {% if form.ano_nacimiento.help_text %}
+                        <p class="help">{{ form.ano_nacimiento.help_text|safe }}</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <div class="row my-3 mx-3">
+                <div class="col-md-2">
+                    <div class="fieldWrapper">
+                        <!-- {{ form.email.label_tag }} -->
+                        {{ form.dni }}
+                        {{ form.dni.errors }}
+                        {% if form.dni.help_text %}
+                        <p class="help">{{ form.dni.help_text|safe }}</p>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="fieldWrapper">
+                        <!-- {{ form.apellido.label_tag }} -->
+                        {{ form.sexo }}
+                        {{ form.sexo.errors }}
+                        {% if form.sexo.help_text %}
+                        <p class="help">{{ form.sexo.help_text|safe }}</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <div class="row my-3 mx-3">
+                <h6>Información Médica</h6>
+            </div>
+
+            <div class="row my-3 mx-3">
+                <div class="col-md-4">
+                    <div class="fieldWrapper">
+                        {{ form.es_paciente_riesgo }}
+                        {{ form.es_paciente_riesgo.label_tag }}
+                        {{ form.es_paciente_riesgo.errors }}
+                        {% if form.es_paciente_riesgo.help_text %}
+                        <p class="help">{{ form.es_paciente_riesgo.help_text|safe }}</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <div class="row my-3 mx-3">
+                <div class="col-md-2">
+                    <div class="fieldWrapper">
+                        {{ form.vacuna_covid }}
+                        {{ form.vacuna_covid.label_tag }}
+                        {{ form.vacuna_covid.errors }}
+                        {% if form.vacuna_covid.help_text %}
+                        <p class="help">{{ form.vacuna_covid.help_text|safe }}</p>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="fieldWrapper">
+                        <!-- {{ form.fecha_vacunacion_covid.label_tag }} -->
+                        {{ form.fecha_vacunacion_covid }}
+                        {{ form.fecha_vacunacion_covid.errors }}
+                        {% if form.fecha_vacunacion_covid.help_text %}
+                        <p class="help">{{ form.fecha_vacunacion_covid.help_text|safe }}</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <div class="row my-3 mx-3">
+                <div class="col-md-2">
+                    <div class="fieldWrapper">
+                        {{ form.vacuna_gripe }}
+                        {{ form.vacuna_gripe.label_tag }}
+                        {{ form.vacuna_gripe.errors }}
+                        {% if form.vacuna_gripe.help_text %}
+                        <p class="help">{{ form.vacuna_gripe.help_text|safe }}</p>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="fieldWrapper">
+                        <!-- {{ form.fecha_vacunacion_gripe.label_tag }} -->
+                        {{ form.fecha_vacunacion_gripe }}
+                        {{ form.fecha_vacunacion_gripe.errors }}
+                        {% if form.fecha_vacunacion_gripe.help_text %}
+                        <p class="help">{{ form.fecha_vacunacion_gripe.help_text|safe }}</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <div class="row my-3 mx-3">
+                <div class="col-md-2">
+                    <div class="fieldWrapper">
+                        {{ form.vacuna_fa }}
+                        {{ form.vacuna_fa.label_tag }}
+                        {{ form.vacuna_fa.errors }}
+                        {% if form.vacuna_fa.help_text %}
+                        <p class="help">{{ form.vacuna_fa.help_text|safe }}</p>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="fieldWrapper">
+                        <!-- {{ form.fecha_vacunacion_fa.label_tag }} -->
+                        {{ form.fecha_vacunacion_fa }}
+                        {{ form.fecha_vacunacion_fa.errors }}
+                        {% if form.fecha_vacunacion_fa.help_text %}
+                        <p class="help">{{ form.fecha_vacunacion_fa.help_text|safe }}</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <div class="row my-3 mx-3">
+                <div class="col-md-2">
+                    <!-- <h6>Centro de preferencia</h6> -->
+                    {{ form.centro_vacunatorio.label_tag }}
+                </div>
+                <div class="col-md-2">
+                    <div class="fieldWrapper">
+                        {{ form.centro_vacunatorio }}
+                        {{ form.centro_vacunatorio.errors }}
+                        {% if form.centro_vacunatorio.help_text %}
+                        <p class="help">{{ form.centro_vacunatorio.help_text|safe }}</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <div class="row my-3 mx-3">
+                <div class="col-sm-2">
+                    <button class="btn btn-dark" onclick="myFunction()">Atrás</button>
+                    <button type="submit" class="btn btn-success">Registrar</button>
+                </div>
+            </div>
+
+        </fieldset>
+
     </form>
+
+    <script>
+        function myFunction() {
+            var first_step = document.getElementById("first-step");
+            var second_step = document.getElementById("second-step");
+            if (first_step.style.display === "none") {
+                first_step.style.display = "block";
+                second_step.style.display = "none";
+            } else {
+                first_step.style.display = "none";
+                second_step.style.display = "block";
+            }
+        }
+
+        // funciones para activar y desactivar campos de fecha de las vacunas
+        function disableCovidField() {
+            var field = document.getElementById("id_fecha_vacunacion_covid");
+            field.disabled = !field.disabled
+        }
+        function disableGripeField() {
+            var field = document.getElementById("id_fecha_vacunacion_gripe");
+            field.disabled = !field.disabled
+        }
+        function disableFAField() {
+            var field = document.getElementById("id_fecha_vacunacion_fa");
+            field.disabled = !field.disabled
+        }
+
+    </script>
 
 </body>
 </html>
