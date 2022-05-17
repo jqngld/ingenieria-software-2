@@ -1,4 +1,5 @@
 import email
+from pacientes.models import Usuarios, PacientesDetalles
 from email import message
 from lib2to3.pgen2 import token
 from pyexpat.errors import messages
@@ -7,30 +8,33 @@ from django.shortcuts import redirect, render
 from .forms import UserSignUpForm,UserSign
 from django.contrib.auth.forms import AuthenticationForm , UserCreationForm
 from django import forms
-from django.contrib.auth import authenticate
+from django.contrib.auth import authenticate,login
+from django.contrib import messages
+from django.contrib.auth.backends import BaseBackend
+
 def home(request):
 
     return HttpResponse('Página home de pacientes.')
 
 
+def mail(request):
+    return render(request, 'pacientes/multiple_steps_form.html')    
+ 
 def login(request):   
-    if request.method == 'POST':
-       form = UserSign(request.POST)
+    if request.method == "POST":
+       form = UserSign(data=request.POST)
        if form.is_valid(): 
-            form.save()
             mail= form.cleaned_data.get("email")
-            password= form.cleaned_data.get("contraseña")
-            tok= form.cleaned_data.get("token")
-            usuario= authenticate(email = mail,contraseña = password , token = tok )
-            if usuario is not None:
-                login(request,usuario)
+            contraseña= form.cleaned_data.get("password")
+            token = form.cleaned_data.get("token")
+            user= authenticate(email = mail,password = contraseña)
+            if PacientesDetalles.objects.filter(token=token,user=user).exists():
                 return redirect('/pacientes/')
             else:
                  messages.error(request, "usuario no valido")  
        else: 
              messages.error(request, "informacion")                     
-    else:
-       form = UserSign()      
+    form = UserSign()     
     context = {'form' : form}
     return render(request, 'pacientes/login.html', context)
 

@@ -1,7 +1,6 @@
 from django.urls import path
 from pacientes.views import *
-
-
+from django.contrib.auth.views import LoginView
 urlpatterns = [
     path('', home),
     path('login/', login, name='login'),

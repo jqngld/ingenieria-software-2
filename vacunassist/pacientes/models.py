@@ -57,6 +57,9 @@ class Usuarios(AbstractBaseUser):
         return self.usuario_administrador
 
 
+      
+
+
 class PacientesDetalles(models.Model):
 
     paciente_id = models.AutoField(primary_key=True)
@@ -79,7 +82,7 @@ class PacientesDetalles(models.Model):
 
     def __str__(self) -> str:
         return '%s: %s' % (self.apellido, self.nombre)
-
+    
 
 class VacunasDetalles(models.Model):
 
