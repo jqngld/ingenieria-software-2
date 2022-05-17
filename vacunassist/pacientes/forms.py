@@ -1,18 +1,21 @@
 from django import forms
-from django.conf import settings
-from django.contrib import auth
-from django.contrib.auth.forms import UserCreationForm
 from django.template.loader import get_template
 from django.core.mail import EmailMultiAlternatives
-from email.mime.image import MIMEImage
-
+from django.contrib.auth.forms import UserCreationForm
 from pacientes.models import Usuarios, PacientesDetalles
 from .models import Usuarios
+from vacunassist import settings
 import os
 import string
 import random
 from datetime import datetime
+from email.mime.image import MIMEImage
 
+
+class  UserSign(forms.Form):
+   email = forms.EmailField(max_length=200, required=True)
+   password = forms.CharField(widget=forms.PasswordInput())
+   token = forms.IntegerField(label='token', required=True)
 
 class UserSignUpForm(UserCreationForm):
     """
@@ -131,6 +134,8 @@ class UserSignUpForm(UserCreationForm):
     def generate_token(self):   
         length_of_string = 4
         return ''.join(random.choice(string.digits) for _ in range(length_of_string))
+
+
 
     def send_register_email(self, token):
         subject = 'Registro de Usuario Exitoso.'
