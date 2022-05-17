@@ -12,9 +12,15 @@
     <script src="{% static 'js/bootstrap.min.js' %}"></script>
 
 </head>
-<body>
+<body class="m-0 row justify-content-center">
+    <style>
+        body {
+            background-color: #5e5e5e;
+        }
+    </style>
 
-    <form method="POST">
+    <div class="col-lg-4 col-offset-1 centered">
+    <form method="POST" id="formulario">
         {% csrf_token %}
 
         <div class="row my-3 mx-3">
@@ -27,7 +33,7 @@
             </div>
 
             <div class="row my-3 mx-3">
-                <div class="col-md-2">
+                <div class="col-md-6">
                     <div class="fieldWrapper">
                         <!-- {{ form.nombre.label_tag }} -->
                         {{ form.nombre }}
@@ -37,7 +43,7 @@
                         {% endif %}
                     </div>
                 </div>
-                <div class="col-md-2">
+                <div class="col-md-6">
                     <div class="fieldWrapper">
                         <!-- {{ form.apellido.label_tag }} -->
                         {{ form.apellido }}
@@ -50,7 +56,7 @@
             </div>
             
             <div class="row my-3 mx-3">
-                <div class="col-md-4">
+                <div class="col-md-12">
                     <div class="fieldWrapper">
                         <!-- {{ form.email.label_tag }} -->
                         {{ form.email }}
@@ -63,7 +69,7 @@
             </div>
 
             <div class="row my-3 mx-3">
-                <div class="col-md-4">
+                <div class="col-md-12">
                     <div class="fieldWrapper">
                         <!-- {{ form.password1.label_tag }} -->
                         {{ form.password1 }}
@@ -75,7 +81,7 @@
                 </div>
             </div>
             <div class="row my-3 mx-3">
-                <div class="col-md-4">
+                <div class="col-md-12">
                     <div class="fieldWrapper">
                         <!-- {{ form.password2.label_tag }} -->
                         {{ form.password2 }}
@@ -90,7 +96,7 @@
             <div class="row my-3 mx-3">
                 <div class="col-sm-2">
                     <!-- <button type="submit" class="btn btn-primary">Siguiente</button> -->
-                    <button class="btn btn-dark" onclick="myFunction()">Siguiente</button>
+                    <button class="btn btn-dark" onclick="validarPrimerPaso()">Siguiente</button>
                 </div>
             </div>
 
@@ -103,7 +109,7 @@
             </div>
 
             <div class="row my-3 mx-3">
-                <div class="col-md-1">
+                <div class="col-md-4">
                     <div class="fieldWrapper">
                         <!-- {{ form.nombre.label_tag }} -->
                         {{ form.dia_nacimiento }}
@@ -113,7 +119,7 @@
                         {% endif %}
                     </div>
                 </div>
-                <div class="col-md-2">
+                <div class="col-md-4">
                     <div class="fieldWrapper">
                         <!-- {{ form.apellido.label_tag }} -->
                         {{ form.mes_nacimiento }}
@@ -123,7 +129,7 @@
                         {% endif %}
                     </div>
                 </div>
-                <div class="col-md-1">
+                <div class="col-md-4">
                     <div class="fieldWrapper">
                         <!-- {{ form.apellido.label_tag }} -->
                         {{ form.ano_nacimiento }}
@@ -136,7 +142,7 @@
             </div>
 
             <div class="row my-3 mx-3">
-                <div class="col-md-2">
+                <div class="col-md-6">
                     <div class="fieldWrapper">
                         <!-- {{ form.email.label_tag }} -->
                         {{ form.dni }}
@@ -146,7 +152,7 @@
                         {% endif %}
                     </div>
                 </div>
-                <div class="col-md-2">
+                <div class="col-md-6">
                     <div class="fieldWrapper">
                         <!-- {{ form.apellido.label_tag }} -->
                         {{ form.sexo }}
@@ -163,7 +169,7 @@
             </div>
 
             <div class="row my-3 mx-3">
-                <div class="col-md-4">
+                <div class="col-md-12">
                     <div class="fieldWrapper">
                         {{ form.es_paciente_riesgo }}
                         {{ form.es_paciente_riesgo.label_tag }}
@@ -176,7 +182,7 @@
             </div>
 
             <div class="row my-3 mx-3">
-                <div class="col-md-2">
+                <div class="col-md-6">
                     <div class="fieldWrapper">
                         {{ form.vacuna_covid }}
                         {{ form.vacuna_covid.label_tag }}
@@ -186,7 +192,7 @@
                         {% endif %}
                     </div>
                 </div>
-                <div class="col-md-2">
+                <div class="col-md-6">
                     <div class="fieldWrapper">
                         <!-- {{ form.fecha_vacunacion_covid.label_tag }} -->
                         {{ form.fecha_vacunacion_covid }}
@@ -199,7 +205,7 @@
             </div>
 
             <div class="row my-3 mx-3">
-                <div class="col-md-2">
+                <div class="col-md-6">
                     <div class="fieldWrapper">
                         {{ form.vacuna_gripe }}
                         {{ form.vacuna_gripe.label_tag }}
@@ -209,7 +215,7 @@
                         {% endif %}
                     </div>
                 </div>
-                <div class="col-md-2">
+                <div class="col-md-6">
                     <div class="fieldWrapper">
                         <!-- {{ form.fecha_vacunacion_gripe.label_tag }} -->
                         {{ form.fecha_vacunacion_gripe }}
@@ -222,7 +228,7 @@
             </div>
 
             <div class="row my-3 mx-3">
-                <div class="col-md-2">
+                <div class="col-md-6">
                     <div class="fieldWrapper">
                         {{ form.vacuna_fa }}
                         {{ form.vacuna_fa.label_tag }}
@@ -232,7 +238,7 @@
                         {% endif %}
                     </div>
                 </div>
-                <div class="col-md-2">
+                <div class="col-md-6">
                     <div class="fieldWrapper">
                         <!-- {{ form.fecha_vacunacion_fa.label_tag }} -->
                         {{ form.fecha_vacunacion_fa }}
@@ -245,11 +251,11 @@
             </div>
 
             <div class="row my-3 mx-3">
-                <div class="col-md-2">
+                <div class="col-md-6">
                     <!-- <h6>Centro de preferencia</h6> -->
                     {{ form.centro_vacunatorio.label_tag }}
                 </div>
-                <div class="col-md-2">
+                <div class="col-md-6">
                     <div class="fieldWrapper">
                         {{ form.centro_vacunatorio }}
                         {{ form.centro_vacunatorio.errors }}
@@ -261,8 +267,8 @@
             </div>
 
             <div class="row my-3 mx-3">
-                <div class="col-sm-2">
-                    <button class="btn btn-dark" onclick="myFunction()">Atrás</button>
+                <div class="col-sm-12">
+                    <button class="btn btn-dark" onclick="cambiarPaso()">Atrás</button>
                     <button type="submit" class="btn btn-success">Registrar</button>
                 </div>
             </div>
@@ -270,9 +276,12 @@
         </fieldset>
 
     </form>
+    </div>
+    </div>
 
     <script>
-        function myFunction() {
+        function cambiarPaso() {
+            // validarFormulario()
             var first_step = document.getElementById("first-step");
             var second_step = document.getElementById("second-step");
             if (first_step.style.display === "none") {
@@ -296,6 +305,27 @@
         function disableFAField() {
             var field = document.getElementById("id_fecha_vacunacion_fa");
             field.disabled = !field.disabled
+        }
+
+        //validación de primer paso del formulario
+        document.addEventListener("DOMContentLoaded", function() {
+            document.getElementById("formulario").addEventListener('submit', validarFormulario); 
+        });
+
+        function validarPrimerPaso() {
+            var evento = document.getElementById("formulario")
+            // evento.preventDefault();
+            var nombre = document.getElementById('id_nombre').value;
+            if(nombre.length == 0) {
+                //alert('No has escrito nada en el usuario');
+                return;
+            }
+            var apellido = document.getElementById('id_apellido').value;
+            if (apellido.length < 6) {
+                //alert('La clave no es válida');
+                return;
+            }
+            cambiarPaso();
         }
 
     </script>

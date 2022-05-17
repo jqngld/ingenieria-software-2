@@ -43,26 +43,79 @@ class UserSignUpForm(UserCreationForm):
         ('Municipalidad', 'Municipalidad'),
     ]
 
-    nombre = forms.CharField(max_length=100, required=True, widget=forms.TextInput(attrs = {'class' : 'form-control','placeholder' : 'Nombre'}))
-    apellido = forms.CharField(max_length=100, required=True, widget=forms.TextInput(attrs = {'class' : 'form-control','placeholder' : 'Apellido'}))
-    email = forms.EmailField(max_length=200, required=True, widget=forms.EmailInput(attrs={'class' : 'form-control', 'placeholder' : 'Email'}))
-    
-    dni = forms.IntegerField(label='DNI', required=True, widget=forms.NumberInput(attrs = {'class' : 'form-control','placeholder' : 'DNI'}))
-    sexo = forms.ChoiceField(choices=generos, required=True, label="Género", widget=forms.Select(attrs={'class' : 'form-control', 'placeholder' : 'Sexo'}))
-    dia_nacimiento = forms.IntegerField(label='Día', widget=forms.NumberInput(attrs = {'class' : 'form-control','placeholder' : 'Día'}))
-    mes_nacimiento = forms.ChoiceField(choices=meses, required=True, label="Mes", widget=forms.Select(attrs={'class' : 'form-control','placeholder' : 'Mes'}))
-    ano_nacimiento = forms.IntegerField(label='Año', widget=forms.NumberInput(attrs = {'class' : 'form-control','placeholder' : 'Año'}))
-    centro_vacunatorio = forms.ChoiceField(choices=centros, required=True, label="Centro vacunatorio", widget=forms.Select(attrs = {'class' : 'form-control','placeholder' : 'Centro Vacunatorio'}))
+    nombre = forms.CharField(
+        max_length=100,
+        required=True,
+        widget=forms.TextInput(attrs = {'class' : 'form-control','placeholder' : 'Nombre'}))
+    apellido = forms.CharField(
+        max_length=100,
+        required=True,
+        widget=forms.TextInput(attrs = {'class' : 'form-control','placeholder' : 'Apellido'}))
+    email = forms.EmailField(
+        max_length=200,
+        required=True,
+        widget=forms.EmailInput(attrs={'class' : 'form-control', 'placeholder' : 'Email'}))
+
+    dni = forms.IntegerField(
+        label='DNI',
+        required=True,
+        widget=forms.NumberInput(attrs = {'class' : 'form-control','placeholder' : 'DNI'}))
+    sexo = forms.ChoiceField(
+        choices=generos,
+        required=True,
+        label="Género",
+        widget=forms.Select(attrs={'class' : 'form-control', 'placeholder' : 'Sexo'}))
+    dia_nacimiento = forms.IntegerField(
+        label='Día',
+        widget=forms.NumberInput(attrs = {'class' : 'form-control','placeholder' : 'Día'}))
+    mes_nacimiento = forms.ChoiceField(
+        choices=meses,
+        required=True,
+        label="Mes",
+        widget=forms.Select(attrs={'class' : 'form-control','placeholder' : 'Mes'}))
+    ano_nacimiento = forms.IntegerField(
+        label='Año',
+        widget=forms.NumberInput(attrs = {'class' : 'form-control','placeholder' : 'Año'})
+    )
+    centro_vacunatorio = forms.ChoiceField(
+        choices=centros,
+        required=True,
+        label="Centro vacunatorio",
+        widget=forms.Select(attrs = {'class' : 'form-control','placeholder' : 'Centro Vacunatorio'})
+    )
     es_paciente_riesgo = forms.BooleanField(required=False, label='¿Es paciente de riesgo?')
     
-    vacuna_covid = forms.BooleanField(required=False, label='COVID-19', widget=forms.CheckboxInput(attrs={'OnClick': 'disableCovidField();'}))
-    fecha_vacunacion_covid = forms.DateField(required=False, label='Fecha aplicación', widget=forms.DateInput(attrs = {'disabled' : 'true', 'type': 'date', 'class' : 'form-control', 'placeholder' : 'Fecha Vacunación'}))
+    vacuna_covid = forms.BooleanField(
+        required=False,
+        label='COVID-19',
+        widget=forms.CheckboxInput(attrs={'OnClick': 'disableCovidField();'})
+    )
+    fecha_vacunacion_covid = forms.DateField(
+        required=False,
+        label='Fecha aplicación',
+        widget=forms.DateInput(attrs = {'disabled' : 'true', 'type': 'date', 'class' : 'form-control', 'placeholder' : 'Fecha Vacunación'})
+    )
 
-    vacuna_gripe = forms.BooleanField(required=False, label='GRIPE', widget=forms.CheckboxInput(attrs={'OnClick': 'disableGripeField();'}))
-    fecha_vacunacion_gripe = forms.DateField(required=False, label='Fecha aplicación', widget=forms.DateInput(attrs = {'disabled' : 'true', 'type': 'date', 'class': 'form-control','placeholder' : 'Fecha Vacunación'}))
+    vacuna_gripe = forms.BooleanField(
+        required=False,
+        label='GRIPE',
+        widget=forms.CheckboxInput(attrs={'OnClick': 'disableGripeField();'})
+    )
+    fecha_vacunacion_gripe = forms.DateField(
+        required=False,
+        label='Fecha aplicación',
+        widget=forms.DateInput(attrs = {'disabled' : 'true', 'type': 'date', 'class': 'form-control','placeholder' : 'Fecha Vacunación'})
+    )
     
-    vacuna_fa = forms.BooleanField(required=False, label='FIEBRE AMARILLA', widget=forms.CheckboxInput(attrs={'OnClick': 'disableFAField();'}))
-    fecha_vacunacion_fa = forms.DateField(required=False, label='Fecha aplicación', widget=forms.DateInput(attrs = {'disabled' : 'true', 'type': 'date', 'class' : 'form-control','placeholder' : 'Fecha Vacunación'}))
+    vacuna_fa = forms.BooleanField(
+        required=False,
+        label='FIEBRE AMARILLA', widget=forms.CheckboxInput(attrs={'OnClick': 'disableFAField();'})
+    )
+    fecha_vacunacion_fa = forms.DateField(
+        required=False,
+        label='Fecha aplicación',
+        widget=forms.DateInput(attrs = {'disabled' : 'true', 'type': 'date', 'class' : 'form-control','placeholder' : 'Fecha Vacunación'})
+    )
 
     class Meta:
         model = Usuarios
@@ -117,6 +170,11 @@ class UserSignUpForm(UserCreationForm):
         if PacientesDetalles.objects.filter(dni=dni).exists():
             raise forms.ValidationError('Ya existe un usuario con este DNI.')
         return dni
+
+    def validar_email(self, email):
+        if Usuarios.objects.filter(email=email).exists():
+            raise forms.ValidationError('Ya existe un usuario con este Email.')
+        return email
 
     def save(self, commit=True):
         if not commit:
