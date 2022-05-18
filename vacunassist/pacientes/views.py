@@ -2,7 +2,9 @@ from django.contrib import messages
 from django.http import HttpResponse
 from django.shortcuts import redirect, render
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth import authenticate, login as patient_login
+from django.contrib.auth import authenticate
+from django.contrib.auth import login as auth_login
+from django.contrib.auth import logout as django_logout
 from .models import PacientesDetalles
 from .forms import UserSignUpForm,UserSign
 
@@ -29,7 +31,7 @@ def login(request):
             token = form.cleaned_data.get("token")
             user = authenticate(request, email=mail, password=contraseña)
             if user is not None and PacientesDetalles.objects.filter(token=token,user=user).exists():
-                patient_login(request, user)
+                auth_login(request, user)
                 return redirect('/pacientes/')
             else:
                  messages.error(request, "usuario no valido")  
@@ -38,6 +40,12 @@ def login(request):
     form = UserSign()     
     context = {'form' : form}
     return render(request, 'pacientes/login.html', context)
+
+
+def logout(request):
+    
+    django_logout(request)
+    return redirect('/pacientes/')
 
 
 def signup(request):
@@ -54,6 +62,7 @@ def signup(request):
     return render(request, 'pacientes/signup.html', context)
 
 
-#def viewProfile(request): proxima implementación
-    users = PacientesDetalles.objects.all()
-    return render(request, "pacientes/list_users.html", {"usrs": users})
+def view_profile(request): 
+    data = PacientesDetalles.objects.filter()
+    return render(request, "pacientes/view_profile.html", {"datos": data})
+
