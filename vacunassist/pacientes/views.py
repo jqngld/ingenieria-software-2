@@ -11,15 +11,18 @@ from django import forms
 from django.contrib.auth import authenticate,login
 from django.contrib import messages
 from django.contrib.auth.backends import BaseBackend
+from django.contrib.auth import authenticate, login as patient_login
+from django.contrib.auth.decorators import login_required
 
 def home(request):
 
-    return HttpResponse('Página home de pacientes.')
+    return render(request, 'pacientes/index.html')
 
 
 def mail(request):
     return render(request, 'pacientes/multiple_steps_form.html')    
  
+
 def login(request):   
     if request.method == "POST":
        form = UserSign(data=request.POST)
@@ -28,7 +31,8 @@ def login(request):
             contraseña= form.cleaned_data.get("password")
             token = form.cleaned_data.get("token")
             user= authenticate(email = mail,password = contraseña)
-            if PacientesDetalles.objects.filter(token=token,user=user).exists():
+            if user is not None and PacientesDetalles.objects.filter(token=token,user=user).exists():
+                patient_login(request, user)
                 return redirect('/pacientes/')
             else:
                  messages.error(request, "usuario no valido")  
@@ -37,8 +41,6 @@ def login(request):
     form = UserSign()     
     context = {'form' : form}
     return render(request, 'pacientes/login.html', context)
-
-
 
 
 def signup(request):
@@ -55,3 +57,6 @@ def signup(request):
     return render(request, 'pacientes/signup.html', context)
 
 
+#def viewProfile(request): proxima implementación
+    users = PacientesDetalles.objects.all()
+    return render(request, "pacientes/list_users.html", {"usrs": users})
