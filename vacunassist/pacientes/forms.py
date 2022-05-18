@@ -86,7 +86,7 @@ class UserSignUpForm(UserCreationForm):
         label="Centro vacunatorio",
         widget=forms.Select(attrs = {'class' : 'form-control','placeholder' : 'Centro Vacunatorio'})
     )
-    es_paciente_riesgo = forms.BooleanField(required=False, label='¿Es paciente de riesgo?')
+    es_paciente_riesgo = forms.BooleanField(required=False, label='Respecto a la vacuna COVID-19, ¿es paciente de riesgo?')
     
     vacuna_covid = forms.BooleanField(
         required=False,

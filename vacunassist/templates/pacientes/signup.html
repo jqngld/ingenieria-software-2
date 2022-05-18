@@ -95,8 +95,7 @@
 
             <div class="row my-3 mx-3">
                 <div class="col-sm-2">
-                    <!-- <button type="submit" class="btn btn-primary">Siguiente</button> -->
-                    <button class="btn btn-dark" onclick="validarPrimerPaso()">Siguiente</button>
+                    <button type="button" class="btn btn-dark" onclick="validarPrimerPaso()">Siguiente</button>
                 </div>
             </div>
 
@@ -268,7 +267,7 @@
 
             <div class="row my-3 mx-3">
                 <div class="col-sm-12">
-                    <button class="btn btn-dark" onclick="cambiarPaso()">Atrás</button>
+                    <button type="button" class="btn btn-dark" onclick="cambiarPaso()">Atrás</button>
                     <button type="submit" class="btn btn-success">Registrar</button>
                 </div>
             </div>
@@ -307,25 +306,26 @@
             field.disabled = !field.disabled
         }
 
-        //validación de primer paso del formulario
-        document.addEventListener("DOMContentLoaded", function() {
-            document.getElementById("formulario").addEventListener('submit', validarFormulario); 
-        });
-
         function validarPrimerPaso() {
             var evento = document.getElementById("formulario")
-            // evento.preventDefault();
+
             var nombre = document.getElementById('id_nombre').value;
-            if(nombre.length == 0) {
-                //alert('No has escrito nada en el usuario');
-                return;
-            }
+            if(nombre.length == 0) {return;}
+
             var apellido = document.getElementById('id_apellido').value;
-            if (apellido.length < 6) {
-                //alert('La clave no es válida');
-                return;
-            }
+            if (apellido.length == 0) {return;}
+
+            var email = document.getElementById('id_email').value;
+            if (email.length == 0) {return;}
+
+            var password1 = document.getElementById('id_password1').value;
+            if (password1.length == 0) {return;}
+
+            var password2= document.getElementById('id_password2').value;
+            if (password2.length == 0) {return;}
+
             cambiarPaso();
+
         }
 
     </script>

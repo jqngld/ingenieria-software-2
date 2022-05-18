@@ -1,34 +1,35 @@
-import email
-from pacientes.models import Usuarios, PacientesDetalles
-from email import message
-from lib2to3.pgen2 import token
-from pyexpat.errors import messages
+from django.contrib import messages
 from django.http import HttpResponse
 from django.shortcuts import redirect, render
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth import authenticate, login as patient_login
+from .models import PacientesDetalles
 from .forms import UserSignUpForm,UserSign
-from django.contrib.auth.forms import AuthenticationForm , UserCreationForm
-from django import forms
-from django.contrib.auth import authenticate, login
-from django.contrib import messages
-from django.contrib.auth.backends import BaseBackend
+
 
 def home(request):
-
     return HttpResponse('Página home de pacientes.')
 
 
-def mail(request):
-    return render(request, 'pacientes/multiple_steps_form.html')    
- 
+def login_error(request):
+    return HttpResponse('Usuario no logueado.')
+
+
+@login_required(login_url='/pacientes/login_error/')
+def inicio_pacientes(request):
+    return HttpResponse('Página inicio de pacientes.')
+
+
 def login(request):   
     if request.method == "POST":
        form = UserSign(data=request.POST)
        if form.is_valid(): 
-            mail= form.cleaned_data.get("email")
-            contraseña= form.cleaned_data.get("password")
+            mail = form.cleaned_data.get("email")
+            contraseña = form.cleaned_data.get("password")
             token = form.cleaned_data.get("token")
-            user= authenticate(email = mail,password = contraseña)
-            if PacientesDetalles.objects.filter(token=token,user=user).exists():
+            user = authenticate(request, email=mail, password=contraseña)
+            if user is not None and PacientesDetalles.objects.filter(token=token,user=user).exists():
+                patient_login(request, user)
                 return redirect('/pacientes/')
             else:
                  messages.error(request, "usuario no valido")  
