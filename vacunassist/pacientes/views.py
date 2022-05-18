@@ -8,7 +8,7 @@ from .forms import UserSignUpForm,UserSign
 
 
 def home(request):
-    return HttpResponse('Página home de pacientes.')
+    return render(request, 'pacientes/index.html')
 
 
 def login_error(request):
@@ -40,8 +40,6 @@ def login(request):
     return render(request, 'pacientes/login.html', context)
 
 
-
-
 def signup(request):
 
     if request.method == 'POST':
@@ -56,3 +54,6 @@ def signup(request):
     return render(request, 'pacientes/signup.html', context)
 
 
+#def viewProfile(request): proxima implementación
+    users = PacientesDetalles.objects.all()
+    return render(request, "pacientes/list_users.html", {"usrs": users})

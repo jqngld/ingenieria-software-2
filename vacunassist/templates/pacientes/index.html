@@ -1,18 +1,41 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>VacunAssist</title>
+{% extends "pacientes/base.html" %}
+{% load static %}
 
-    {% load staticfiles %}
-    <link href="{% static 'css/bootstrap.min.css' %}" >  
-    <script src="{% static 'js/bootstrap.min.js' %}"></script>  
-</head>
-<body>
-    
+{% block content %}
+   <!-- Heading -->
+   <section class="page-section clearfix">
+    <div class="container">
+      <div class="intro">
+        <img class="intro-img img-fluid mb-3 mb-lg-0 rounded" src="{% static 'img/vacunassist-logo-2.png'%}" alt="">
+        <div class="intro-text left-0 text-center bg-faded p-5 rounded">
+          <h2 class="section-heading mb-4" >
+            <span class="section-heading-upper">Linea 1</span>
+            <span class="section-heading-lower">Linea 2</span>
+          </h2>
+          <p class="mb-3">Lorem ipsum dolor sit amet consectetur adipisicing elit. Tempora perferendis incidunt eligendi aut natus, impedit rem, sapiente numquam, repellendus omnis dolor magni nihil ea. Temporibus blanditiis libero repellat consequatur asperiores?</p>
+        </div>
+      </div>
+    </div>
+  </section>
 
 
-</body>
-</html>
+  
+    <!-- Message -->
+    <section class="page-section cta">
+      <div class="container">
+        <div class="row">
+          <div class="col-xl-9 mx-auto">
+            <div class="cta-inner text-center rounded">
+              <h2 class="section-heading mb-4">
+                <span class="section-heading-upper">Linea 1</span>
+                <span class="section-heading-lower">Linea 2</span>
+              </h2>
+              <p class="mb-0">Lorem ipsum dolor sit amet consectetur adipisicing elit. Vel consectetur enim harum fugit at laborum impedit rem adipisci recusandae itaque quo inventore, beatae deleniti rerum obcaecati amet dolorum magnam sint!</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+
+    {% endblock %}
