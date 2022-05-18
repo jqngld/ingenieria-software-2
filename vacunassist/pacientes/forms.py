@@ -14,7 +14,7 @@ from email.mime.image import MIMEImage
 
 class  UserSign(forms.Form):
    email = forms.EmailField(max_length=200, required=True)
-   password = forms.CharField(widget=forms.PasswordInput())
+   password = forms.CharField(label="Contraseña", widget=forms.PasswordInput())
    token = forms.IntegerField(label='token', required=True)
 
 class UserSignUpForm(UserCreationForm):
