@@ -1,20 +1,11 @@
+{% extends "pacientes/base.html" %}
 {% load static %}
 {% load crispy_forms_tags %}
 
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Crear cuenta paciente de VacunAssist</title>
-    
-    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
-    <script src="{% static 'js/bootstrap.min.js' %}"></script>
+{% block title %} Crear cuenta paciente de VacunAssist {% endblock %}
 
-</head>
-<body>
-    
+
+{% block content %} 
     <form method="POST">
         <div class="form-group">
             {% csrf_token %}
@@ -23,5 +14,4 @@
         <button type="submit" class="btn btn-primary" id="submit">iniciar sesion</button>
     </form>
 
-</body>
-</html>
+{% endblock %}
