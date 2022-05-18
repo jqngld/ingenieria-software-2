@@ -131,3 +131,8 @@ class PacientesTurnos(models.Model):
     def __str__(self) -> str:
         return '%s - %s: %s' % (self.solicitud_id.paciente_id, self.solicitud_id.vacuna_id, self.fecha_confirmada)
 
+
+class VacunasAplicadas(models.Model):
+    vacuna_id = models.ForeignKey(VacunasDetalles, on_delete=models.CASCADE)
+    paciente_id = models.ForeignKey(PacientesDetalles, on_delete=models.CASCADE) 
+    fecha_vacunacion = models.DateField('Fecha de Vacunacion', blank=False)
