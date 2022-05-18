@@ -1,0 +1,16 @@
+{% extends "pacientes/base.html" %}
+{% load static %}
+
+{% block content %}
+    
+{% for dato in datos %} 
+
+    <p>Nombre: {{dato.nombre}}</p>
+    <p>Apellido: {{dato.apellido}}</p>
+    <p>DNI: {{dato.dni}}</p>
+    <p>Sexo: {{dato.sexo}}</p>
+    <p>Fecha de nacimiento: {{dato.fecha_nacimiento}}</p>
+
+{% endfor %}
+
+{% endblock %}
