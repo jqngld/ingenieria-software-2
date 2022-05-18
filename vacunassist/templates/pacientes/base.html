@@ -39,7 +39,7 @@
           <li class="nav-item {% if request.path == '/pacientes/' %}active{% endif %} px-lg-4">
             <a class="nav-link text-uppercase text-expanded" href="{% url 'home' %}">Inicio</a>
           </li>
-          <li class="nav-item {% if request.path == '/pacientes/signup/' %}active{% endif %} px-lg-4">
+          <li class="nav-item {% if request.path|slice:'18' == '/pacientes/signup/' %}active{% endif %} px-lg-4">
             <a class="nav-link text-uppercase text-expanded" href="{% url 'signup' %}">Registrarse</a>
           </li>
           <li class="nav-item {% if request.path == '/pacientes/login/' %}active{% endif %} px-lg-4">

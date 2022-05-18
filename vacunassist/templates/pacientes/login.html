@@ -6,12 +6,11 @@
 
 
 {% block content %} 
-    <form method="POST">
-        <div class="form-group">
+
+    <form method="POST" style="  width: 100%; max-width: 600px; margin: 0 auto; display: flex;flex-direction: column; justify-content: center; align-items: center;">
             {% csrf_token %}
-            {{ form|crispy}}
-        </div>
-        <button type="submit" class="btn btn-primary" id="submit">iniciar sesion</button>
+           {{ form|crispy}}
+        <button type="submit" class="btn btn-primary" id="submit">iniciar sesi&oacute;n</button>
     </form>
 
     {% if messages %}
