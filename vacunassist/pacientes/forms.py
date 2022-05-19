@@ -1,9 +1,10 @@
+from tokenize import Token
 from django import forms
 from django.template.loader import get_template
 from django.core.mail import EmailMultiAlternatives
 from django.contrib.auth.forms import UserCreationForm
 from pacientes.models import Usuarios, PacientesDetalles
-from .models import Usuarios
+from .models import Usuarios, VacunasAplicadas, VacunasDetalles
 from vacunassist import settings
 import os
 import string
@@ -135,9 +136,10 @@ class UserSignUpForm(UserCreationForm):
         length_of_string = 4
         return ''.join(random.choice(string.digits) for _ in range(length_of_string))
 
-
-
     def send_register_email(self, token):
+        '''Se envía un mail al correo del usuario paciente registrado con el token que
+        se generó para utilizar en el inicio de sesión.'''
+        
         subject = 'Registro de Usuario Exitoso.'
         from_email = 'VacunAssist <%s>' % (settings.EMAIL_HOST_USER)
         to_email = '%s' % (self.cleaned_data['email'])
@@ -170,6 +172,53 @@ class UserSignUpForm(UserCreationForm):
 
         email.send(fail_silently=False)
 
+    def registrar_detalles(self, user, token):
+        '''Se guardan detalles e información personal del usuario paciente registrado.'''
+
+        patient_details = PacientesDetalles(
+            user=user,
+            token = token,
+            dni = self.cleaned_data['dni'],
+            sexo = self.cleaned_data['sexo'],
+            nombre = self.cleaned_data['nombre'], 
+            apellido = self.cleaned_data['apellido'],
+            fecha_nacimiento = datetime(int(self.cleaned_data['ano_nacimiento']), int(self.cleaned_data['mes_nacimiento']), int(self.cleaned_data['dia_nacimiento'])),
+            es_paciente_riesgo = self.cleaned_data['es_paciente_riesgo'],
+            centro_vacunatorio = self.cleaned_data['centro_vacunatorio']
+        )
+        patient_details.save()
+
+        return patient_details
+
+    def registrar_vacunaciones(self, paciente_id):
+        '''Se registran aquellas vacunas que el usuario indicó haberse aplicado.'''
+
+        if self.cleaned_data['vacuna_covid']:
+            vacuna_covid = VacunasAplicadas(
+                paciente_id = paciente_id,
+                vacuna_id = 1,
+                fecha_vacunacion = self.cleaned_data['fecha_vacunacion_covid']
+            )
+            vacuna_covid.save()
+        #else: generar solicitud de turno
+        
+        if self.cleaned_data['vacuna_gripe']:
+            vacuna_gripe = VacunasAplicadas(
+                paciente_id = paciente_id,
+                vacuna_id = 2,
+                fecha_vacunacion = self.cleaned_data['fecha_vacunacion_gripe']
+            )
+            vacuna_gripe.save()
+        #else: generar solicitud de turno
+        
+        if self.cleaned_data['vacuna_fa']:
+            vacuna_fa = VacunasAplicadas(
+                paciente_id = paciente_id,
+                vacuna_id = 3,
+                fecha_vacunacion = self.cleaned_data['fecha_vacunacion_fa']
+            )
+            vacuna_fa.save()
+
     def clean_dni(self):
         dni = self.cleaned_data.get('dni')
         if PacientesDetalles.objects.filter(dni=dni).exists():
@@ -188,17 +237,7 @@ class UserSignUpForm(UserCreationForm):
         user.tipo_usuario = 'paciente'
         user.save()
         token = self.generate_token()
-        patient_details = PacientesDetalles(
-            user=user,
-            token = token,
-            dni = self.cleaned_data['dni'],
-            sexo = self.cleaned_data['sexo'],
-            nombre = self.cleaned_data['nombre'], 
-            apellido = self.cleaned_data['apellido'],
-            fecha_nacimiento = datetime(int(self.cleaned_data['ano_nacimiento']), int(self.cleaned_data['mes_nacimiento']), int(self.cleaned_data['dia_nacimiento'])),
-            es_paciente_riesgo = self.cleaned_data['es_paciente_riesgo'],
-            centro_vacunatorio = self.cleaned_data['centro_vacunatorio']
-        )
-        patient_details.save()
+        patient_details = self.registrar_detalles(user, token)
+        self.registrar_vacunaciones(patient_details.paciente_id)
         self.send_register_email(token)
         return user, patient_details
