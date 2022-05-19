@@ -136,3 +136,10 @@ class VacunasAplicadas(models.Model):
     vacuna_id = models.ForeignKey(VacunasDetalles, on_delete=models.CASCADE)
     paciente_id = models.ForeignKey(PacientesDetalles, on_delete=models.CASCADE) 
     fecha_vacunacion = models.DateField('Fecha de Vacunacion', blank=False)
+
+    class Meta:
+        verbose_name = 'Vacunas Aplicada'
+        db_table = 'vacunas_aplicadas'
+
+    def __str__(self) -> str:
+        return '%s - %s: %s' % (self.paciente_id.paciente_id, self.vacuna_id.vacuna_id, self.fecha_vacunacion)

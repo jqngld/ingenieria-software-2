@@ -2,15 +2,10 @@
 {% load static %}
 
 {% block content %}
-    
-{% for dato in datos %} 
-
-    <p>Nombre: {{dato.nombre}}</p>
-    <p>Apellido: {{dato.apellido}}</p>
-    <p>DNI: {{dato.dni}}</p>
-    <p>Sexo: {{dato.sexo}}</p>
-    <p>Fecha de nacimiento: {{dato.fecha_nacimiento}}</p>
-
-{% endfor %}
+    <p>Nombre: {{datos.nombre}}</p>
+    <p>Apellido: {{datos.apellido}}</p>
+    <p>DNI: {{datos.dni}}</p>
+    <p>Sexo: {{datos.sexo}}</p>
+    <p>Fecha de nacimiento: {{datos.fecha_nacimiento}}</p>
 
 {% endblock %}
