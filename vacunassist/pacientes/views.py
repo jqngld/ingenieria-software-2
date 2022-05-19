@@ -63,6 +63,6 @@ def signup(request):
 
 
 def view_profile(request):
-    paciente = PacientesDetalles.objects.get(paciente_id=request.user.id)
+    paciente = PacientesDetalles.objects.get(user_id=request.user.id)
     return render(request, "pacientes/view_profile.html/", {"datos": paciente})
 
