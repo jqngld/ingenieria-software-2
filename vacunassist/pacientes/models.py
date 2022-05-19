@@ -81,7 +81,7 @@ class PacientesDetalles(models.Model):
         db_table = 'pacientes_detalles'
 
     def __str__(self) -> str:
-        return '%s: %s' % (self.apellido, self.nombre)
+        return '%s, %s' % (self.apellido, self.nombre)
     
 
 class VacunasDetalles(models.Model):
@@ -102,8 +102,8 @@ class VacunasDetalles(models.Model):
 class PacientesSolicitudes(models.Model):
 
     solicitud_id = models.AutoField(primary_key=True)
-    vacuna_id = models.ForeignKey(VacunasDetalles, on_delete=models.CASCADE)
-    paciente_id = models.ForeignKey(PacientesDetalles, on_delete=models.CASCADE)
+    vacuna = models.ForeignKey(VacunasDetalles, on_delete=models.CASCADE)
+    paciente = models.ForeignKey(PacientesDetalles, on_delete=models.CASCADE)
     fecha_estimada = models.DateField(blank=False, null=False)
     solicitud_aprobada = models.BooleanField(default=False, blank=False, null=False)
 
@@ -112,13 +112,13 @@ class PacientesSolicitudes(models.Model):
         db_table = 'pacientes_solicitudes'
 
     def __str__(self) -> str:
-        return '%s - %s: %s' % (self.paciente_id, self.paciente_id.dni, self.vacuna_id)
+        return '%s - %s: %s' % (self.paciente, self.paciente.dni, self.vacuna)
 
 
 class PacientesTurnos(models.Model):
 
     turno_id = models.AutoField(primary_key=True)
-    solicitud_id = models.ForeignKey(PacientesSolicitudes, on_delete=models.CASCADE)
+    solicitud = models.ForeignKey(PacientesSolicitudes, on_delete=models.CASCADE)
     fecha_confirmada = models.DateField(blank=True, null=True)
     turno_perdido = models.BooleanField(default=False, blank=False, null=False)
     turno_pendiente = models.BooleanField(default=True, blank=False, null=False)
@@ -129,12 +129,12 @@ class PacientesTurnos(models.Model):
         db_table = 'pacientes_turnos'
 
     def __str__(self) -> str:
-        return '%s - %s: %s' % (self.solicitud_id.paciente_id, self.solicitud_id.vacuna_id, self.fecha_confirmada)
+        return '%s - %s: %s' % (self.solicitud.paciente_id, self.solicitud.vacuna_id, self.fecha_confirmada)
 
 
 class VacunasAplicadas(models.Model):
-    vacuna_id = models.ForeignKey(VacunasDetalles, on_delete=models.CASCADE)
-    paciente_id = models.ForeignKey(PacientesDetalles, on_delete=models.CASCADE) 
+    vacuna = models.ForeignKey(VacunasDetalles, on_delete=models.CASCADE)
+    paciente = models.ForeignKey(PacientesDetalles, on_delete=models.CASCADE) 
     fecha_vacunacion = models.DateField('Fecha de Vacunacion', blank=False)
 
     class Meta:
@@ -142,4 +142,4 @@ class VacunasAplicadas(models.Model):
         db_table = 'vacunas_aplicadas'
 
     def __str__(self) -> str:
-        return '%s - %s: %s' % (self.paciente_id.paciente_id, self.vacuna_id.vacuna_id, self.fecha_vacunacion)
+        return '%s - %s: %s' % (self.paciente.dni, self.vacuna.nombre, self.fecha_vacunacion)
