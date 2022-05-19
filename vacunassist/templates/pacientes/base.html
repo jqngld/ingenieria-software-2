@@ -43,6 +43,8 @@
           {% if user.is_authenticated %}
             <li class="nav-item {% if request.path|slice:'18' == '/pacientes/view_profile/' %}active{% endif %} px-lg-4">
               <a class="nav-link text-uppercase text-expanded" href="{% url 'view_profile' %}">Ver Mi Perfil</a>
+            <li class="nav-item {% if request.path|slice:'18' == '/pacientes/list_vaccines/' %}active{% endif %} px-lg-4">
+              <a class="nav-link text-uppercase text-expanded" href="{% url 'list_vaccines' %}">Mis Vacunas Aplicadas</a>
             <li class="nav-item {% if request.path|slice:'18' == '/pacientes/logout/' %}active{% endif %} px-lg-4">
               <a class="nav-link text-uppercase text-expanded" href="{% url 'logout' %}">Cerrar sesi&oacute;n</a>
           {% else %}

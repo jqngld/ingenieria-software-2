@@ -5,7 +5,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate
 from django.contrib.auth import login as auth_login
 from django.contrib.auth import logout as django_logout
-from .models import PacientesDetalles
+from .models import PacientesDetalles, VacunasAplicadas
 from .forms import UserSignUpForm,UserSign
 
 
@@ -66,3 +66,7 @@ def view_profile(request):
     paciente = PacientesDetalles.objects.get(user_id=request.user.id)
     return render(request, "pacientes/view_profile.html/", {"datos": paciente})
 
+
+def list_vaccines(request):
+    vacunas = VacunasAplicadas.objects.filter(id=request.user.id)
+    return render(request, "pacientes/list_vaccines.html/", {"vacs":vacunas})

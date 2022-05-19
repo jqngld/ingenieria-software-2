@@ -8,5 +8,6 @@ urlpatterns = [
     path('login_error/', login_error, name='login_error'),
     path('inicio_pacientes/', inicio_pacientes, name='inicio_pacientes'),
     path('view_profile/', view_profile, name='view_profile'),
-    path('logout', logout, name='logout')
+    path('logout', logout, name='logout'),
+    path('list_vaccines/', list_vaccines, name="list_vaccines"),
 ]
