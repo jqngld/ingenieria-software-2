@@ -5,7 +5,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate
 from django.contrib.auth import login as auth_login
 from django.contrib.auth import logout as django_logout
-from .models import PacientesDetalles, VacunasAplicadas
+from .models import *
 from .forms import UserSignUpForm,UserSign
 
 
@@ -67,6 +67,32 @@ def view_profile(request):
     return render(request, "pacientes/view_profile.html/", {"datos": paciente})
 
 
-def list_vaccines(request):
-    vacunas = VacunasAplicadas.objects.filter(paciente_id=request.user.id)
-    return render(request, "pacientes/list_vaccines.html/", {"vacs":vacunas})
+def listar_vacunas(request):
+    paciente = PacientesDetalles.objects.get(user_id=request.user.id)
+
+    vacunas = VacunasAplicadas.objects.filter(paciente_id=paciente.paciente_id)\
+        .values('vacuna_id__nombre', 'fecha_vacunacion')
+
+    return render(request, "pacientes/list_vaccines.html/", {'vacunas' : vacunas})
+
+def listar_solicitudes(request):
+    paciente = PacientesDetalles.objects.get(user_id=request.user.id)
+
+    solicitudes = PacientesSolicitudes.objects.filter(paciente_id=paciente.paciente_id)\
+        .values('vacuna_id__nombre', 'fecha_solicitud', 'solicitud_aprobada')
+    return render(request, "pacientes/listar_solicitudes.html/", {'solicitudes' : solicitudes})
+
+def listar_turnos(request):
+    paciente = PacientesDetalles.objects.get(user_id=request.user.id)
+
+    turnos = PacientesTurnos.objects.filter(
+        solicitud_id__paciente_id=paciente.paciente_id,
+        solicitud_id__solicitud_aprobada=True)\
+            .values('solicitud_id__vacuna_id__nombre', 'fecha_confirmada', 'turno_perdido', 'turno_pendiente', 'turno_completado')
+    return render(request, "pacientes/listar_turnos.html/", {'turnos' : turnos})
+
+
+
+
+
+

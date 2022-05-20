@@ -1,0 +1,42 @@
+{% extends "pacientes/base.html" %}
+{% load static %}
+
+{% block content %}
+
+
+<div class="card">
+    <div class="card-header">
+        <div class="row" style="margin: 30px;">
+            <div class="col-md-12 text-center ">
+                <strong class="card-title">
+                    <h2>Listado de Solicitudes</h2>
+                </strong>
+            </div>
+        </div>
+
+        <div class="container">
+            <div class="row">
+                {% for solicitud in solicitudes %}
+                <div class="col-md-4">
+                    <div class="card">
+                        <!-- <span class="post-category text-white bg-primary mb-3">{{ vac }}</span> -->
+                        <div class="card-body">
+                            <h4 class="card-title mb-2">{{ solicitud.vacuna_id__nombre }}</h4>
+                            <p class="card-text">Día de solicitud: {{ solicitud.fecha_solicitud }}</p>
+                            <p class="card-text">Estado: 
+                                {% if solicitud.solicitud_aprobada %}
+                                confirmada.
+                                {% else %}
+                                pendiente confirmación.
+                                {% endif %}
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                {%endfor %}
+            </div>
+        </div>
+    </div>
+</section>
+
+{% endblock %}

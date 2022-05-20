@@ -1,3 +1,5 @@
+from datetime import datetime
+from time import time
 from django.db import models
 from django.utils import timezone
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
@@ -105,8 +107,9 @@ class PacientesSolicitudes(models.Model):
     vacuna = models.ForeignKey(VacunasDetalles, on_delete=models.CASCADE)
     paciente = models.ForeignKey(PacientesDetalles, on_delete=models.CASCADE)
     fecha_estimada = models.DateField(blank=False, null=False)
+    fecha_solicitud = models.DateField(default=datetime.today)
     solicitud_aprobada = models.BooleanField(default=False, blank=False, null=False)
-
+    
     class Meta:
         verbose_name = 'Solicitudes Paciente'
         db_table = 'pacientes_solicitudes'
@@ -129,7 +132,7 @@ class PacientesTurnos(models.Model):
         db_table = 'pacientes_turnos'
 
     def __str__(self) -> str:
-        return '%s - %s: %s' % (self.solicitud.paciente_id, self.solicitud.vacuna_id, self.fecha_confirmada)
+        return '%s - %s: %s' % (self.solicitud.paciente, self.solicitud.paciente.dni, self.fecha_confirmada)
 
 
 class VacunasAplicadas(models.Model):
