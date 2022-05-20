@@ -68,5 +68,5 @@ def view_profile(request):
 
 
 def list_vaccines(request):
-    vacunas = VacunasAplicadas.objects.filter(id=request.user.id)
+    vacunas = VacunasAplicadas.objects.filter(paciente_id=request.user.id)
     return render(request, "pacientes/list_vaccines.html/", {"vacs":vacunas})
