@@ -73,7 +73,7 @@ def listar_vacunas(request):
     vacunas = VacunasAplicadas.objects.filter(paciente_id=paciente.paciente_id)\
         .values('vacuna_id__nombre', 'fecha_vacunacion')
 
-    return render(request, "pacientes/list_vaccines.html/", {'vacunas' : vacunas})
+    return render(request, "pacientes/listar_vacunas.html/", {'vacunas' : vacunas})
 
 def listar_solicitudes(request):
     paciente = PacientesDetalles.objects.get(user_id=request.user.id)
