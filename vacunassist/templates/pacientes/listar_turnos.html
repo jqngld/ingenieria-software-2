@@ -5,8 +5,8 @@
 
 
 <div class="card">
-    <div class="card-header">
-        <div class="row" style="margin: 30px;">
+    <div class="card-header" style="min-height: 224px;">
+        <div class="row" style="margin-top: 10px;">
             <div class="col-md-12 text-center ">
                 <strong class="card-title">
                     <h2>Listado de Turnos</h2>
@@ -14,12 +14,12 @@
             </div>
         </div>
 
+        {% if turnos%}
         <div class="container">
             <div class="row">
                 {% for turno in turnos %}
                 <div class="col-md-4 mt-4">
                     <div class="card">
-                        <!-- <span class="post-category text-white bg-primary mb-3">{{ vac }}</span> -->
                         <div class="card-body">
                             <h4 class="card-title mb-2">{{ turno.solicitud_id__vacuna_id__nombre }}</h4>
                             <p class="card-text">Día del turno: {{ turno.fecha_confirmada }}</p>
@@ -38,7 +38,20 @@
                 {%endfor %}
             </div>
         </div>
+        {% else %}
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12 mt-4">
+                    <div class="card">
+                        <div class="card-body">
+                            <p class="card-text">Por el momento usted no tiene turnos registrados.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
     </div>
-</section>
+</div>
 
 {% endblock %}
