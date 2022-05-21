@@ -88,13 +88,24 @@ class UserSignUpForm(UserCreationForm):
         widget=forms.Select(attrs = {'class' : 'form-control','placeholder' : 'Centro Vacunatorio'})
     )
     es_paciente_riesgo = forms.BooleanField(required=False, label='Respecto a la vacuna COVID-19, ¿es paciente de riesgo?')
-    
-    vacuna_covid = forms.BooleanField(
+
+    vacuna_covid_1 = forms.BooleanField(
         required=False,
-        label='COVID-19',
-        widget=forms.CheckboxInput(attrs={'OnClick': 'disableCovidField();'})
+        label='COVID-19 (1ra dosis)',
+        widget=forms.CheckboxInput(attrs={'OnClick': 'disableCovidField1();'})
     )
-    fecha_vacunacion_covid = forms.DateField(
+    fecha_vacunacion_covid_1 = forms.DateField(
+        required=False,
+        label='Fecha aplicación',
+        widget=forms.DateInput(attrs = {'disabled' : 'true', 'type': 'date', 'class' : 'form-control', 'placeholder' : 'Fecha Vacunación'})
+    )
+
+    vacuna_covid_2 = forms.BooleanField(
+        required=False,
+        label='COVID-19 (2da dosis)',
+        widget=forms.CheckboxInput(attrs={'disabled' : 'true', 'OnClick': 'disableCovidField2();'})
+    )
+    fecha_vacunacion_covid_2 = forms.DateField(
         required=False,
         label='Fecha aplicación',
         widget=forms.DateInput(attrs = {'disabled' : 'true', 'type': 'date', 'class' : 'form-control', 'placeholder' : 'Fecha Vacunación'})
@@ -110,7 +121,7 @@ class UserSignUpForm(UserCreationForm):
         label='Fecha aplicación',
         widget=forms.DateInput(attrs = {'disabled' : 'true', 'type': 'date', 'class': 'form-control','placeholder' : 'Fecha Vacunación'})
     )
-    
+
     vacuna_fa = forms.BooleanField(
         required=False,
         label='FIEBRE AMARILLA', widget=forms.CheckboxInput(attrs={'OnClick': 'disableFAField();'})
@@ -127,7 +138,8 @@ class UserSignUpForm(UserCreationForm):
                   'password1', 'password2', 'dni', 'sexo',
                   'dia_nacimiento', 'mes_nacimiento', 'ano_nacimiento',
                   'centro_vacunatorio', 'es_paciente_riesgo',
-                  'vacuna_covid', 'fecha_vacunacion_covid',
+                  'vacuna_covid_1', 'fecha_vacunacion_covid_1',
+                  'vacuna_covid_2', 'fecha_vacunacion_covid_2',
                   'vacuna_gripe', 'fecha_vacunacion_gripe',
                   'vacuna_fa', 'fecha_vacunacion_fa'
                 )
@@ -139,7 +151,7 @@ class UserSignUpForm(UserCreationForm):
     def send_register_email(self, token):
         '''Se envía un mail al correo del usuario paciente registrado con el token que
         se generó para utilizar en el inicio de sesión.'''
-        
+
         subject = 'Registro de Usuario Exitoso.'
         from_email = 'VacunAssist <%s>' % (settings.EMAIL_HOST_USER)
         to_email = '%s' % (self.cleaned_data['email'])
@@ -190,31 +202,40 @@ class UserSignUpForm(UserCreationForm):
 
         return patient_details
 
-    def registrar_vacunaciones(self, paciente_id):
+    def registrar_vacunaciones(self, paciente):
         '''Se registran aquellas vacunas que el usuario indicó haberse aplicado.'''
 
-        if self.cleaned_data['vacuna_covid']:
-            vacuna_covid = VacunasAplicadas(
-                paciente_id = paciente_id,
+        if self.cleaned_data['vacuna_covid_1']:
+            vacuna_covid_1 = VacunasAplicadas(
+                paciente_id = paciente.paciente_id,
                 vacuna_id = 1,
-                fecha_vacunacion = self.cleaned_data['fecha_vacunacion_covid']
+                fecha_vacunacion = self.cleaned_data['fecha_vacunacion_covid_1']
             )
-            vacuna_covid.save()
+            vacuna_covid_1.save()
         #else: generar solicitud de turno
-        
+
+        if self.cleaned_data['vacuna_covid_2']:
+            vacuna_covid_2 = VacunasAplicadas(
+                paciente_id = paciente.paciente_id,
+                vacuna_id = 2,
+                fecha_vacunacion = self.cleaned_data['fecha_vacunacion_covid_2']
+            )
+            vacuna_covid_2.save()
+        #else: generar solicitud de turno
+
         if self.cleaned_data['vacuna_gripe']:
             vacuna_gripe = VacunasAplicadas(
-                paciente_id = paciente_id,
-                vacuna_id = 2,
+                paciente_id = paciente.paciente_id,
+                vacuna_id = 3,
                 fecha_vacunacion = self.cleaned_data['fecha_vacunacion_gripe']
             )
             vacuna_gripe.save()
         #else: generar solicitud de turno
-        
+
         if self.cleaned_data['vacuna_fa']:
             vacuna_fa = VacunasAplicadas(
-                paciente_id = paciente_id,
-                vacuna_id = 3,
+                paciente_id = paciente.paciente_id,
+                vacuna_id = 4,
                 fecha_vacunacion = self.cleaned_data['fecha_vacunacion_fa']
             )
             vacuna_fa.save()
@@ -238,6 +259,6 @@ class UserSignUpForm(UserCreationForm):
         user.save()
         token = self.generate_token()
         patient_details = self.registrar_detalles(user, token)
-        self.registrar_vacunaciones(patient_details.paciente_id)
+        self.registrar_vacunaciones(patient_details)
         self.send_register_email(token)
         return user, patient_details

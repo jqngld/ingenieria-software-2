@@ -109,6 +109,7 @@ class PacientesSolicitudes(models.Model):
     fecha_estimada = models.DateField(blank=False, null=False)
     fecha_solicitud = models.DateField(default=datetime.today)
     solicitud_aprobada = models.BooleanField(default=False, blank=False, null=False)
+    centro_vacunatorio = models.CharField('Centro Vacunatorio', max_length=50, blank=False, null=False)
     
     class Meta:
         verbose_name = 'Solicitudes Paciente'
