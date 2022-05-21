@@ -1,17 +1,16 @@
-from tokenize import Token
 from django import forms
 from django.template.loader import get_template
 from django.core.mail import EmailMultiAlternatives
 from django.contrib.auth.forms import UserCreationForm
-from psycopg2 import Date
 from pacientes.models import Usuarios, PacientesDetalles
 from .models import PacientesSolicitudes, Usuarios, VacunasAplicadas, VacunasDetalles
 from vacunassist import settings
 import os
 import string
 import random
-from datetime import datetime, timedelta
 from email.mime.image import MIMEImage
+from datetime import date, datetime, timedelta
+from dateutil.relativedelta import relativedelta
 
 
 class  UserSign(forms.Form):
@@ -213,8 +212,7 @@ class UserSignUpForm(UserCreationForm):
                 fecha_vacunacion = self.cleaned_data['fecha_vacunacion_covid_1']
             )
             vacuna_covid_1.save()
-
-
+            
             if self.cleaned_data['vacuna_covid_2']:
                 vacuna_covid_2 = VacunasAplicadas(
                     paciente_id = paciente.paciente_id,
@@ -227,22 +225,19 @@ class UserSignUpForm(UserCreationForm):
                     paciente_id = paciente.paciente_id,
                     vacuna_id = 2,
                     solicitud_aprobada = 0,
-                    fecha_estimada = datetime.today() + timedelta(days=7),
+                    fecha_estimada = datetime.today() + relativedelta(days=7),
                     centro_vacunatorio = paciente.centro_vacunatorio
                 )
                 solicitud_covid2.save()
-
         else:
             solicitud_covid1 = PacientesSolicitudes(
                 paciente_id = paciente.paciente_id,
                 vacuna_id = 1,
                 solicitud_aprobada = 0,
-                fecha_estimada = datetime.today() + timedelta(days=7),
+                fecha_estimada = datetime.today() + relativedelta(days=7),
                 centro_vacunatorio = paciente.centro_vacunatorio
             )
             solicitud_covid1.save()
-
-
 
         if self.cleaned_data['vacuna_gripe']:
             vacuna_gripe = VacunasAplicadas(
@@ -251,23 +246,16 @@ class UserSignUpForm(UserCreationForm):
                 fecha_vacunacion = self.cleaned_data['fecha_vacunacion_gripe']
             )
             vacuna_gripe.save()
-  
-        
         # Se generará un fecha de solicitud de turno SI el paciente no se dió la dosis de gripe, o si la fecha de dicha vacuna es mayor a un año (la vacuna de la gripe debe darse cada 1 año)
-
-        if not self.cleaned_data['vacuna_gripe'] or ((datetime.now() - self.cleaned_data['fecha_vacunacion_gripe']).days >= 365):  
+        if not self.cleaned_data['vacuna_gripe'] or (self.cleaned_data['fecha_vacunacion_gripe'] <= date.today() - timedelta(days=365)):  
             solicitud_gripe = PacientesSolicitudes(
             paciente_id = paciente.paciente_id,
             vacuna_id = 3,
             solicitud_aprobada = 0,
-            fecha_estimada = datetime.today() + datetime.timedelta(months=6),
+            fecha_estimada = datetime.today() + relativedelta(months=6),
             centro_vacunatorio = paciente.centro_vacunatorio
         )
         solicitud_gripe.save()
-
-
-
-
 
         if self.cleaned_data['vacuna_fa']:
             vacuna_fa = VacunasAplicadas(
