@@ -21,7 +21,7 @@
                 <div class="col-md-4 mt-4">
                     <div class="card">
                         <div class="card-body">
-                            <h4 class="card-title mb-2">{{ turno.solicitud_id__vacuna_id__nombre }}</h4>
+                            <h4 class="card-title mb-2"><b>{{ turno.solicitud_id__vacuna_id__nombre }}</b></h4>
                             <p class="card-text">Día del turno: {{ turno.fecha_confirmada }}</p>
                             <p class="card-text">Estado: 
                                 {% if turno.turno_perdido %}
