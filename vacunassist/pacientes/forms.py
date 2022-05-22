@@ -289,7 +289,18 @@ class UserSignUpForm(UserCreationForm):
         return user, patient_details
 
 
-# class UserUpdateForm(forms.Form):
+class UserUpdateForm(UserCreationForm):
+    generos = [
+        ('Mujer' , 'Mujer'),
+        ('Hombre', 'Hombre'),
+        ('N/A'  , 'Prefiero no decirlo'),
+        ('Otro'  , 'Otro'),
+    ]
+    name = forms.CharField()
+    message = forms.CharField(widget=forms.Textarea)
+    sexo = forms.ChoiceField(
+        choices=generos,
+        required=True,
+        label="Género",
+        widget=forms.Select(attrs={'class' : 'form-control', 'placeholder' : 'Sexo'}))
 
-    # name = forms.CharField()
-    # message = forms.CharField(widget=forms.Textarea)

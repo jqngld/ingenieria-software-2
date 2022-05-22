@@ -1,5 +1,5 @@
 from django.contrib import messages
-from django.shortcuts import redirect, render
+from django.shortcuts import get_object_or_404, redirect, render
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate
 from django.contrib.auth import login as auth_login
@@ -7,10 +7,13 @@ from django.contrib.auth import logout as django_logout
 from django.views import View
 from django.views.generic.edit import UpdateView
 from .models import *
-from .forms import UserSignUpForm,UserSign
+from .forms import UserSignUpForm,UserSign,UserUpdateForm
 #pdf
+from django.shortcuts import (get_object_or_404,
+                              render,
+                              HttpResponseRedirect)
 from unittest import result
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseRedirect
 from django.template.loader import get_template
 from xhtml2pdf import pisa
 from io import BytesIO
@@ -100,20 +103,44 @@ def listar_turnos(request):
 
 
 
-class editar_perfil(UpdateView):
+# class editar_perfil(UpdateView):
     # specify the model you want to use
     model = PacientesDetalles
-    #form_class = UserUpdateForm
+    form_class = UserUpdateForm()
     template_name = 'pacientes/editar_perfil.html'
     # specify the fields
     fields = [
-        "sexo",
+         "sexo", "centro_vacunatorio"
         #agregar campos que especificaste en el UserUpdateForm
-    ]
+     ]
 
-    success_url ="pacientes/view_profile.html"
+    success_url ="/pacientes/mi_perfil/"
     def get_object(self):
         return PacientesDetalles.objects.get(user_id=self.request.user.id)
+
+ 
+# update view for details
+def editar_perfil(request):
+    # dictionary for initial data with
+    # field names as keys
+    context ={}
+    id = request.user.id
+    # fetch the object related to passed id
+    obj = get_object_or_404(PacientesDetalles,user_id=request.user.id)
+ 
+    # pass the object as instance in form
+    form = UserUpdateForm(request.POST or None, instance = obj)
+ 
+    # save the data from the form and
+    # redirect to detail_view
+    if form.is_valid():
+        form.save()
+        return redirect("/pacientes/mi_perfil/")
+ 
+    # add form dictionary to context
+    context["form"] = form
+ 
+    return render(request,'pacientes/editar_perfil.html', context)        
 
 
 
