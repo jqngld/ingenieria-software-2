@@ -23,7 +23,7 @@
                         <div class="card-body">
                             <h4 class="card-title mb-2">{{ vacuna.vacuna_id__nombre }}</h4>
                             <p class="card-text">Día de vacunación: {{ vacuna.fecha_vacunacion }}</p>
-                            <button type="button" class="btn btn-outline-danger" data-toggle="tooltip" data-placement="right" title="Descargar comprobante">
+                            <button type="button" class="btn btn-outline-danger" data-toggle="tooltip" data-placement="right" title="Descargar comprobante" onclick="window.location.href='comprobante_vacunacion'">
                                 <i class="bi bi-file-earmark-pdf"></i>
                             </button>
                         </div>

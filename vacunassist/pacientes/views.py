@@ -1,12 +1,19 @@
 from django.contrib import messages
-from django.http import HttpResponse
 from django.shortcuts import redirect, render
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate
 from django.contrib.auth import login as auth_login
 from django.contrib.auth import logout as django_logout
+from django.views import View
+
 from .models import *
 from .forms import UserSignUpForm,UserSign
+#pdf
+from unittest import result
+from django.http import HttpResponse
+from django.template.loader import get_template
+from xhtml2pdf import pisa
+from io import BytesIO
 
 
 def home(request):
@@ -91,6 +98,25 @@ def listar_turnos(request):
             .values('solicitud_id__vacuna_id__nombre', 'fecha_confirmada', 'turno_perdido', 'turno_pendiente', 'turno_completado')
     return render(request, "pacientes/listar_turnos.html/", {'turnos' : turnos})
 
+
+class descargar_comprobante(View):
+
+    def render_to_pdf(self, template_src, context_dict={}):
+        template = get_template(template_src)
+        html = template.render(context_dict)
+        result = BytesIO()
+        pdf = pisa.pisaDocument(BytesIO(html.encode("ISO-8859-1")), result)
+        if not pdf.err:
+            return HttpResponse(result.getvalue(), content_type='application/pdf')
+        return None
+
+    def get(self, request, *args, **kwargs):
+        paciente = PacientesDetalles.objects.get(user_id=request.user.id) #Revisar
+
+        vacunas = VacunasAplicadas.objects.filter(paciente_id=paciente.paciente_id) #Revisar
+
+        pdf = self.render_to_pdf('comprobante_vacunacion.html', {'paciente':paciente, 'vacunas':vacunas})
+        return HttpResponse(pdf, content_type='application/pdf')
 
 
 
