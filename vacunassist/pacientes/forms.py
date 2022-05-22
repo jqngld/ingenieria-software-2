@@ -275,7 +275,7 @@ class UserSignUpForm(UserCreationForm):
         if Usuarios.objects.filter(email=email).exists():
             raise forms.ValidationError('Ya existe un usuario con este Email.')
         return email
-
+    
     def save(self, commit=True):
         if not commit:
             raise NotImplementedError("Can't create User and UserProfile without database save")
@@ -287,3 +287,9 @@ class UserSignUpForm(UserCreationForm):
         self.registrar_vacunaciones(patient_details)
         self.send_register_email(token)
         return user, patient_details
+
+
+# class UserUpdateForm(forms.Form):
+
+    # name = forms.CharField()
+    # message = forms.CharField(widget=forms.Textarea)

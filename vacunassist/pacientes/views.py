@@ -5,7 +5,7 @@ from django.contrib.auth import authenticate
 from django.contrib.auth import login as auth_login
 from django.contrib.auth import logout as django_logout
 from django.views import View
-
+from django.views.generic.edit import UpdateView
 from .models import *
 from .forms import UserSignUpForm,UserSign
 #pdf
@@ -99,6 +99,25 @@ def listar_turnos(request):
     return render(request, "pacientes/listar_turnos.html/", {'turnos' : turnos})
 
 
+
+class editar_perfil(UpdateView):
+    # specify the model you want to use
+    model = PacientesDetalles
+    #form_class = UserUpdateForm
+    template_name = 'pacientes/editar_perfil.html'
+    # specify the fields
+    fields = [
+        "sexo",
+        #agregar campos que especificaste en el UserUpdateForm
+    ]
+
+    success_url ="pacientes/view_profile.html"
+    def get_object(self):
+        return PacientesDetalles.objects.get(user_id=self.request.user.id)
+
+
+
+
 class descargar_comprobante(View):
 
     def render_to_pdf(self, template_src, context_dict={}):
@@ -111,14 +130,7 @@ class descargar_comprobante(View):
         return None
 
     def get(self, request, *args, **kwargs):
-        paciente = PacientesDetalles.objects.get(user_id=request.user.id) #Revisar
-
-        vacunas = VacunasAplicadas.objects.filter(paciente_id=paciente.paciente_id) #Revisar
-
-        pdf = self.render_to_pdf('comprobante_vacunacion.html', {'paciente':paciente, 'vacunas':vacunas})
+        pdf = self.render_to_pdf('comprobante_vacunacion.html')
         return HttpResponse(pdf, content_type='application/pdf')
-
-
-
 
 
