@@ -34,28 +34,32 @@
       </button>
       <div class="collapse navbar-collapse" id="navbarResponsive">
         <ul class="navbar-nav mx-auto">
-          <li class="nav-item {% if request.path == '/pacientes/' %}active{% endif %} px-lg-4">
+          <li class="nav-item {% if request.path == '/pacientes/' %}active{% endif %} px-lg-6">
             <a class="nav-link text-uppercase text-expanded" href="{% url 'home' %}">Inicio</a>
           </li>
 
           {% if user.is_authenticated %}
-            <li class="nav-item {% if request.path|slice:'18' == '/pacientes/mi_perfil/' %}active{% endif %} px-lg-4">
+            <li class="nav-item {% if request.path|slice:'18' == '/pacientes/mi_perfil/' %}active{% endif %} px-lg-6">
               <a class="nav-link text-uppercase text-expanded" href="{% url 'view_profile' %}">Ver Mi Perfil</a>
+
+          <li class="nav-item {% if request.path|slice:'18' == '/pacientes/editar_perfil/' %}active{% endif %} px-lg-6">
+               <a class="nav-link text-uppercase text-expanded" href="{% url 'editar_perfil' %}">editar mi perfil </a>
+               
             
-            <li class="nav-item {% if request.path|slice:'18' == '/pacientes/listar_vacunas/' %}active{% endif %} px-lg-4">
+            <li class="nav-item {% if request.path|slice:'18' == '/pacientes/listar_vacunas/' %}active{% endif %} px-lg-6">
               <a class="nav-link text-uppercase text-expanded" href="{% url 'listar_vacunas' %}">Mis Vacunas Aplicadas</a>
 
-            <li class="nav-item {% if request.path|slice:'18' == '/pacientes/mis_solicitudes/' %}active{% endif %} px-lg-4">
+            <li class="nav-item {% if request.path|slice:'18' == '/pacientes/mis_solicitudes/' %}active{% endif %} px-lg-6">
               <a class="nav-link text-uppercase text-expanded" href="{% url 'listar_solicitudes' %}">Solicitudes</a>
-            <li class="nav-item {% if request.path|slice:'18' == '/pacientes/mis_turnos/' %}active{% endif %} px-lg-4">
+            <li class="nav-item {% if request.path|slice:'18' == '/pacientes/mis_turnos/' %}active{% endif %} px-lg-6">
               <a class="nav-link text-uppercase text-expanded" href="{% url 'listar_turnos' %}">Turnos</a>
-            <li class="nav-item {% if request.path|slice:'18' == '/pacientes/cerrar_sesion/' %}active{% endif %} px-lg-4">
+            <li class="nav-item {% if request.path|slice:'18' == '/pacientes/cerrar_sesion/' %}active{% endif %} px-lg-6">
               <a class="nav-link text-uppercase text-expanded" href="{% url 'logout' %}">Cerrar sesi&oacute;n</a>
           {% else %}
-            <li class="nav-item {% if request.path|slice:'18' == '/pacientes/registro/' %}active{% endif %} px-lg-4">
+            <li class="nav-item {% if request.path|slice:'18' == '/pacientes/registro/' %}active{% endif %} px-lg-6">
               <a class="nav-link text-uppercase text-expanded" href="{% url 'signup' %}">Registrarse</a>
             </li>
-            <li class="nav-item {% if request.path == '/pacientes/inicio_sesion/' %}active{% endif %} px-lg-4">
+            <li class="nav-item {% if request.path == '/pacientes/inicio_sesion/' %}active{% endif %} px-lg-6">
               <a class="nav-link text-uppercase text-expanded" href="{% url 'login' %}">Iniciar Sesión</a>
           {% endif %}    
           </li>

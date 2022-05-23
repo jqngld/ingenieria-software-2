@@ -1,22 +1,18 @@
 from django.contrib import messages
-from django.shortcuts import get_object_or_404, redirect, render
+from django.shortcuts import redirect, render
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate
 from django.contrib.auth import login as auth_login
 from django.contrib.auth import logout as django_logout
 from django.views import View
-from django.views.generic.edit import UpdateView
+from django.contrib.auth.views import PasswordChangeView
+from django.contrib.auth.forms import PasswordChangeForm 
 from .models import *
 from .forms import UserSignUpForm,UserSign,UserUpdateForm
-#pdf
-from django.shortcuts import (get_object_or_404,
-                              render,
-                              HttpResponseRedirect)
-from unittest import result
+from django.shortcuts import HttpResponseRedirect
 from django.http import HttpResponse, HttpResponseRedirect
 from django.template.loader import get_template
 from xhtml2pdf import pisa
-from io import BytesIO
 
 
 def home(request):
@@ -103,20 +99,11 @@ def listar_turnos(request):
 
 
 
-# class editar_perfil(UpdateView):
-    # specify the model you want to use
-    model = PacientesDetalles
-    form_class = UserUpdateForm()
-    template_name = 'pacientes/editar_perfil.html'
-    # specify the fields
-    fields = [
-         "sexo", "centro_vacunatorio"
-        #agregar campos que especificaste en el UserUpdateForm
-     ]
 
-    success_url ="/pacientes/mi_perfil/"
-    def get_object(self):
-        return PacientesDetalles.objects.get(user_id=self.request.user.id)
+
+class cambiarPassword(PasswordChangeView):
+      form_class = PasswordChangeForm
+      success_url ="/pacientes/mi_perfil/"
 
  
 # update view for details
@@ -124,18 +111,24 @@ def editar_perfil(request):
     # dictionary for initial data with
     # field names as keys
     context ={}
-    id = request.user.id
-    # fetch the object related to passed id
-    obj = get_object_or_404(PacientesDetalles,user_id=request.user.id)
+ 
+    user = request.user.id
+
+    perfil = PacientesDetalles.objects.get(user_id=request.user.id) 
+
  
     # pass the object as instance in form
-    form = UserUpdateForm(request.POST or None, instance = obj)
- 
+    form = UserUpdateForm(request.POST or None , request.FILES , instance = perfil)
+
+
     # save the data from the form and
     # redirect to detail_view
     if form.is_valid():
-        form.save()
-        return redirect("/pacientes/mi_perfil/")
+
+        perfil.sexo = form.cleaned_data.get('sexo')
+        perfil.centro_vacunatorio = form.cleaned_data.get('centro_vacunatorio')
+        perfil.save()
+        return HttpResponseRedirect("/pacientes/mi_perfil/")
  
     # add form dictionary to context
     context["form"] = form
@@ -144,7 +137,6 @@ def editar_perfil(request):
 
 
 class descargar_comprobante(View):
-
     def get(self, request, *args, **kwargs):
 
         paciente = PacientesDetalles.objects.get(user_id=request.user.id)
@@ -163,7 +155,7 @@ class descargar_comprobante(View):
             'solicitud' : solicitud[0] if solicitud else False
         }
 
-        template = get_template('comprobante_vacunacion.html')
+        template = get_template('pacientes/comprobante_vacunacion.html')
         html = template.render(context)
 
         response = HttpResponse(content_type='application/pdf')
