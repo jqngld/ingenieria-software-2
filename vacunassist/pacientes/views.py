@@ -81,7 +81,7 @@ def listar_vacunas(request):
     paciente = PacientesDetalles.objects.get(user_id=request.user.id)
 
     vacunas = VacunasAplicadas.objects.filter(paciente_id=paciente.paciente_id)\
-        .values('vacuna_id__nombre', 'fecha_vacunacion')
+        .values('vacuna_id__nombre', 'fecha_vacunacion', 'vacuna_id')
 
     return render(request, "pacientes/listar_vacunas.html/", {'vacunas' : vacunas})
 
@@ -143,21 +143,33 @@ def editar_perfil(request):
     return render(request,'pacientes/editar_perfil.html', context)        
 
 
-
-
 class descargar_comprobante(View):
 
-    def render_to_pdf(self, template_src, context_dict={}):
-        template = get_template(template_src)
-        html = template.render(context_dict)
-        result = BytesIO()
-        pdf = pisa.pisaDocument(BytesIO(html.encode("ISO-8859-1")), result)
-        if not pdf.err:
-            return HttpResponse(result.getvalue(), content_type='application/pdf')
-        return None
-
     def get(self, request, *args, **kwargs):
-        pdf = self.render_to_pdf('comprobante_vacunacion.html')
-        return HttpResponse(pdf, content_type='application/pdf')
 
+        paciente = PacientesDetalles.objects.get(user_id=request.user.id)
 
+        solicitud = PacientesSolicitudes.objects.filter(paciente_id=paciente.paciente_id, vacuna_id=kwargs['vacuna_id'])\
+            .values('centro_vacunatorio')
+        vacuna = VacunasAplicadas.objects.filter(paciente_id=paciente.paciente_id, vacuna_id=kwargs['vacuna_id'])\
+            .values('vacuna_id__nombre', 'fecha_vacunacion')
+
+        fecha_descarga = datetime.today()
+
+        context = {
+            'fecha' : fecha_descarga,
+            'vacuna' : vacuna[0],
+            'paciente' : paciente,
+            'solicitud' : solicitud[0] if solicitud else False
+        }
+
+        template = get_template('comprobante_vacunacion.html')
+        html = template.render(context)
+
+        response = HttpResponse(content_type='application/pdf')
+        # response['Content-Disposition'] = 'attachment; filename="report.pdf"'
+        pisaStatus = pisa.CreatePDF(html, dest=response)
+
+        if pisaStatus.err:
+            return HttpResponse('We had some errors <pre>' + html + '</pre>')
+        return response
