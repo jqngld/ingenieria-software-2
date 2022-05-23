@@ -1,28 +1,18 @@
-import email
-from django.contrib.auth import get_user_model
 from django.contrib import messages
-from django.shortcuts import get_object_or_404, redirect, render
+from django.shortcuts import redirect, render
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate
 from django.contrib.auth import login as auth_login
 from django.contrib.auth import logout as django_logout
 from django.views import View
-from django.views.generic.edit import UpdateView
-from django.contrib.auth.models import User
 from django.contrib.auth.views import PasswordChangeView
 from django.contrib.auth.forms import PasswordChangeForm 
-from requests import request
 from .models import *
 from .forms import UserSignUpForm,UserSign,UserUpdateForm
-#pdf
-from django.shortcuts import (get_object_or_404,
-                              render,
-                              HttpResponseRedirect)
-from unittest import result
+from django.shortcuts import HttpResponseRedirect
 from django.http import HttpResponse, HttpResponseRedirect
 from django.template.loader import get_template
 from xhtml2pdf import pisa
-from io import BytesIO
 
 
 def home(request):
@@ -87,7 +77,7 @@ def listar_vacunas(request):
     paciente = PacientesDetalles.objects.get(user_id=request.user.id)
 
     vacunas = VacunasAplicadas.objects.filter(paciente_id=paciente.paciente_id)\
-        .values('vacuna_id__nombre', 'fecha_vacunacion')
+        .values('vacuna_id__nombre', 'fecha_vacunacion', 'vacuna_id')
 
     return render(request, "pacientes/listar_vacunas.html/", {'vacunas' : vacunas})
 
@@ -125,7 +115,6 @@ def editar_perfil(request):
     user = request.user.id
 
     perfil = PacientesDetalles.objects.get(user_id=request.user.id) 
-    cre = Usuarios.objects.get(id=user)
 
  
     # pass the object as instance in form
@@ -138,9 +127,7 @@ def editar_perfil(request):
 
         perfil.sexo = form.cleaned_data.get('sexo')
         perfil.centro_vacunatorio = form.cleaned_data.get('centro_vacunatorio')
-        cre.email = form.cleaned_data.get('email')
         perfil.save()
-        cre.save()
         return HttpResponseRedirect("/pacientes/mi_perfil/")
  
     # add form dictionary to context
@@ -152,18 +139,32 @@ def editar_perfil(request):
 
 
 class descargar_comprobante(View):
-
-    def render_to_pdf(self, template_src, context_dict={}):
-        template = get_template(template_src)
-        html = template.render(context_dict)
-        result = BytesIO()
-        pdf = pisa.pisaDocument(BytesIO(html.encode("ISO-8859-1")), result)
-        if not pdf.err:
-            return HttpResponse(result.getvalue(), content_type='application/pdf')
-        return None
-
     def get(self, request, *args, **kwargs):
-        pdf = self.render_to_pdf('comprobante_vacunacion.html')
-        return HttpResponse(pdf, content_type='application/pdf')
 
+        paciente = PacientesDetalles.objects.get(user_id=request.user.id)
+
+        solicitud = PacientesSolicitudes.objects.filter(paciente_id=paciente.paciente_id, vacuna_id=kwargs['vacuna_id'])\
+            .values('centro_vacunatorio')
+        vacuna = VacunasAplicadas.objects.filter(paciente_id=paciente.paciente_id, vacuna_id=kwargs['vacuna_id'])\
+            .values('vacuna_id__nombre', 'fecha_vacunacion')
+
+        fecha_descarga = datetime.today()
+
+        context = {
+            'fecha' : fecha_descarga,
+            'vacuna' : vacuna[0],
+            'paciente' : paciente,
+            'solicitud' : solicitud[0] if solicitud else False
+        }
+
+        template = get_template('pacientes/comprobante_vacunacion.html')
+        html = template.render(context)
+
+        response = HttpResponse(content_type='application/pdf')
+        # response['Content-Disposition'] = 'attachment; filename="report.pdf"'
+        pisaStatus = pisa.CreatePDF(html, dest=response)
+
+        if pisaStatus.err:
+            return HttpResponse('We had some errors <pre>' + html + '</pre>')
+        return response
 

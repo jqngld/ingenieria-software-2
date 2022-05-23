@@ -18,5 +18,5 @@ urlpatterns = [
     path('mis_vacunas/', listar_vacunas, name="listar_vacunas"),
     path('mis_solicitudes/', listar_solicitudes, name="listar_solicitudes"),
     path('inicio_pacientes/', inicio_pacientes, name='inicio_pacientes'),
-    path('mis_vacunas/comprobante_vacunacion/<str:vacuna>/', descargar_comprobante.as_view(), name="descargar_comprobante")
+    path('mis_vacunas/descargar_comprobante/<int:vacuna_id>', descargar_comprobante.as_view(), name="descargar_comprobante")
 ] 
