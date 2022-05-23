@@ -1,17 +1,28 @@
 {% extends "pacientes/base.html" %}
 {% load static %}
-{% block title %} <title> Editar Perfil </title>{%endblock%}
+{% block title %} Editar Perfil {%endblock%}
 {% block content %}
 
+
+<div class="container">
+    <div class="row justify-content-md-center">
+    <div class="col-md-6 my-4">
+        <div class="card">
 <form method="post"> 
     {% csrf_token %} 
     {{ form.sexo}} 
     {{ form.email}} 
     {{ form.centro_vacunatorio}} 
-
-    <input type="submit" value="Save" style="position:static"> 
+    <div class="row my-3 mx-3">
+        <div class="col-sm-2">
+    <input type="submit" class="btn btn-primary" value="Actualizar"> 
+        </div>
+    </div>
 </form> 
 <a href="/pacientes/">Cancelar</a>
-</a><a href="/pacientes/contraseña/">Cambiar Contraseña</a>
-
+<a href="/pacientes/contraseña/">Cambiar Contraseña</a>
+        </div>
+    </div>
+    </div>
+</div>
 {%endblock%}
