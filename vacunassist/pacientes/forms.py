@@ -309,10 +309,6 @@ class UserUpdateForm(forms.ModelForm):
         widget=forms.Select(attrs={'class' : 'form-control', 'placeholder' : 'Sexo'}))
 
 
-        email = forms.EmailField(
-        max_length=200,
-        required=False,
-        widget=forms.EmailInput(attrs={'class' : 'form-control', 'placeholder' : 'Email'}))
         
         centro_vacunatorio = forms.ChoiceField(
         choices=centros,
@@ -328,7 +324,7 @@ class UserUpdateForm(forms.ModelForm):
 
 
           fields = [
-            "sexo","email","centro_vacunatorio",
+            "sexo", "centro_vacunatorio",
             ]
         
 

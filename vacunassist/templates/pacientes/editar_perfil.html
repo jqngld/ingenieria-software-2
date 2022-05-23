@@ -2,14 +2,16 @@
 {% load static %}
 {% block title %} <title> Editar Perfil </title>{%endblock%}
 {% block content %}
-   
+
 <form method="post"> 
     {% csrf_token %} 
     {{ form.sexo}} 
     {{ form.email}} 
     {{ form.centro_vacunatorio}} 
 
-    <input type="submit" value="Save"> 
+    <input type="submit" value="Save" style="position:static"> 
 </form> 
+<a href="/pacientes/">Cancelar</a>
+</a><a href="/pacientes/contraseña/">Cambiar Contraseña</a>
 
 {%endblock%}
