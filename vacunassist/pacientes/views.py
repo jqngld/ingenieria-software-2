@@ -13,6 +13,7 @@ from django.shortcuts import HttpResponseRedirect
 from django.http import HttpResponse, HttpResponseRedirect
 from django.template.loader import get_template
 from xhtml2pdf import pisa
+from dateutil.relativedelta import relativedelta
 
 
 def home(request):
@@ -40,9 +41,9 @@ def login(request):
                 auth_login(request, user)
                 return redirect('/pacientes/')
             else:
-                 messages.error(request, "usuario no valido")  
+                 messages.error(request, "Alguna/s de las credenciales ingresadas son incorrectas.")  
        else: 
-             messages.error(request, "informacion")                     
+             messages.error(request, "informacion")
     form = UserSign()     
     context = {'form' : form}
     return render(request, 'pacientes/login.html', context)
@@ -98,7 +99,34 @@ def listar_turnos(request):
     return render(request, "pacientes/listar_turnos.html/", {'turnos' : turnos})
 
 
+def solicitud_fiebre_amarilla(request):
 
+    paciente = PacientesDetalles.objects.get(user_id=request.user.id)
+    paciente_edad = relativedelta(datetime.now(), paciente.fecha_nacimiento)
+
+    vacuna_aplicada = VacunasAplicadas.objects.filter(paciente_id=paciente.paciente_id, vacuna_id=4).exists()
+    solicitud_existente = PacientesSolicitudes.objects.filter(paciente_id=paciente.paciente_id, vacuna_id=4).exists()
+
+    if paciente_edad.years < 60 and not vacuna_aplicada and not solicitud_existente:        
+        solicitud_fa = PacientesSolicitudes(
+            paciente_id = paciente.paciente_id,
+            vacuna_id = 4,
+            solicitud_aprobada = 0,
+            fecha_estimada = datetime.today() + relativedelta(months=6),
+            centro_vacunatorio = paciente.centro_vacunatorio
+        )
+        solicitud_fa.save()
+        messages.success(request, "La solicitud se ha realizado de forma exitosa.")
+    
+    else:
+        if paciente_edad.years >= 60:
+            messages.error(request, "La vacuna contra la fiebre amarilla solo se aplica a menores de 60 años.")
+        if vacuna_aplicada:
+            messages.error(request, "Usted ya se ha aplicado la vacuna contra la fiebre amarilla.")                     
+        if solicitud_existente:
+            messages.error(request, "Usted ya ha solicitado un turno para aplicarse esta vacuna.")                     
+
+    return redirect('/pacientes/mis_solicitudes/')
 
 
 class cambiarPassword(PasswordChangeView):

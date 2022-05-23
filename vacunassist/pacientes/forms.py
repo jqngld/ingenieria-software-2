@@ -249,13 +249,13 @@ class UserSignUpForm(UserCreationForm):
         # Se generará un fecha de solicitud de turno SI el paciente no se dió la dosis de gripe, o si la fecha de dicha vacuna es mayor a un año (la vacuna de la gripe debe darse cada 1 año)
         if not self.cleaned_data['vacuna_gripe'] or (self.cleaned_data['fecha_vacunacion_gripe'] <= date.today() - timedelta(days=365)):  
             solicitud_gripe = PacientesSolicitudes(
-            paciente_id = paciente.paciente_id,
-            vacuna_id = 3,
-            solicitud_aprobada = 0,
-            fecha_estimada = datetime.today() + relativedelta(months=6),
-            centro_vacunatorio = paciente.centro_vacunatorio
-        )
-        solicitud_gripe.save()
+                paciente_id = paciente.paciente_id,
+                vacuna_id = 3,
+                solicitud_aprobada = 0,
+                fecha_estimada = datetime.today() + relativedelta(months=6),
+                centro_vacunatorio = paciente.centro_vacunatorio
+            )
+            solicitud_gripe.save()
 
         if self.cleaned_data['vacuna_fa']:
             vacuna_fa = VacunasAplicadas(
@@ -290,41 +290,34 @@ class UserSignUpForm(UserCreationForm):
 
 
 class UserUpdateForm(forms.ModelForm):   
-        generos = [
+    generos = [
         ('Mujer' , 'Mujer'),
         ('Hombre', 'Hombre'),
         ('N/A'  , 'Prefiero no decirlo'),
         ('Otro'  , 'Otro'),
     ]
-        centros = [
+    centros = [
         ('Terminal', 'Terminal'),
         ('Cementerio', 'Cementerio'),
         ('Municipalidad', 'Municipalidad'),
     ]
 
-        sexo = forms.ChoiceField(
-        choices=generos,
-        required=True,
-        label="Género",
-        widget=forms.Select(attrs={'class' : 'form-control', 'placeholder' : 'Sexo'}))
-
-
-        
-        centro_vacunatorio = forms.ChoiceField(
-        choices=centros,
-        required=True,
-        label="Centro vacunatorio",
-        widget=forms.Select(attrs = {'class' : 'form-control','placeholder' : 'Centro Vacunatorio'}))
-         
-
-
-
-        class Meta:
-          model = PacientesDetalles
-
-
-          fields = [
+    sexo = forms.ChoiceField(
+        choices = generos,
+        required = True,
+        label = "Género",
+        widget = forms.Select(attrs={'class' : 'form-control', 'placeholder' : 'Sexo'})
+    )
+    centro_vacunatorio = forms.ChoiceField(
+        choices = centros,
+        required = True,
+        label = "Centro vacunatorio",
+        widget = forms.Select(attrs = {'class' : 'form-control','placeholder' : 'Centro Vacunatorio'})
+    )
+    class Meta:
+        model = PacientesDetalles
+        fields = [
             "sexo", "centro_vacunatorio",
-            ]
+        ]
         
 
