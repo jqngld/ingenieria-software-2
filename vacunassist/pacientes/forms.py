@@ -289,18 +289,46 @@ class UserSignUpForm(UserCreationForm):
         return user, patient_details
 
 
-class UserUpdateForm(UserCreationForm):
-    generos = [
+class UserUpdateForm(forms.ModelForm):   
+        generos = [
         ('Mujer' , 'Mujer'),
         ('Hombre', 'Hombre'),
         ('N/A'  , 'Prefiero no decirlo'),
         ('Otro'  , 'Otro'),
     ]
-    name = forms.CharField()
-    message = forms.CharField(widget=forms.Textarea)
-    sexo = forms.ChoiceField(
+        centros = [
+        ('Terminal', 'Terminal'),
+        ('Cementerio', 'Cementerio'),
+        ('Municipalidad', 'Municipalidad'),
+    ]
+
+        sexo = forms.ChoiceField(
         choices=generos,
         required=True,
         label="Género",
         widget=forms.Select(attrs={'class' : 'form-control', 'placeholder' : 'Sexo'}))
+
+
+        email = forms.EmailField(
+        max_length=200,
+        required=False,
+        widget=forms.EmailInput(attrs={'class' : 'form-control', 'placeholder' : 'Email'}))
+        
+        centro_vacunatorio = forms.ChoiceField(
+        choices=centros,
+        required=True,
+        label="Centro vacunatorio",
+        widget=forms.Select(attrs = {'class' : 'form-control','placeholder' : 'Centro Vacunatorio'}))
+         
+
+
+
+        class Meta:
+          model = PacientesDetalles
+
+
+          fields = [
+            "sexo","email","centro_vacunatorio",
+            ]
+        
 

@@ -41,6 +41,10 @@
           {% if user.is_authenticated %}
             <li class="nav-item {% if request.path|slice:'18' == '/pacientes/mi_perfil/' %}active{% endif %} px-lg-4">
               <a class="nav-link text-uppercase text-expanded" href="{% url 'view_profile' %}">Ver Mi Perfil</a>
+
+          <li class="nav-item {% if request.path|slice:'18' == '/pacientes/editar_perfil/' %}active{% endif %} px-lg-4">
+               <a class="nav-link text-uppercase text-expanded" href="{% url 'editar_perfil' %}">editar mi perfil </a>
+               
             
             <li class="nav-item {% if request.path|slice:'18' == '/pacientes/listar_vacunas/' %}active{% endif %} px-lg-4">
               <a class="nav-link text-uppercase text-expanded" href="{% url 'listar_vacunas' %}">Mis Vacunas Aplicadas</a>

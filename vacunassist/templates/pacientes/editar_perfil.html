@@ -5,7 +5,10 @@
    
 <form method="post"> 
     {% csrf_token %} 
-    {{ form.as_p}} 
+    {{ form.sexo}} 
+    {{ form.email}} 
+    {{ form.centro_vacunatorio}} 
+
     <input type="submit" value="Save"> 
 </form> 
 
