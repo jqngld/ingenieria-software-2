@@ -17,6 +17,7 @@ urlpatterns = [
     path('mis_turnos/', listar_turnos, name="listar_turnos"),
     path('mis_vacunas/', listar_vacunas, name="listar_vacunas"),
     path('mis_solicitudes/', listar_solicitudes, name="listar_solicitudes"),
+    path('mis_solicitudes/solicitud_fiebre_amarilla/', solicitud_fiebre_amarilla, name="solicitud_fiebre_amarilla"),
     path('inicio_pacientes/', inicio_pacientes, name='inicio_pacientes'),
     path('mis_vacunas/descargar_comprobante/<int:vacuna_id>', descargar_comprobante.as_view(), name="descargar_comprobante"),
     path('reset_password/', auth_views.PasswordResetView.as_view(), name='password_reset'),

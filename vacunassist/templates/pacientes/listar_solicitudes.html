@@ -6,6 +6,17 @@
 
 <div class="card">
     <div class="card-header" style="min-height: 224px;">
+
+        {% if messages %}
+        {% for message in messages %}
+        <div class="{% if message.tags == 'error' %} alert alert-warning {% else %} alert alert-success {% endif %}" style="padding-top: 10px;">
+            <button class="close" data-dismiss="alert" aria-label="close">&times;</button>
+            {{ message }}
+        </div>
+        {% endfor %}
+        {% endif %}
+
+
         <div class="row" style="margin-top: 10px;">
             <div class="col-md-12 text-center ">
                 <strong class="card-title">
@@ -14,9 +25,10 @@
             </div>
         </div>
 
-        {% if solicitudes%}
         <div class="container">
-            <div class="row">
+            <div class="row" style="padding-bottom: 20px;">
+                
+                {% if solicitudes%}
                 {% for solicitud in solicitudes %}
                 <div class="col-md-4 mt-4">
                     <div class="card">
@@ -34,11 +46,7 @@
                     </div>
                 </div>
                 {%endfor %}
-            </div>
-        </div>
-        {% else %}
-        <div class="container">
-            <div class="row">
+                {% else %}
                 <div class="col-md-12 mt-4">
                     <div class="card">
                         <div class="card-body">
@@ -46,10 +54,37 @@
                         </div>
                     </div>
                 </div>
+                {% endif %}
+
+                
             </div>
+
+            <p>• Realizar nuevas solicitudes:</p>
+            <!-- <button style="background-color: #f9fb6e; border-color: #f9fb6e; color: black;" type="button" class="btn btn-success" onclick="window.location.href='solicitud_fiebre_amarilla/'">
+                Fiebre Amarilla
+            </button> -->
+
+            <div class="dropdown">
+                <button class="btn btn-success dropdown-toggle" type="button" id="dLabel" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    Nueva solicitud
+                </button>
+                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                    <!-- <a class="dropdown-item" href="#">GRIPE</a> -->
+                    <a class="dropdown-item" href="solicitud_fiebre_amarilla/">FIEBRE AMARILLA</a>
+                    <!-- <a class="dropdown-item" href="#">COVID-19 (1ra dosis)</a> -->
+                    <!-- <a class="dropdown-item" href="#">COVID-19 (2da dosis)</a> -->
+                </div>
+              </div>
+
         </div>
-        {% endif %}
     </div>
 </div>
+
+<script>
+    $(function () {
+        $(".alert").alert()
+        $('.dropdown-toggle').dropdown()
+    })
+</script>
 
 {% endblock %}

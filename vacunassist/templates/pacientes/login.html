@@ -7,19 +7,26 @@
 
 {% block content %} 
 
-    <form method="POST" style="  width: 100%; max-width: 600px; margin: 0 auto; display: flex;flex-direction: column; justify-content: center; align-items: center;">
-            {% csrf_token %}
-           {{ form|crispy}}
-        <button type="submit" class="btn btn-primary" id="submit">iniciar sesi&oacute;n</button>
-    </form>
+{% if messages %}
+{% for message in messages %}
+<div class="{% if message.tags == 'error' %} alert alert-warning {% else %} alert alert-success {% endif %}" style="padding-top: 10px;">
+    <button class="close" data-dismiss="alert" aria-label="close">&times;</button>
+    {{ message }}
+</div>
+{% endfor %}
+{% endif %}
 
-    {% if messages %}
-    <ul class="messages">
-        {% for message in messages %}
-        <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
-        {% endfor %}
-    </ul>
-    {% endif %}
+<form method="POST" style="  width: 100%; max-width: 600px; margin: 0 auto; display: flex;flex-direction: column; justify-content: center; align-items: center;">
+    {% csrf_token %}
+    {{ form|crispy}}
+    <button type="submit" class="btn btn-primary" id="submit">iniciar sesi&oacute;n</button>
+</form>
+
+<script>
+    $(function () {
+        $(".alert").alert()
+    })
+</script>
 
     <a href="{% url 'password_reset' %}">Olvidé mi contraseña</a>
 {% endblock %}
