@@ -2,10 +2,15 @@
 {% load static %}
 {% block title %}  Mi Perfil {% endblock %}
 {% block content %}
+<div class="col-md-4 mt-4">
+    <div class="card">
+        <div class="card-body">
     <p>Nombre: {{datos.nombre}}</p>
     <p>Apellido: {{datos.apellido}}</p>
     <p>DNI: {{datos.dni}}</p>
     <p>Sexo: {{datos.sexo}}</p>
     <p>Fecha de nacimiento: {{datos.fecha_nacimiento}}</p>
     <p>centro vacunatorio: {{datos.centro_vacunatorio}}</p>
+        </div>
+    </div></div>
 {% endblock %}
