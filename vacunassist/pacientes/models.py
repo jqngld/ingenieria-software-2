@@ -56,7 +56,7 @@ class Usuarios(AbstractBaseUser):
     
     @property
     def is_staff(self):
-        return self.usuario_administrador
+        return self.is_admin
 
       
 
