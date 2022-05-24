@@ -18,5 +18,9 @@ urlpatterns = [
     path('mis_vacunas/', listar_vacunas, name="listar_vacunas"),
     path('mis_solicitudes/', listar_solicitudes, name="listar_solicitudes"),
     path('inicio_pacientes/', inicio_pacientes, name='inicio_pacientes'),
-    path('mis_vacunas/descargar_comprobante/<int:vacuna_id>', descargar_comprobante.as_view(), name="descargar_comprobante")
+    path('mis_vacunas/descargar_comprobante/<int:vacuna_id>', descargar_comprobante.as_view(), name="descargar_comprobante"),
+    path('reset_password/', auth_views.PasswordResetView.as_view(), name='password_reset'),
+    path('reset_password_send/', auth_views.PasswordResetDoneView.as_view(), name='password_reset_done'),
+    path('reset/<uidb64>/<token>', auth_views.PasswordResetConfirmView.as_view(), name='password_reset_confirm'),
+    path('reset_password_complete/', auth_views.PasswordResetCompleteView.as_view(), name='password_reset_complete'),
 ] 

@@ -31,10 +31,10 @@ class Usuarios(AbstractBaseUser):
     last_name = None
 
     email = models.EmailField('Mail', unique=True, max_length=254, blank=True, null=False)
+    is_active = models.BooleanField(default=True)
     tipo_usuario = models.CharField('Tipo de Usuario', max_length=20, blank=False, null=False)
-    usuario_activo = models.BooleanField(default=True)
-    usuario_administrador = models.BooleanField(default=False)
-
+    is_staff = models.BooleanField(default=False)
+    is_admin = models.BooleanField(default=False)
     objects = UsuariosManager()
 
     EMAIL_FIELD = 'email'
@@ -57,7 +57,6 @@ class Usuarios(AbstractBaseUser):
     @property
     def is_staff(self):
         return self.usuario_administrador
-
 
       
 

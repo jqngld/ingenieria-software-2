@@ -4,6 +4,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate
 from django.contrib.auth import login as auth_login
 from django.contrib.auth import logout as django_logout
+from django.urls import reverse_lazy
 from django.views import View
 from django.contrib.auth.views import PasswordChangeView
 from django.contrib.auth.forms import PasswordChangeForm 
@@ -168,3 +169,9 @@ class descargar_comprobante(View):
             return HttpResponse('We had some errors <pre>' + html + '</pre>')
         return response
 
+class LoginAfterPasswordChangeView(PasswordChangeView):
+    @property
+    def success_url(self):
+        return reverse_lazy('inicio_sesion/')
+
+login_after_password_change = login_required(LoginAfterPasswordChangeView.as_view())
