@@ -9,7 +9,7 @@ from django.views import View
 from django.contrib.auth.views import PasswordChangeView
 from django.contrib.auth.forms import PasswordChangeForm 
 from .models import *
-from .forms import UserSignUpForm,UserSign,UserUpdateForm
+from .forms import *
 from django.shortcuts import HttpResponseRedirect
 from django.http import HttpResponse, HttpResponseRedirect
 from django.template.loader import get_template
