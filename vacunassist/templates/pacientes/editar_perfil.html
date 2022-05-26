@@ -10,8 +10,8 @@
         <div class="card">
 <form method="post"> 
     {% csrf_token %} 
-    {{ form.sexo}} 
-    {{ form.email}} 
+   <p>Sexo:  {{ form.sexo}} </p>
+   <p>Centro de Preferencia: {{ form.email}} </p>
     {{ form.centro_vacunatorio}} 
     <div class="row my-3 mx-3">
         <div class="col-sm-2">

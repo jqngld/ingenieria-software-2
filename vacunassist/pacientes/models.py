@@ -18,7 +18,7 @@ class UsuariosManager(BaseUserManager):
 
     def create_superuser(self, email, password):
         user = self.create_user(email, password=password)
-        user.usuario_administrador = True
+        user.is_admin = True
         user.tipo_usuario = 'admin'
         user.save()
         return user
@@ -56,7 +56,7 @@ class Usuarios(AbstractBaseUser):
     
     @property
     def is_staff(self):
-        return self.is_admin
+        return self.is_staff
 
       
 
