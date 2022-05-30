@@ -6,8 +6,8 @@ from django.contrib.auth import login as auth_login
 from django.contrib.auth import logout as django_logout
 from django.urls import reverse_lazy
 from django.views import View
-from django.contrib.auth.views import PasswordChangeView
-from django.contrib.auth.forms import PasswordChangeForm 
+from django.contrib.auth.views import PasswordChangeView,PasswordResetView
+from django.contrib.auth.forms import PasswordChangeForm ,PasswordResetForm
 from .models import *
 from .forms import *
 from django.shortcuts import HttpResponseRedirect
@@ -221,3 +221,18 @@ class LoginAfterPasswordChangeView(PasswordChangeView):
         return reverse_lazy('inicio_sesion/')
 
 login_after_password_change = login_required(LoginAfterPasswordChangeView.as_view())
+
+
+
+
+class restPassword(PasswordResetView):
+      form_class = PasswordResetForm
+      success_url ="/pacientes/restablecer-contrasenia-hecho/"
+      
+      
+      
+def restDone(request):
+    return render(request, 'pacientes/restablecer-contrasenia-hecho.html')     
+      
+      
+      
