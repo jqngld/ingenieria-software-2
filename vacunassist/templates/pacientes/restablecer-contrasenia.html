@@ -1,0 +1,13 @@
+{% extends "pacientes/base.html" %}
+{% load static %}
+{% block title %} <title> Restablecer contraseña </title>{%endblock%}
+{% block content %}
+   
+<form method="post"> 
+    ¿Olvidaste tu contraseña? Ingrese su dirección de correo electrónico a continuación y le enviaremos las instrucciones para configurar una nueva.
+    {% csrf_token %} 
+    {{ form.as_p}} 
+   <button> <input type="submit" value="restablecer contraseña"> </button> 
+</form> 
+<a href="/pacientes/editar_perfil">Cancelar</a>
+{%endblock%}

@@ -20,8 +20,8 @@ urlpatterns = [
     path('mis_solicitudes/solicitud_fiebre_amarilla/', solicitud_fiebre_amarilla, name="solicitud_fiebre_amarilla"),
     path('inicio_pacientes/', inicio_pacientes, name='inicio_pacientes'),
     path('mis_vacunas/descargar_comprobante/<int:vacuna_id>', descargar_comprobante.as_view(), name="descargar_comprobante"),
-    path('reset_password/', auth_views.PasswordResetView.as_view(), name='password_reset'),
-    path('reset_password_send/', auth_views.PasswordResetDoneView.as_view(), name='password_reset_done'),
+    path('reset_password/', restPassword.as_view(template_name='pacientes/restablecer-contrasenia.html'), name='password_reset'),
+    path('restablecer-contrasenia-hecho/',restDone, name='restablecer-contrasenia-hecho'),
     path('reset/<uidb64>/<token>', auth_views.PasswordResetConfirmView.as_view(), name='password_reset_confirm'),
     path('reset_password_complete/', auth_views.PasswordResetCompleteView.as_view(template_name="pacientes/password_reset_confirm.html"), name='password_reset_complete'),
 ] 
