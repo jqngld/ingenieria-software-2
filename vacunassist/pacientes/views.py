@@ -56,18 +56,38 @@ def logout(request):
     return redirect('/pacientes/')
 
 
-def signup(request):
+def signup1(request):
+
+    if request.method == 'POST':
+        form = UserSignUp1Form(request.POST)
+        if form.is_valid():
+            form_usuario = UserSignUpForm(initial={
+            'password2': form.cleaned_data.get("password2"),
+            'password1': form.cleaned_data.get("password1")})
+
+            form_usuario.fields['nombre'].initial = form.cleaned_data.get("nombre")
+            form_usuario.fields['apellido'].initial = form.cleaned_data.get("apellido")
+            form_usuario.fields['email'].initial = form.cleaned_data.get("email")
+            form_usuario.fields['password1'].widget.render_value = True
+            form_usuario.fields['password2'].widget.render_value = True
+            context = {'form' : form_usuario}
+            return render(request, 'pacientes/signup2.html', context)
+    else:
+        form = UserSignUp1Form()
+
+    context = {'form' : form}
+    return render(request, 'pacientes/signup1.html', context)
+    
+def signup2(request):
 
     if request.method == 'POST':
         form = UserSignUpForm(request.POST)
         if form.is_valid():
             form.save()
             return redirect('/pacientes/')
-    else:
-        form = UserSignUpForm()
-
-    context = {'form' : form}
-    return render(request, 'pacientes/signup.html', context)
+        else:
+            context = {'form': form}
+            return render(request, 'pacientes/signup2.html', context)
 
 
 def view_profile(request):
@@ -129,7 +149,7 @@ def solicitud_fiebre_amarilla(request):
 
     return redirect('/pacientes/mis_solicitudes/')
 
-
+   
 class cambiarPassword(PasswordChangeView):
       form_class = PasswordChangeForm
       success_url ="/pacientes/mi_perfil/"

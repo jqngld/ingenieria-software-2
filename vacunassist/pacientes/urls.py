@@ -5,7 +5,8 @@ from django.contrib.auth.views import LoginView
 from django.contrib.auth import views as auth_views
 urlpatterns = [
     path('', home, name='home'),
-    path('registro/', signup, name='signup'),
+    path('registro1/', signup1, name='signup1'),
+    path('registro2/', signup2, name='signup2'),
     path('inicio_sesion/', login, name='login'),
     path('cerrar_sesion', logout, name='logout'),
     path('login_error/', login_error, name='login_error'),

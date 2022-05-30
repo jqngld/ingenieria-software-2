@@ -321,3 +321,29 @@ class UserUpdateForm(forms.ModelForm):
         ]
         
 
+class UserSignUp1Form(UserCreationForm):
+    """
+        Modifique el método __init__ de la clase UserCreationForm, 
+        para agregarle los atributos 'placeholder' y 'class' a los
+        campos password1 y password2.
+    """
+
+    nombre = forms.CharField(
+        max_length=100,
+        required=True,
+        widget=forms.TextInput(attrs = {'class' : 'form-control','placeholder' : 'Nombre'}))
+    apellido = forms.CharField(
+        max_length=100,
+        required=True,
+        widget=forms.TextInput(attrs = {'class' : 'form-control','placeholder' : 'Apellido'}))
+    email = forms.EmailField(
+        max_length=200,
+        required=True,
+        widget=forms.EmailInput(attrs={'class' : 'form-control', 'placeholder' : 'Email'}))
+
+
+    class Meta:
+        model = Usuarios
+        fields = ('nombre', 'apellido', 'email',
+                  'password1', 'password2',
+                )
