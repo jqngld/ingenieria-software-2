@@ -1,0 +1,98 @@
+{% extends "pacientes/base.html" %}
+{% load static %}
+
+{% block title %}Registrar Usuario Paciente{% endblock %}
+
+
+{% block content %}
+
+<!-- <div class="col-lg-4 col-offset-1 centered"> -->
+<div class="container">
+<div class="row justify-content-md-center">
+<div class="col-md-6 my-4">
+    <div class="card">
+    <form action="/pacientes/registro1/" method="POST" id="formulario">
+        {% csrf_token %}
+
+        <fieldset id="first-step">
+            <div class="row my-3 mx-3">
+                <h5><b>Información de inicio de sesión</b></h5>
+            </div>
+
+            <div class="row my-3 mx-3">
+                <div class="col-md-6">
+                    <div class="fieldWrapper">
+                        <!-- {{ form.nombre.label_tag }} -->
+                        {{ form.nombre }}
+                        {{ form.nombre.errors }}
+                        {% if form.nombre.help_text %}
+                        <p class="help">{{ form.nombre.help_text|safe }}</p>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="fieldWrapper">
+                        <!-- {{ form.apellido.label_tag }} -->
+                        {{ form.apellido }}
+                        {{ form.apellido.errors }}
+                        {% if form.apellido.help_text %}
+                        <p class="help">{{ form.apellido.help_text|safe }}</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            
+            <div class="row my-3 mx-3">
+                <div class="col-md-12">
+                    <div class="fieldWrapper">
+                        <!-- {{ form.email.label_tag }} -->
+                        {{ form.email }}
+                        {{ form.email.errors }}
+                        {% if form.email.help_text %}
+                        <p class="help">{{ form.email.help_text|safe }}</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <div class="row my-3 mx-3">
+                <div class="col-md-12">
+                    <div class="fieldWrapper">
+                        <!-- {{ form.password1.label_tag }} -->
+                        {{ form.password1 }}
+                        {{ form.password1.errors }}
+                        {% if form.password1.help_text %}
+                        <p class="help">{{ form.password1.help_text|safe }}</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            <div class="row my-3 mx-3">
+                <div class="col-md-12">
+                    <div class="fieldWrapper">
+                        <!-- {{ form.password2.label_tag }} -->
+                        {{ form.password2 }}
+                        {{ form.password2.errors }}
+                        {% if form.password2.help_text %}
+                        <p class="help">{{ form.password2.help_text|safe }}</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <div class="row my-3 mx-3">
+                <div class="col-sm-2">
+                    <button type="submit" class="btn btn-dark">Siguiente</button>
+                </div>
+            </div>
+
+        </fieldset>
+
+    </form>
+    </div>
+</div>
+</div>
+</div>
+<!-- </div> -->
+
+{% endblock %}
