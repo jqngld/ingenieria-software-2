@@ -336,19 +336,19 @@
             var evento = document.getElementById("formulario")
 
             var nombre = document.getElementById('id_nombre').value;
-            if(nombre.length == 0) { alert('Nombre vacío'); return;}
+            if(nombre.length == 0) { alert('El campo "Nombre" no puede quedar vacío.'); return;}
 
             var apellido = document.getElementById('id_apellido').value;
-            if (apellido.length == 0) {return;}
+            if (apellido.length == 0) { alert('El campo "Apellido" no puede quedar vacío.'); return;}
 
             var email = document.getElementById('id_email').value;
-            if (email.length == 0) {return;}
+            if (email.length == 0) { alert('El campo "Email" no puede quedar vacío.'); return;}
 
             var password1 = document.getElementById('id_password1').value;
-            if (password1.length == 0) {return;}
+            if (password1.length == 0) { alert('El campo "Contraseña" no puede quedar vacío.'); return;}
 
             var password2= document.getElementById('id_password2').value;
-            if (password2.length == 0) {return;}
+            if (password2.length == 0) { alert('El campo "Confirmación" no puede quedar vacío.'); return;}
 
             cambiarPaso();
 
