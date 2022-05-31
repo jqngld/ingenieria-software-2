@@ -1,0 +1,14 @@
+{% extends "pacientes/base.html" %}
+{% load static %}
+{% block title %} <title> Restablecer contraseña </title>{%endblock%}
+{% block content %}
+   
+<form method="post"> 
+    Escriba la nueva contraseña
+    Por favor, introduzca su contraseña nueva dos veces para verificar que la ha escrito correctamente.
+    {% csrf_token %} 
+    {{ form.as_p}} 
+   <button> <input type="submit" value="cambiar mi contraseña"> </button> 
+</form> 
+<a href="/pacientes/editar_perfil">Cancelar</a>
+{%endblock%}

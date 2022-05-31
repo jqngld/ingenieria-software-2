@@ -23,6 +23,6 @@ urlpatterns = [
     path('mis_vacunas/descargar_comprobante/<int:vacuna_id>', descargar_comprobante.as_view(), name="descargar_comprobante"),
     path('reset_password/', restPassword.as_view(template_name='pacientes/restablecer-contrasenia.html'), name='password_reset'),
     path('restablecer-contrasenia-hecho/',restDone, name='restablecer-contrasenia-hecho'),
-    path('reset/<uidb64>/<token>', auth_views.PasswordResetConfirmView.as_view(), name='password_reset_confirm'),
+    path('reset/<uidb64>/<token>', restPasswordConfirm.as_view(template_name='pacientes/rest-contra-conf.html'), name='password_reset_confirm'),
     path('reset_password_complete/', auth_views.PasswordResetCompleteView.as_view(template_name="pacientes/password_reset_confirm.html"), name='password_reset_complete'),
 ] 
