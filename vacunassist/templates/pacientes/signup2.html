@@ -10,6 +10,16 @@
 <div class="row justify-content-md-center">
 <div class="col-md-6 my-4">
     <div class="card">
+        
+        {% if messages %}
+        {% for message in messages %}
+        <div class="{% if message.tags == 'error' %} alert alert-warning {% else %} alert alert-success {% endif %}" style="padding-top: 10px;">
+            <button class="close" data-dismiss="alert" aria-label="close">&times;</button>
+            {{ message }}
+        </div>
+        {% endfor %}
+        {% endif %}
+
     <form action="/pacientes/registro2/" method="POST" id="formulario">
         {% csrf_token %}
 
@@ -232,11 +242,21 @@
 
         // funciones para activar y desactivar campos de fecha de las vacunas
         function disableCovidField1() {
-            var field = document.getElementById("id_fecha_vacunacion_covid_1");
-            field.disabled = !field.disabled
+            var covid_1 = document.getElementById("id_fecha_vacunacion_covid_1");
+            covid_1.disabled = !covid_1.disabled
 
-            var field = document.getElementById("id_vacuna_covid_2");
-            field.disabled = !field.disabled
+            var covid_2 = document.getElementById("id_vacuna_covid_2");
+            covid_2.disabled = !covid_2.disabled
+
+            var covid_2_fecha = document.getElementById("id_fecha_vacunacion_covid_2");
+            if(!covid_2_fecha.disabled){
+                disableCovidField2()
+            }
+            else{
+                if(covid_2.checked){
+                    disableCovidField2()
+                }
+            }
         }
         function disableCovidField2() {
             var field = document.getElementById("id_fecha_vacunacion_covid_2");

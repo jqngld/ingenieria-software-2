@@ -123,10 +123,12 @@ def listar_turnos(request):
 def solicitud_fiebre_amarilla(request):
 
     paciente = PacientesDetalles.objects.get(user_id=request.user.id)
+    solicitud = PacientesSolicitudes.objects.get(paciente_id=paciente.paciente_id, vacuna_id=4)
+
     paciente_edad = relativedelta(datetime.now(), paciente.fecha_nacimiento)
 
     vacuna_aplicada = VacunasAplicadas.objects.filter(paciente_id=paciente.paciente_id, vacuna_id=4).exists()
-    solicitud_existente = PacientesSolicitudes.objects.filter(paciente_id=paciente.paciente_id, vacuna_id=4).exists()
+    solicitud_existente = solicitud is not None
 
     if paciente_edad.years < 60 and not vacuna_aplicada and not solicitud_existente:        
         solicitud_fa = PacientesSolicitudes(
@@ -140,12 +142,15 @@ def solicitud_fiebre_amarilla(request):
         messages.success(request, "La solicitud se ha realizado de forma exitosa.")
     
     else:
-        if paciente_edad.years >= 60:
-            messages.error(request, "La vacuna contra la fiebre amarilla solo se aplica a menores de 60 años.")
         if vacuna_aplicada:
-            messages.error(request, "Usted ya se ha aplicado la vacuna contra la fiebre amarilla.")                     
-        if solicitud_existente:
-            messages.error(request, "Usted ya ha solicitado un turno para aplicarse esta vacuna.")                     
+            messages.error(request, "Usted ya se ha aplicado la vacuna contra la fiebre amarilla.")
+        elif paciente_edad.years >= 60:
+            messages.error(request, "La vacuna contra la fiebre amarilla solo se aplica a menores de 60 años.")
+        elif solicitud_existente:
+            if solicitud.solicitud_aprobada:
+                messages.error(request, "Usted ya recibió un turno para aplicarse esta vacuna.")
+            else:
+                messages.error(request, "Usted ya ha solicitado un turno para aplicarse esta vacuna.")
 
     return redirect('/pacientes/mis_solicitudes/')
 

@@ -19,6 +19,7 @@ class UsuariosManager(BaseUserManager):
     def create_superuser(self, email, password):
         user = self.create_user(email, password=password)
         user.is_admin = True
+        user.is_staff = True
         user.tipo_usuario = 'admin'
         user.save()
         return user
@@ -53,12 +54,6 @@ class Usuarios(AbstractBaseUser):
 
     def has_module_perms(self, app_label):
         return True
-    
-    @property
-    def is_admin(self):
-        return self.is_admin
-
-      
 
 
 class PacientesDetalles(models.Model):
@@ -89,8 +84,8 @@ class VacunasDetalles(models.Model):
 
     vacuna_id = models.AutoField(primary_key=True)
     nombre = models.CharField('Nombre', max_length=100, blank=False, null=False)
-    efectividad = models.CharField('Efectividad', max_length=20, blank=False, null=False)
-    cantidad_dosis = models.CharField('Cantidad Dosis', max_length=50, blank=False, null=False)
+    efectividad = models.CharField('Efectividad', max_length=20, blank=True, null=True)
+    cantidad_dosis = models.CharField('Cantidad Dosis', max_length=50, blank=True, null=True)
 
     class Meta:
         verbose_name = 'Detalles Vacuna'

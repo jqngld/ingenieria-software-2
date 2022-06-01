@@ -205,6 +205,9 @@ class UserSignUpForm(UserCreationForm):
     def registrar_vacunaciones(self, paciente):
         '''Se registran aquellas vacunas que el usuario indicó haberse aplicado.'''
 
+        fecha_nacimiento = datetime(int(self.cleaned_data['ano_nacimiento']), int(self.cleaned_data['mes_nacimiento']), int(self.cleaned_data['dia_nacimiento']))
+        paciente_edad = relativedelta(datetime.now(), fecha_nacimiento)
+
         if self.cleaned_data['vacuna_covid_1']:
             vacuna_covid_1 = VacunasAplicadas(
                 paciente_id = paciente.paciente_id,
@@ -220,24 +223,26 @@ class UserSignUpForm(UserCreationForm):
                     fecha_vacunacion = self.cleaned_data['fecha_vacunacion_covid_2']
                 )
                 vacuna_covid_2.save()
-            else: 
-                solicitud_covid2 = PacientesSolicitudes(
+            else:
+                if paciente_edad.years >= 18:
+                    solicitud_covid2 = PacientesSolicitudes(
+                        paciente_id = paciente.paciente_id,
+                        vacuna_id = 2,
+                        solicitud_aprobada = 0,
+                        fecha_estimada = datetime.today() + relativedelta(days=7),
+                        centro_vacunatorio = paciente.centro_vacunatorio
+                    )
+                    solicitud_covid2.save()
+        else:
+            if paciente_edad.years >= 18:
+                solicitud_covid1 = PacientesSolicitudes(
                     paciente_id = paciente.paciente_id,
-                    vacuna_id = 2,
+                    vacuna_id = 1,
                     solicitud_aprobada = 0,
                     fecha_estimada = datetime.today() + relativedelta(days=7),
                     centro_vacunatorio = paciente.centro_vacunatorio
                 )
-                solicitud_covid2.save()
-        else:
-            solicitud_covid1 = PacientesSolicitudes(
-                paciente_id = paciente.paciente_id,
-                vacuna_id = 1,
-                solicitud_aprobada = 0,
-                fecha_estimada = datetime.today() + relativedelta(days=7),
-                centro_vacunatorio = paciente.centro_vacunatorio
-            )
-            solicitud_covid1.save()
+                solicitud_covid1.save()
 
         if self.cleaned_data['vacuna_gripe']:
             vacuna_gripe = VacunasAplicadas(
