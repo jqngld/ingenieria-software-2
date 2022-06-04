@@ -14,7 +14,6 @@ urlpatterns = [
     path('editar_perfil/',editar_perfil, name='editar_perfil'),
     path('contraseña/', cambiarPassword.as_view(template_name='pacientes/cambiar-contraseña.html')),
     path('password_change/done/',auth_views.PasswordChangeDoneView.as_view(), name='password_change_done'),
-    #path('editar_perfil/', editar_perfil.as_view()), 
     path('mis_turnos/', listar_turnos, name="listar_turnos"),
     path('mis_vacunas/', listar_vacunas, name="listar_vacunas"),
     path('mis_solicitudes/', listar_solicitudes, name="listar_solicitudes"),
