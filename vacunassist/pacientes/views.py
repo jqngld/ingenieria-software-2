@@ -123,7 +123,11 @@ def listar_turnos(request):
 def solicitud_fiebre_amarilla(request):
 
     paciente = PacientesDetalles.objects.get(user_id=request.user.id)
-    solicitud = PacientesSolicitudes.objects.get(paciente_id=paciente.paciente_id, vacuna_id=4)
+    
+    try:
+        solicitud = PacientesSolicitudes.objects.get(paciente_id=paciente.paciente_id, vacuna_id=4)
+    except:
+        pass
 
     paciente_edad = relativedelta(datetime.now(), paciente.fecha_nacimiento)
 

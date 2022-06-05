@@ -127,7 +127,7 @@ class PacientesTurnos(models.Model):
         db_table = 'pacientes_turnos'
 
     def __str__(self) -> str:
-        return '%s - %s: %s' % (self.solicitud.paciente, self.solicitud.paciente.dni, self.fecha_confirmada)
+        return '%s - %s: %s' % (self.solicitud.paciente, self.solicitud.paciente.dni, self.solicitud.vacuna.nombre)
 
 
 class VacunasAplicadas(models.Model):

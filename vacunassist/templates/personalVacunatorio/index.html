@@ -1,0 +1,72 @@
+{% extends "personalVacunatorio/base.html" %}
+{% load static %}
+
+{% block content %}
+   <!-- Heading -->
+   <section class="page-section clearfix">
+    <div class="container">
+      <div class="intro">
+        <img class="intro-img img-fluid mb-3 mb-lg-0 rounded" src="{% static 'img/fiebreamarilla.jpg'%}" alt="">
+        <div class="intro-text left-0 text-center bg-faded p-5 rounded">
+          <h2 class="section-heading mb-4" >
+            <span class="section-heading-upper">Vacunas Ofrecidas</span>
+            <span class="section-heading-lower">Fiebre Amarilla</span>
+          </h2>
+          <p class="mb-3">La vacuna contra la fiebre amarilla se aplica a menores de 60 años</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Heading -->
+  <section class="page-section clearfix">
+    <div class="container">
+      <div class="intro">
+        <img class="intro-img img-fluid mb-3 mb-lg-0 rounded" src="{% static 'img/gripea.jpg'%}" alt="">
+        <div class="intro-text left-0 text-center bg-faded p-5 rounded">
+          <h2 class="section-heading mb-4" >
+            <span class="section-heading-upper">Vacunas Ofrecidas</span>
+            <span class="section-heading-lower">Gripe</span>
+          </h2>
+          <p class="mb-3">Ofrecemos también vacuna para la gripe</p>
+        </div>
+      </div>
+    </div>
+  </section>
+    <!-- Heading -->
+    <section class="page-section clearfix">
+      <div class="container">
+        <div class="intro">
+          <img class="intro-img img-fluid mb-3 mb-lg-0 rounded" src="{% static 'img/coronavirus.jpg'%}" alt="">
+          <div class="intro-text left-0 text-center bg-faded p-5 rounded">
+            <h2 class="section-heading mb-4" >
+              <span class="section-heading-upper">Vacunas Ofrecidas</span>
+              <span class="section-heading-lower">coronavirus</span>
+            </h2>
+            <p class="mb-3">Los coronavirus son una familia de virus conocida por causar enfermedades respiratorias. La principal vía de contagio del nuevo coronavirus es persona a persona, por lo que resulta fundamental el refuerzo de medidas preventivas para disminuir sus posibilidades de circulación.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+
+    <!-- Message -->
+    <section class="page-section cta">
+      <div class="container">
+        <div class="row">
+          <div style="background-color: grey;" class="col-xl-9 mx-auto">
+            <img class="intro-img img-fluid mb-3 mb-lg-0 rounded" src="{% static 'img/vacunassist-logo.png'%}" alt="">
+            <div class="intro-text left-0 text-center bg-faded p-5 rounded">
+              <h2 class="section-heading mb-4">
+                <span class="section-heading-upper"></span>
+                <span class="section-heading-lower"></span>
+              </h2>
+              <p class="mb-0">Un servicio para que vos estes mejor...</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+
+    {% endblock %}

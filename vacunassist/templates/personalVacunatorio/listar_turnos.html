@@ -1,0 +1,85 @@
+{% extends "personalVacunatorio/base.html" %}
+{% load static %}
+{% block title %}  Turnos Programados del Día {% endblock %}
+{% block content %}
+
+
+<div class="card">
+    <div class="card-header" style="min-height: 224px;">
+
+        {% if messages %}
+        {% for message in messages %}
+        <div class="{% if message.tags == 'error' %} alert alert-warning {% else %} alert alert-success {% endif %}" style="padding-top: 10px;">
+            <button class="close" data-dismiss="alert" aria-label="close">&times;</button>
+            {{ message }}
+        </div>
+        {% endfor %}
+        {% endif %}
+
+        <div class="row" style="margin-top: 10px;">
+            <div class="col-md-12 text-center ">
+                <strong class="card-title">
+                    <h2>Turnos del día: {% now "d F, Y" %}</h2>
+                </strong>
+            </div>
+        </div>
+
+        <div class="container">
+            <div class="row" style="padding-bottom: 20px;">
+                {% if turnos %}
+                    {% for turno in turnos %}
+                    <div class="col-md-12 mt-2">
+                        <div class="card">
+                            <div class="card-body px-2 py-2">
+                                <div class="row pr-2">
+                                    <div class="col-md-11">
+                                        <span class="card-title" style="width: 50%; margin: 0; font-size: 1.2rem; font-family: 'emoji';">{{ turno }}</span>
+                                    </div>
+                                    <div class="col-md-1 px-0 py-0">
+                                        <!-- botón de confirmar asistencia -->
+                                        <button type="button" class="btn btn-outline-success" data-toggle="tooltip" data-placement="right" title="Confirmar Asistencia">
+                                            <i class="bi bi-check-square-fill"></i>
+                                        </button>
+                                        
+                                        <!-- botón de confirmar inasistencia -->
+                                        <button type="button" class="btn btn-outline-danger" data-toggle="tooltip" data-placement="right" title="Confirmar inasistencia">
+                                            <i class="bi bi-x-square-fill"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                <div class="col-md-12 mt-4">
+                    <div class="card">
+                        <div class="card-body">
+                            <p class="card-text">No hay turnos programados para el día de hoy.</p>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+
+            <!-- <div class="dropdown">
+                <button class="btn btn-success dropdown-toggle" type="button" id="dLabel" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    Nueva solicitud
+                </button>
+                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                    <a class="dropdown-item" href="solicitud_fiebre_amarilla/">FIEBRE AMARILLA</a>
+                </div>
+            </div> -->
+
+        </div>
+    </div>
+</div>
+
+<script>
+    $(function () {
+        $(".alert").alert()
+        $('.dropdown-toggle').dropdown()
+    })
+</script>
+
+{% endblock %}

@@ -18,8 +18,10 @@ from django.contrib import admin
 from django.urls import include, path
 from vacunassist.views import *
 
+
 urlpatterns = [
     path('', home),
     path('admin/', admin.site.urls),
     path('pacientes/', include('pacientes.urls')),
+    path('personal_vacunatorio/', include('personalVacunatorio.urls')),
 ]

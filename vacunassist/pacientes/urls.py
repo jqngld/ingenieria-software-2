@@ -1,8 +1,8 @@
-from re import template
 from django.urls import path
 from pacientes.views import *
-from django.contrib.auth.views import LoginView
 from django.contrib.auth import views as auth_views
+
+
 urlpatterns = [
     path('', home, name='home'),
     path('registro1/', signup1, name='signup1'),
