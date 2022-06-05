@@ -128,7 +128,7 @@ def solicitud_fiebre_amarilla(request):
     paciente_edad = relativedelta(datetime.now(), paciente.fecha_nacimiento)
 
     vacuna_aplicada = VacunasAplicadas.objects.filter(paciente_id=paciente.paciente_id, vacuna_id=4).exists()
-    solicitud_existente = solicitud is not None
+    solicitud_existente = PacientesSolicitudes.objects.filter(paciente_id=paciente.paciente_id, vacuna_id=4).exists()
 
     if paciente_edad.years < 60 and not vacuna_aplicada and not solicitud_existente:        
         solicitud_fa = PacientesSolicitudes(
