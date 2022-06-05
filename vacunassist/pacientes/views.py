@@ -90,11 +90,13 @@ def signup2(request):
             return render(request, 'pacientes/signup2.html', context)
 
 
+@login_required(login_url='/pacientes/login_error/')
 def view_profile(request):
     paciente = PacientesDetalles.objects.get(user_id=request.user.id)
     return render(request, "pacientes/view_profile.html/", {"datos": paciente})
 
 
+@login_required(login_url='/pacientes/login_error/')
 def listar_vacunas(request):
     paciente = PacientesDetalles.objects.get(user_id=request.user.id)
 
@@ -103,6 +105,8 @@ def listar_vacunas(request):
 
     return render(request, "pacientes/listar_vacunas.html/", {'vacunas' : vacunas})
 
+
+@login_required(login_url='/pacientes/login_error/')
 def listar_solicitudes(request):
     paciente = PacientesDetalles.objects.get(user_id=request.user.id)
 
@@ -110,6 +114,8 @@ def listar_solicitudes(request):
         .values('vacuna_id__nombre', 'fecha_solicitud', 'solicitud_aprobada')
     return render(request, "pacientes/listar_solicitudes.html/", {'solicitudes' : solicitudes})
 
+
+@login_required(login_url='/pacientes/login_error/')
 def listar_turnos(request):
     paciente = PacientesDetalles.objects.get(user_id=request.user.id)
 
@@ -120,6 +126,7 @@ def listar_turnos(request):
     return render(request, "pacientes/listar_turnos.html/", {'turnos' : turnos})
 
 
+@login_required(login_url='/pacientes/login_error/')
 def solicitud_fiebre_amarilla(request):
 
     paciente = PacientesDetalles.objects.get(user_id=request.user.id)
@@ -164,7 +171,7 @@ class cambiarPassword(PasswordChangeView):
       success_url ="/pacientes/mi_perfil/"
 
  
-# update view for details
+@login_required(login_url='/pacientes/login_error/')
 def editar_perfil(request):
     # dictionary for initial data with
     # field names as keys
@@ -224,14 +231,13 @@ class descargar_comprobante(View):
             return HttpResponse('We had some errors <pre>' + html + '</pre>')
         return response
 
+
 class LoginAfterPasswordChangeView(PasswordChangeView):
     @property
     def success_url(self):
         return reverse_lazy('inicio_sesion/')
 
 login_after_password_change = login_required(LoginAfterPasswordChangeView.as_view())
-
-
 
 
 class restPassword(PasswordResetView):
@@ -241,7 +247,7 @@ class restPassword(PasswordResetView):
 class restPasswordConfirm(PasswordResetConfirmView):
       form_class = SetPasswordForm
      
-      
+
 def restDone(request):
     return render(request, 'pacientes/restablecer-contrasenia-hecho.html')     
       
