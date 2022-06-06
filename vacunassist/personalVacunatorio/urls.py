@@ -3,7 +3,7 @@ from personalVacunatorio.views import *
 
 
 urlpatterns = [
-    path('', home, name='home'),
-    path('inicio_sesion/', login, name='login'),
+    path('', home_personal, name='home_personal'),
+    path('inicio_sesion/', login_personal, name='login_personal'),
     path('turnos/', listar_turnos, name='listar_turnos'),
 ]

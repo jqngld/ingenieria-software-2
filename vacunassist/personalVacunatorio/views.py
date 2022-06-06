@@ -4,11 +4,11 @@ from pacientes.models import *
 from datetime import datetime 
 
 
-def home(request):
+def home_personal(request):
     return render(request, 'personalVacunatorio/index.html')
 
 
-def login(request):
+def login_personal(request):
     pass
 
 
