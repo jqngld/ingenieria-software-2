@@ -37,7 +37,7 @@
       	<div class="collapse navbar-collapse" id="navbarResponsive">
         	<ul class="navbar-nav mx-auto">
           		<li class="nav-item {% if request.path == '/personal_vacunatorio/' %}active{% endif %} px-lg-6">
-            		<a class="nav-link text-uppercase text-expanded" href="{% url 'home' %}">Inicio</a>
+            		<a class="nav-link text-uppercase text-expanded" href="{% url 'home_personal' %}">Inicio</a>
           		</li>
 				{% if user.is_authenticated and user.tipo_usuario == "personal" %}
             	<li class="nav-item {% if request.path|slice:'18' == '/personal_vacunatorio/turnos/' %}active{% endif %} px-lg-6">
@@ -45,7 +45,7 @@
           		</li>
 				{% else %}
             	<li class="nav-item {% if request.path == '/personal_vacunatorio/inicio_sesion/' %}active{% endif %} px-lg-6">
-            		<a class="nav-link text-uppercase text-expanded" href="{% url 'login' %}">Iniciar Sesión</a>
+            		<a class="nav-link text-uppercase text-expanded" href="{% url 'login_personal' %}">Iniciar Sesión</a>
 				</li>
           		{% endif %}    
         	</ul>
