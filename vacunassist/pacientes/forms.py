@@ -71,7 +71,7 @@ class UserSignUpForm(UserCreationForm):
         widget=forms.Select(attrs={'class' : 'form-control', 'placeholder' : 'Sexo'}))
     dia_nacimiento = forms.IntegerField(
         label='Día',
-        widget=forms.NumberInput(attrs = {'class' : 'form-control','placeholder' : 'Día'}))
+        widget=forms.NumberInput(attrs = {'min' : 1,'class' : 'form-control','placeholder' : 'Día'}))
     mes_nacimiento = forms.ChoiceField(
         choices=meses,
         required=True,
@@ -79,7 +79,7 @@ class UserSignUpForm(UserCreationForm):
         widget=forms.Select(attrs={'class' : 'form-control','placeholder' : 'Mes'}))
     ano_nacimiento = forms.IntegerField(
         label='Año',
-        widget=forms.NumberInput(attrs = {'class' : 'form-control','placeholder' : 'Año'})
+        widget=forms.NumberInput(attrs = {'min' : 1,'class' : 'form-control','placeholder' : 'Año'})
     )
     centro_vacunatorio = forms.ChoiceField(
         choices=centros,
