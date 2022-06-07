@@ -43,7 +43,10 @@
             	<li class="nav-item {% if request.path|slice:'18' == '/personal_vacunatorio/turnos/' %}active{% endif %} px-lg-6">
               		<a class="nav-link text-uppercase text-expanded" href="{% url 'listar_turnos' %}">Ver Turnos</a>
           		</li>
-				{% else %}
+				<li class="nav-item {% if request.path|slice:'18' == '/personal_vacunatorio/cerrar_sesion/' %}active{% endif %} px-lg-6">
+					<a class="nav-link text-uppercase text-expanded" href="{% url 'logout_personal' %}">Cerrar Sesión</a>
+				</li>
+					{% else %}
             	<li class="nav-item {% if request.path == '/personal_vacunatorio/inicio_sesion/' %}active{% endif %} px-lg-6">
             		<a class="nav-link text-uppercase text-expanded" href="{% url 'login_personal' %}">Iniciar Sesión</a>
 				</li>
