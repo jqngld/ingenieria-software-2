@@ -1,5 +1,4 @@
 from email.policy import default
-from attr import attr, attrs
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from pacientes.models import Usuarios
@@ -38,3 +37,20 @@ class PersonalSignUpForm(UserCreationForm):
     class Meta:
         model = Usuarios
         fields = ('email', 'password1', 'password2', 'tipo_usuario',)
+
+
+
+class  devolucionForm(forms.Form):
+    
+        obervaciones = forms.CharField(
+        max_length=100,
+        required=True,
+        widget=forms.TextInput(attrs = {'class' : 'form-control','placeholder' : 'observaciones'}))
+        
+        
+        lote = forms.CharField(
+        max_length=100,
+        required=True,
+        widget=forms.TextInput(attrs = {'class' : 'form-control','placeholder' : 'lote'}))
+    
+

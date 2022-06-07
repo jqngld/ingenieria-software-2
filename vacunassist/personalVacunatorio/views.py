@@ -1,10 +1,11 @@
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseRedirect
 from django.contrib import messages
 from django.shortcuts import redirect, render
 from django.contrib.auth import authenticate
 from django.contrib.auth import logout as personal_logout
 from django.contrib.auth import login as personal_auth_login
 from django.contrib.auth.decorators import login_required
+from django.views import View
 
 from pacientes.models import *
 from .forms import *
@@ -53,3 +54,18 @@ def listar_turnos(request):
 
     turnos = PacientesTurnos.objects.filter(fecha_confirmada = today)
     return render(request, "personalVacunatorio/listar_turnos.html/", {'turnos' : turnos})
+
+
+
+
+def devolucion(request):
+    if request.method == 'POST':
+        form = devolucionForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('/personal_vacunatorio/')  
+    form = devolucionForm()  
+    context = {'form': form}
+    return render(request, 'personalVacunatorio/devolucion.html/', context) 
+
+      
