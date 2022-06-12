@@ -54,8 +54,11 @@ def listar_turnos_diarios(request):
     today = datetime.today().strftime('%Y-%m-%d')
     centro_vacunatorio = PersonalDetalles.objects.get(user_id=request.user.id).centro_vacunatorio
 
-    turnos = PacientesTurnos.objects.filter(fecha_confirmada=today, solicitud_id__centro_vacunatorio=centro_vacunatorio)\
-                .values('turno_id',
+    turnos = PacientesTurnos.objects.filter(
+                turno_pendiente = 1,
+                fecha_confirmada=today,
+                solicitud_id__centro_vacunatorio=centro_vacunatorio)\
+                    .values('turno_id',
                         'solicitud_id__vacuna_id__nombre',
                         'solicitud_id__paciente_id__dni',
                         'solicitud_id__paciente_id__sexo',
