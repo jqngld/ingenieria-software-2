@@ -134,6 +134,9 @@ class VacunasAplicadas(models.Model):
     vacuna = models.ForeignKey(VacunasDetalles, on_delete=models.CASCADE)
     paciente = models.ForeignKey(PacientesDetalles, on_delete=models.CASCADE) 
     fecha_vacunacion = models.DateField('Fecha de Vacunacion', blank=False)
+    observacion = models.CharField('observacion', max_length=100, blank=False, null=False ,default=" ")
+    lote = models.CharField('lote', max_length=100, blank=False, null=False , default="")
+    
 
     class Meta:
         verbose_name = 'Vacunas Aplicada'

@@ -3,6 +3,7 @@ from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from pacientes.models import Usuarios
 from personalVacunatorio.models import PersonalDetalles
+from pacientes.models import VacunasAplicadas
 
 
 class  PersonalSignIn(forms.Form):
@@ -64,17 +65,9 @@ class PersonalSignUpForm(UserCreationForm):
         return user
 
 
-class devolucionForm(forms.Form):
-    
-        obervaciones = forms.CharField(
-        max_length=100,
-        required=True,
-        widget=forms.TextInput(attrs = {'class' : 'form-control','placeholder' : 'observaciones'}))
-        
-        
-        lote = forms.CharField(
-        max_length=100,
-        required=True,
-        widget=forms.TextInput(attrs = {'class' : 'form-control','placeholder' : 'lote'}))
-    
-
+class devolucionForm(forms.ModelForm):
+        class Meta:
+          model = VacunasAplicadas
+          fields = [
+            "observacion", "lote",
+        ]

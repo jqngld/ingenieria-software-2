@@ -96,14 +96,24 @@ def listar_turnos_diarios(request):
 
 
 
-def devolucion(request):
-    if request.method == 'POST':
-        form = devolucionForm(request.POST)
-        if form.is_valid():
-            form.save()
-            return redirect('/personal_vacunatorio/')  
-    form = devolucionForm()  
-    context = {'form': form}
-    return render(request, 'personalVacunatorio/devolucion.html/', context) 
 
-      
+def devolucion(request):
+    context ={}
+
+    user = request.user.id
+    vacuna = VacunasAplicadas.objects.get(id=request.user.id)
+    
+
+ 
+    # pass the object as instance in form
+    form = devolucionForm(request.POST or None , request.FILES , instance = vacuna)
+
+    if form.is_valid():
+        vacuna.observacion = form.cleaned_data.get('observacion')
+        vacuna.lote = form.cleaned_data.get('lote')
+        vacuna.save()
+        return redirect('/personal_vacunatorio/')
+
+    context["form"] = form
+ 
+    return render(request,'personalVacunatorio/devolucion.html', context)  

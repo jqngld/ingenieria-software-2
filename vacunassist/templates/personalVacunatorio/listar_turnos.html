@@ -94,6 +94,7 @@
                                 <td>
                                     <!-- botón para mostrar información del paciente -->
                                     <button type="button" class="btn btn-dark btn-sm" data-toggle="modal" data-target="#masInformacion_{{ turno.turno_id }}" data-placement="bottom" title="Información Paciente">
+                                      
                                         <i class="bi bi-arrows-angle-expand"></i>
                                     </button>
                                 </td>
@@ -104,8 +105,9 @@
                                 <td>{{ turno.vacuna_nombre }}</td>
                                 <td>
                                     <!-- botón de confirmar asistencia -->
-                                    <button type="button" class="btn btn-outline-success" data-toggle="tooltip" data-placement="right" title="Confirmar Asistencia">
+                                    <button type="button"  class="btn btn-outline-success" data-toggle="tooltip" data-placement="right" title="Confirmar Asistencia">     
                                         <i class="bi bi-check-square-fill"></i>
+                                        <a href="/personal_vacunatorio/devolucion/">confirmar</a>
                                     </button>
                                     
                                     <!-- botón de confirmar inasistencia -->
