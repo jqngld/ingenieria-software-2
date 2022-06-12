@@ -1,3 +1,4 @@
+from optparse import Values
 from django.http import HttpResponse, HttpResponseRedirect
 from django.contrib import messages
 from django.shortcuts import redirect, render
@@ -11,7 +12,7 @@ from pacientes.models import *
 from .forms import *
 
 from datetime import datetime 
-
+from dateutil.relativedelta import relativedelta
 
 def home_personal(request):
     return render(request, 'personalVacunatorio/index.html')
@@ -50,9 +51,31 @@ def login_personal(request):
 @login_required(login_url='/personal_vacunatorio/login_error/')
 def listar_turnos(request):
 
-    today = datetime.today().strftime('%Y-%m-%d')
+    today = '2022-06-12' #datetime.today().strftime('%Y-%m-%d')
 
-    turnos = PacientesTurnos.objects.filter(fecha_confirmada = today)
+    turnos = PacientesTurnos.objects.filter(fecha_confirmada = today)\
+                .values('solicitud_id__paciente_id__nombre',
+                        'solicitud_id__paciente_id__apellido',
+                        'solicitud_id__paciente_id__dni',
+                        'solicitud_id__paciente_id__fecha_nacimiento',
+                        'solicitud_id__vacuna_id__nombre')
+    
+    for turno in turnos:
+        turno['paciente_nombre']    = turno['solicitud_id__paciente_id__nombre']
+        turno['paciente_apellido']  = turno['solicitud_id__paciente_id__apellido']
+        turno['paciente_dni']       = turno['solicitud_id__paciente_id__dni']
+        turno['vacuna_nombre']      = turno['solicitud_id__vacuna_id__nombre']
+
+        del turno['solicitud_id__paciente_id__nombre']
+        del turno['solicitud_id__paciente_id__apellido']
+        del turno['solicitud_id__paciente_id__dni']
+        del turno['solicitud_id__vacuna_id__nombre']
+
+        fecha_nacimiento = turno['solicitud_id__paciente_id__fecha_nacimiento']
+        del turno['solicitud_id__paciente_id__fecha_nacimiento']
+        edad = relativedelta(datetime.now(), fecha_nacimiento)
+        turno['paciente_edad'] = edad.years
+
     return render(request, "personalVacunatorio/listar_turnos.html/", {'turnos' : turnos})
 
 
