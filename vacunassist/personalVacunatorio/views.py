@@ -51,7 +51,7 @@ def login_personal(request):
 @login_required(login_url='/personal_vacunatorio/login_error/')
 def listar_turnos(request):
 
-    today = '2022-06-12' #datetime.today().strftime('%Y-%m-%d')
+    today = datetime.today().strftime('%Y-%m-%d')
 
     turnos = PacientesTurnos.objects.filter(fecha_confirmada = today)\
                 .values('solicitud_id__paciente_id__nombre',
