@@ -30,14 +30,16 @@
                     <table id="tabla-turnos" class="table table-hover">
                         <thead>
                             <tr>
+                                <th style="width: 1%;"></th>
                                 <th scope="col">Nombre</th>
                                 <th scope="col">Apellido</th>
                                 <th scope="col">DNI</th>
                                 <th scope="col">Edad</th>
                                 <th scope="col">Vacuna</th>
-                                <th scope="col">Acciones</th>
+                                <th style="width: 10%;" scope="col">Acciones</th>
                             </tr>
                             <tr>
+                                <th style="width: 1%;" ></th>
                                 <th><input style="width: 100%;" type="text" placeholder="buscar por nombre"/></th>
                                 <th><input style="width: 100%;" type="text" placeholder="buscar por apellido"/></th>
                                 <th><input style="width: 100%;" type="text" placeholder="buscar por DNI"/></th>
@@ -53,7 +55,47 @@
                         </thead>
                         <tbody>
                             {% for turno in turnos %}
+                            
+                            <!-- PopUp con información detallada del paciente -->
+                            <div class="modal fade" id="masInformacion_{{ turno.turno_id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                                <div class="modal-dialog modal-dialog-centered" role="document">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="exampleModalLongTitle">Información del Paciente</h5>
+                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                <span aria-hidden="true">&times;</span>
+                                            </button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <div class="container-fluid">
+                                                <div class="row">
+                                                    <div class="col-md-7"><b>Nombre:</b> {{ turno.paciente_nombre }}</div>
+                                                    <div class="col-md-5"><b>DNI:</b> {{ turno.paciente_dni }}</div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-md-7"><b>Apellido:</b> {{ turno.paciente_apellido }}</div>
+                                                    <div class="col-md-5"><b>Sexo:</b> {{ turno.paciente_sexo }}</div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-md-7"><b>Centro:</b> {{ turno.paciente_centro }}</div>
+                                                    <div class="col-md-5"><b>Riesgo:</b> {% if turno.paciente_riesgo %} SI {% else %} NO {% endif %}</div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-md-7"><b>Fecha Nacimiento:</b> {{ turno.paciente_fecha_nac }}</div>
+                                                </div>
+                                              </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
                             <tr>
+                                <td>
+                                    <!-- botón para mostrar información del paciente -->
+                                    <button type="button" class="btn btn-dark btn-sm" data-toggle="modal" data-target="#masInformacion_{{ turno.turno_id }}" data-placement="bottom" title="Información Paciente">
+                                        <i class="bi bi-arrows-angle-expand"></i>
+                                    </button>
+                                </td>
                                 <td>{{ turno.paciente_nombre }}</td>
                                 <td>{{ turno.paciente_apellido }}</td>
                                 <td>{{ turno.paciente_dni }}</td>
@@ -92,10 +134,14 @@
     $(document).ready(function(){
         $.noConflict()
         var table = $('#tabla-turnos').DataTable({
-            dom : 'lrt',
+            dom : 'lrt', //'lrtp',
             info : false,
-            paging : false,
-            language : {zeroRecords : 'No se encontraron turnos programados para los filtros aplicados.'},
+            // pageLength : 2,
+            lengthChange : false,
+            language : {
+                paginate : {previous : 'Anterior', next : 'Próximo'},
+                zeroRecords : 'No se encontraron turnos programados para los filtros aplicados.',
+            },
             fixedHeader : true,
             orderCellsTop : true,
         });

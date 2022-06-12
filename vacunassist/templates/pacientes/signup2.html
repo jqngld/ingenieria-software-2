@@ -275,8 +275,11 @@
             var day   = document.getElementById("id_dia_nacimiento").value;
             var month = document.getElementById("id_mes_nacimiento").value;
             var year  = document.getElementById("id_ano_nacimiento").value;
-            var birth_date = day + '/' + month + '/' + year;
+            var birth_date = year + '-' + month + '-' + day;
             var isValidDate = Date.parse(birth_date)
+
+            console.log(birth_date)
+            console.log(isValidDate)
 
             if(isNaN(isValidDate)){
                 alerta = createAlert("warning", "Debe ingresar una fecha de nacimiento válida.");
