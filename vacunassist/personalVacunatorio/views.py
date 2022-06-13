@@ -186,5 +186,14 @@ def vacunacion_fallida(request, **kwargs): #Inasistencia
 
     #Generar nueva solicitud
 
-    messages.success(request, "La ausencia al turno fue registrada con éxito.")
+    messages.success(request, "La ausencia al turno fué registrada con éxito.")
+    return redirect('/personal_vacunatorio/turnos/')
+
+
+def marcar_inasistencias(request):
+
+    hoy = datetime.today().strftime('%Y-%m-%d')
+    turnos = PacientesTurnos.objects.filter(fecha_confirmada = hoy).update(turno_perdido = True, turno_pendiente = False)
+    
+    messages.success(request, "La ausencia al turno fué registrada con éxito.")
     return redirect('/personal_vacunatorio/turnos/')
