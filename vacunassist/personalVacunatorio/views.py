@@ -52,9 +52,13 @@ def login_personal(request):
 def listar_turnos_diarios(request):
 
     today = datetime.today().strftime('%Y-%m-%d')
+    centro_vacunatorio = PersonalDetalles.objects.get(user_id=request.user.id).centro_vacunatorio
 
-    turnos = PacientesTurnos.objects.filter(fecha_confirmada = today)\
-                .values('turno_id',
+    turnos = PacientesTurnos.objects.filter(
+                turno_pendiente = 1,
+                fecha_confirmada=today,
+                solicitud_id__centro_vacunatorio=centro_vacunatorio)\
+                    .values('turno_id',
                         'solicitud_id__vacuna_id__nombre',
                         'solicitud_id__paciente_id__dni',
                         'solicitud_id__paciente_id__sexo',
@@ -87,7 +91,8 @@ def listar_turnos_diarios(request):
         edad = relativedelta(datetime.now(), fecha_nacimiento)
         turno['paciente_edad'] = edad.years
 
-    return render(request, "personalVacunatorio/listar_turnos.html/", {'turnos' : turnos})
+    return render(request, "personalVacunatorio/listar_turnos.html/", {'turnos' : turnos, 'personal_centro' : centro_vacunatorio})
+
 
 
 

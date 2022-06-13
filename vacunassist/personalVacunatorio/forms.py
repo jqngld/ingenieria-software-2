@@ -2,6 +2,8 @@ from email.policy import default
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from pacientes.models import Usuarios
+from personalVacunatorio.models import PersonalDetalles
+from pacientes.models import VacunasAplicadas
 
 
 class  PersonalSignIn(forms.Form):
@@ -24,33 +26,48 @@ class PersonalSignUpForm(UserCreationForm):
         campos password1 y password2.
     """
 
+    centros = [
+        ('Terminal', 'Terminal'),
+        ('Cementerio', 'Cementerio'),
+        ('Municipalidad', 'Municipalidad'),
+    ]
+
+    
     email = forms.EmailField(
         max_length=200,
         required=True,
         widget=forms.EmailInput(attrs={'class' : 'form-control', 'placeholder' : 'Email'})
     )
-    tipo_usuario = forms.CharField(
-        initial='personal',
-        widget=forms.TextInput(attrs = {'readonly' : ''}),
+    centro_vacunatorio = forms.ChoiceField(
+        choices=centros,
+        required=True,
+        label="Centro vacunatorio",
+        widget=forms.Select(attrs = {'class' : 'form-control','placeholder' : 'Centro Vacunatorio'})
     )
 
     class Meta:
         model = Usuarios
-        fields = ('email', 'password1', 'password2', 'tipo_usuario',)
+        fields = ('email', 'password1', 'password2', 'centro_vacunatorio',)
 
-
-
-class  devolucionForm(forms.Form):
-    
-        obervaciones = forms.CharField(
-        max_length=100,
-        required=True,
-        widget=forms.TextInput(attrs = {'class' : 'form-control','placeholder' : 'observaciones'}))
+    def save(self, commit=True):
+        # if not commit:
+        #     raise NotImplementedError("Can't create User and UserProfile without database save")
+        user = super(PersonalSignUpForm, self).save(commit=True)
+        user.tipo_usuario = 'personal'
+        user.save()
         
-        
-        lote = forms.CharField(
-        max_length=100,
-        required=True,
-        widget=forms.TextInput(attrs = {'class' : 'form-control','placeholder' : 'lote'}))
-    
+        personal_details = PersonalDetalles(
+            user = user,
+            centro_vacunatorio = self.cleaned_data['centro_vacunatorio'],
+        )
+        personal_details.save()
 
+        return user
+
+
+class devolucionForm(forms.ModelForm):
+        class Meta:
+          model = VacunasAplicadas
+          fields = [
+            "observacion", "lote",
+        ]
