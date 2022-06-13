@@ -11,4 +11,5 @@ urlpatterns = [
     path('devolucion/<int:vacuna_aplicada>/', devolucion, name='devolucion'),
     path('turnos/vacunacion_exitosa/<int:turno_id>/<int:paciente_dni>/<str:vacuna_nombre>/', vacunacion_exitosa, name="vacunacion_exitosa"),
     path('turnos/vacunacion_fallida/<int:turno_id>', vacunacion_fallida, name="vacunacion_fallida"),
+    path('turnos/marcar_inasistencias/', marcar_inasistencias, name='marcar inasistencias'),
 ]
