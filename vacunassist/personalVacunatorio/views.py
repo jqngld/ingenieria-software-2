@@ -102,4 +102,35 @@ def devolucion(request):
     context = {'form': form}
     return render(request, 'personalVacunatorio/devolucion.html/', context) 
 
-      
+    
+
+def vacunacion_exitosa(request, **kwargs):
+
+    paciente = PacientesDetalles.objects.get(dni=kwargs['paciente_dni'])
+    vacuna = VacunasDetalles.objects.get(nombre=kwargs['vacuna_nombre'])
+    turno_completado = PacientesTurnos(
+            turno_id = kwargs['turno_id'],
+            solicitud_id = kwargs['turno_id'],
+            turno_pendiente = False,
+            turno_completado = True,
+        )
+    turno_completado.save()
+    vacuna_aplicada = VacunasAplicadas(
+        vacuna_id = vacuna.vacuna_id,
+        fecha_vacunacion = datetime.today().strftime('%Y-%m-%d'),
+        paciente_id = paciente.paciente_id,
+    )
+    vacuna_aplicada.save()
+    return redirect('/personal_vacunatorio/turnos/')
+
+
+def vacunacion_fallida(request, **kwargs): #Inasistencia
+
+    turno = PacientesTurnos.objects.filter(turno_id=kwargs['turno_id'])
+    inasistencia = PacientesTurnos(
+            turno_id = kwargs['turno_id'],
+            solicitud_id = kwargs['turno_id'],
+            turno_perdido = True,
+        )
+    inasistencia.save()
+    return redirect('/personal_vacunatorio/turnos/')

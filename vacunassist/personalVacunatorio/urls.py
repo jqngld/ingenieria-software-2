@@ -9,4 +9,6 @@ urlpatterns = [
     path('cerrar_sesion/', logout_personal, name='logout_personal'),
     path('login_error/', login_error_personal, name='login_error_personal'),
     path('devolucion/', devolucion, name='devolucion'),
+    path('turnos/vacunacion_exitosa/<int:turno_id>/<int:paciente_dni>/<str:vacuna_nombre>/', vacunacion_exitosa, name="vacunacion_exitosa"),
+    path('turnos/vacunacion_fallida/<int:turno_id>', vacunacion_fallida, name="vacunacion_fallida"),
 ]
