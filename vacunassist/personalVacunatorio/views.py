@@ -117,21 +117,31 @@ def devolucion(request, **kwargs):
 
 def vacunacion_exitosa(request, **kwargs):
 
-    paciente = PacientesDetalles.objects.get(dni=kwargs['paciente_dni'])
     vacuna = VacunasDetalles.objects.get(nombre=kwargs['vacuna_nombre'])
-    turno_completado = PacientesTurnos(
-            turno_id = kwargs['turno_id'],
-            solicitud_id = kwargs['turno_id'],
-            turno_pendiente = False,
-            turno_completado = True,
-        )
-    turno_completado.save()
+    paciente = PacientesDetalles.objects.get(dni=kwargs['paciente_dni'])
+
+    # Esto que está comentado es para crear un registro nuevo, para actualizar
+    # un registro, hay que traérselo con get, cambiarle los valores y hacer save
+    # como está abajo.
+    # turno_completado = PacientesTurnos(
+    #         turno_id = kwargs['turno_id'],
+    #         solicitud_id = kwargs['turno_id'],
+    #         turno_pendiente = False,
+    #         turno_completado = True,
+    #     )
+    
+    turno = PacientesTurnos.objects.get(turno_id = kwargs['turno_id'])
+    turno.turno_pendiente = False
+    turno.turno_completado = True
+    turno.save()
+    
     vacuna_aplicada = VacunasAplicadas(
         vacuna_id = vacuna.vacuna_id,
         fecha_vacunacion = datetime.today().strftime('%Y-%m-%d'),
         paciente_id = paciente.paciente_id,
     )
     vacuna_aplicada.save()
+    
     form = devolucionForm()  
     context = {'vacuna_aplicada': vacuna_aplicada.id, 'form': form} 
     return render(request, 'personalVacunatorio/devolucion.html', context)
@@ -139,13 +149,19 @@ def vacunacion_exitosa(request, **kwargs):
 
 def vacunacion_fallida(request, **kwargs): #Inasistencia
 
-    turno = PacientesTurnos.objects.filter(turno_id=kwargs['turno_id'])
-    inasistencia = PacientesTurnos(
-            turno_id = kwargs['turno_id'],
-            solicitud_id = kwargs['turno_id'],
-            turno_perdido = True,
-            turno_pendiente = False,
-        )
-    inasistencia.save()
+    turno = PacientesTurnos.objects.get(turno_id = kwargs['turno_id'])
+    # Esto que está comentado, es por lo mismo que para el caso de la
+    # confirmación de la asistencia al turno
+    # inasistencia = PacientesTurnos(
+    #         turno_id = kwargs['turno_id'],
+    #         solicitud_id = kwargs['turno_id'],
+    #         turno_perdido = True,
+    #         turno_pendiente = False,
+    #     )
+
+    turno.turno_pendiente = False
+    turno.turno_perdido = True
+    turno.save()
+
     #Generar nueva solicitud
     return redirect('/personal_vacunatorio/turnos/')
