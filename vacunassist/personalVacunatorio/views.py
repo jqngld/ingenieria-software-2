@@ -1,3 +1,4 @@
+from multiprocessing import context
 from optparse import Values
 from django.http import HttpResponse, HttpResponseRedirect
 from django.contrib import messages
@@ -97,15 +98,20 @@ def listar_turnos_diarios(request):
 
 
 
-def devolucion(request):
+def devolucion(request, **kwargs):
+
+    vacuna_id = kwargs['vacuna_aplicada']
+    vacuna = VacunasAplicadas.objects.get(id = vacuna_id)
     if request.method == 'POST':
         form = devolucionForm(request.POST)
         if form.is_valid():
-            form.save()
-            return redirect('/personal_vacunatorio/')  
+            vacuna.lote = form.cleaned_data.get("lote")
+            vacuna.observacion = form.cleaned_data.get("observacion")
+            vacuna.save()
+            return redirect('/personal_vacunatorio/turnos')  
     form = devolucionForm()  
     context = {'form': form}
-    return render(request, 'personalVacunatorio/devolucion.html/', context) 
+    return render(request, 'personalVacunatorio/devolucion.html', context) 
 
     
 
@@ -126,7 +132,9 @@ def vacunacion_exitosa(request, **kwargs):
         paciente_id = paciente.paciente_id,
     )
     vacuna_aplicada.save()
-    return redirect('/personal_vacunatorio/turnos/')
+    form = devolucionForm()  
+    context = {'vacuna_aplicada': vacuna_aplicada.id, 'form': form} 
+    return render(request, 'personalVacunatorio/devolucion.html', context)
 
 
 def vacunacion_fallida(request, **kwargs): #Inasistencia
@@ -136,6 +144,8 @@ def vacunacion_fallida(request, **kwargs): #Inasistencia
             turno_id = kwargs['turno_id'],
             solicitud_id = kwargs['turno_id'],
             turno_perdido = True,
+            turno_pendiente = False,
         )
     inasistencia.save()
+    #Generar nueva solicitud
     return redirect('/personal_vacunatorio/turnos/')

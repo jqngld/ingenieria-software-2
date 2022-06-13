@@ -5,14 +5,11 @@
 {% block content %}
 
 
-
-
-<form method="post"> 
+<form action="/personal_vacunatorio/devolucion/{{vacuna_aplicada}}/" method="post"> 
     {% csrf_token %} 
     {{ form|crispy}}
-   <button> <input type="submit" value="enviar devolucion"> </button> 
+   <input type="submit" class="btn btn-primary" value="Confirmar Aplicación"> 
 </form> 
-<a href="/personalVacunatorio/listar_turnos">Cancelar</a>
 
 
 

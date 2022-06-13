@@ -105,9 +105,8 @@
                                 <td>{{ turno.vacuna_nombre }}</td>
                                 <td>
                                     <!-- botón de confirmar asistencia -->
-                                    <button type="button" class="btn btn-outline-success" data-toggle="tooltip" data-placement="right" title="Confirmar Asistencia" onclick="window.location.href='vacunacion_exitosa/{{ turno.turno_id }}/{{ turno.paciente_dni }}/{{ turno.vacuna_nombre }}'"></button>
+                                    <button type="button" class="btn btn-outline-success" data-toggle="tooltip" data-placement="right" title="Confirmar Asistencia" onclick="window.location.href='vacunacion_exitosa/{{ turno.turno_id }}/{{ turno.paciente_dni }}/{{ turno.vacuna_nombre }}'">
                                         <i class="bi bi-check-square-fill"></i>
-                                        <a href="/personal_vacunatorio/devolucion/">confirmar</a>
                                     </button>
                                     <!-- botón de confirmar inasistencia -->
                                     <button type="button" class="btn btn-outline-danger" data-toggle="tooltip" data-placement="right" title="Confirmar Inasistencia" onclick="window.location.href='vacunacion_fallida/{{ turno.turno_id }}'">
