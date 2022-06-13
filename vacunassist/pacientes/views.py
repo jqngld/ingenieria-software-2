@@ -32,8 +32,8 @@ def inicio_pacientes(request):
 
 def login(request):   
     if request.method == "POST":
-       form = UserSign(data=request.POST)
-       if form.is_valid(): 
+        form = UserSign(data=request.POST)
+        if form.is_valid(): 
             mail = form.cleaned_data.get("email")
             contraseña = form.cleaned_data.get("password")
             token = form.cleaned_data.get("token")
@@ -42,9 +42,9 @@ def login(request):
                 auth_login(request, user)
                 return redirect('/pacientes/')
             else:
-                 messages.error(request, "Alguna/s de las credenciales ingresadas son incorrectas.")  
-       else: 
-             messages.error(request, "informacion")
+                messages.error(request, "Alguna/s de las credenciales ingresadas son incorrectas.")  
+        else: 
+            messages.error(request, "informacion")
     form = UserSign()     
     context = {'form' : form}
     return render(request, 'pacientes/login.html', context)

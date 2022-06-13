@@ -66,8 +66,7 @@ class PersonalSignUpForm(UserCreationForm):
 
 
 class devolucionForm(forms.ModelForm):
-        class Meta:
-          model = VacunasAplicadas
-          fields = [
-            "observacion", "lote",
-        ]
+    
+    class Meta:
+        model = VacunasAplicadas
+        fields = ['lote', 'observacion']

@@ -1,5 +1,3 @@
-from multiprocessing import context
-from optparse import Values
 from django.http import HttpResponse, HttpResponseRedirect
 from django.contrib import messages
 from django.shortcuts import redirect, render
@@ -113,55 +111,80 @@ def devolucion(request, **kwargs):
     context = {'form': form}
     return render(request, 'personalVacunatorio/devolucion.html', context) 
 
-    
 
 def vacunacion_exitosa(request, **kwargs):
 
-    vacuna = VacunasDetalles.objects.get(nombre=kwargs['vacuna_nombre'])
-    paciente = PacientesDetalles.objects.get(dni=kwargs['paciente_dni'])
+    if request.method == 'POST':
+        form = devolucionForm(request.POST)
 
-    # Esto que está comentado es para crear un registro nuevo, para actualizar
-    # un registro, hay que traérselo con get, cambiarle los valores y hacer save
-    # como está abajo.
-    # turno_completado = PacientesTurnos(
-    #         turno_id = kwargs['turno_id'],
-    #         solicitud_id = kwargs['turno_id'],
-    #         turno_pendiente = False,
-    #         turno_completado = True,
-    #     )
-    
-    turno = PacientesTurnos.objects.get(turno_id = kwargs['turno_id'])
-    turno.turno_pendiente = False
-    turno.turno_completado = True
-    turno.save()
-    
-    vacuna_aplicada = VacunasAplicadas(
-        vacuna_id = vacuna.vacuna_id,
-        fecha_vacunacion = datetime.today().strftime('%Y-%m-%d'),
-        paciente_id = paciente.paciente_id,
-    )
-    vacuna_aplicada.save()
-    
-    form = devolucionForm()  
-    context = {'vacuna_aplicada': vacuna_aplicada.id, 'form': form} 
+        if form.is_valid():
+            # cambio el estado del turno a completado
+            turno = PacientesTurnos.objects.get(turno_id = kwargs['turno_id'])
+            turno.turno_pendiente = False
+            turno.turno_completado = True
+            turno.save()
+
+            # genero la vacuna aplicada con la información detallada            
+            vacuna_aplicada = VacunasAplicadas(
+                vacuna_id = kwargs['vacuna_nombre'],
+                paciente_id = kwargs['paciente_dni'],
+                lote = form.cleaned_data.get('lote'),
+                observacion = form.cleaned_data.get('observacion'),
+                fecha_vacunacion = datetime.today().strftime('%Y-%m-%d'),
+            )
+            vacuna_aplicada.save()
+
+            messages.success(request, "La asistencia al turno fue confirmada con éxito.")
+            return redirect('/personal_vacunatorio/turnos/')
+        else:
+            return render(request, 'personalVacunatorio/devolucion.html', context)
+
+    else:
+        vacuna = VacunasDetalles.objects.get(nombre=kwargs['vacuna_nombre'])
+        paciente = PacientesDetalles.objects.get(dni=kwargs['paciente_dni'])
+
+        form = devolucionForm()
+        context = {
+            'form': form,
+            'turno_id': kwargs['turno_id'],
+            'vacuna_id' : vacuna.vacuna_id,
+            'paciente_id' : paciente.paciente_id,
+        }
+
     return render(request, 'personalVacunatorio/devolucion.html', context)
+    
+
+# def vacunacion_exitosa(request, **kwargs):
+
+#     vacuna = VacunasDetalles.objects.get(nombre=kwargs['vacuna_nombre'])
+#     paciente = PacientesDetalles.objects.get(dni=kwargs['paciente_dni'])
+    
+#     turno = PacientesTurnos.objects.get(turno_id = kwargs['turno_id'])
+#     turno.turno_pendiente = False
+#     turno.turno_completado = True
+#     turno.save()
+    
+#     vacuna_aplicada = VacunasAplicadas(
+#         vacuna_id = vacuna.vacuna_id,
+#         fecha_vacunacion = datetime.today().strftime('%Y-%m-%d'),
+#         paciente_id = paciente.paciente_id,
+#     )
+#     vacuna_aplicada.save()
+    
+#     form = devolucionForm()  
+#     context = {'vacuna_aplicada': vacuna_aplicada.id, 'form': form} 
+#     return render(request, 'personalVacunatorio/devolucion.html', context)
 
 
 def vacunacion_fallida(request, **kwargs): #Inasistencia
 
     turno = PacientesTurnos.objects.get(turno_id = kwargs['turno_id'])
-    # Esto que está comentado, es por lo mismo que para el caso de la
-    # confirmación de la asistencia al turno
-    # inasistencia = PacientesTurnos(
-    #         turno_id = kwargs['turno_id'],
-    #         solicitud_id = kwargs['turno_id'],
-    #         turno_perdido = True,
-    #         turno_pendiente = False,
-    #     )
 
     turno.turno_pendiente = False
     turno.turno_perdido = True
     turno.save()
 
     #Generar nueva solicitud
+
+    messages.success(request, "La ausencia al turno fue registrada con éxito.")
     return redirect('/personal_vacunatorio/turnos/')

@@ -4,29 +4,22 @@
 {% block title %}  devolucion de vacuna aplicada {% endblock %}
 {% block content %}
 
+{% if messages %}
+        {% for message in messages %}
+        <div class="{% if message.tags == 'error' %} alert alert-warning {% else %} alert alert-success {% endif %}" style="padding-top: 10px;">
+            <button class="close" data-dismiss="alert" aria-label="close">&times;</button>
+            {{ message }}
+        </div>
+        {% endfor %}
+        {% endif %}
 
-<form action="/personal_vacunatorio/devolucion/{{vacuna_aplicada}}/" method="post"> 
+<form action="/personal_vacunatorio/turnos/vacunacion_exitosa/{{turno_id}}/{{paciente_id}}/{{vacuna_id}}/" method="POST">
     {% csrf_token %} 
     {{ form|crispy}}
-   <input type="submit" class="btn btn-primary" value="Confirmar Aplicación"> 
+
+    <button type="button" class="btn btn-dark" onClick="history.go(-1);">Atrás</button>
+    <button type="submit" class="btn btn-success">Confirmar Aplicación</button>
+
 </form> 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 {% endblock %}
