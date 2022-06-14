@@ -209,7 +209,7 @@ class descargar_comprobante(View):
         solicitud = PacientesSolicitudes.objects.filter(paciente_id=paciente.paciente_id, vacuna_id=kwargs['vacuna_id'])\
             .values('centro_vacunatorio')
         vacuna = VacunasAplicadas.objects.filter(paciente_id=paciente.paciente_id, vacuna_id=kwargs['vacuna_id'])\
-            .values('vacuna_id__nombre', 'fecha_vacunacion')
+            .values('vacuna_id__nombre', 'fecha_vacunacion', 'lote', 'observacion')
 
         fecha_descarga = datetime.today()
 

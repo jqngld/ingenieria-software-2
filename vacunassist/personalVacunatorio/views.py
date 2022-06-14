@@ -35,7 +35,7 @@ def login_personal(request):
             mail = form.cleaned_data.get("email")
             contraseña = form.cleaned_data.get("password")
             user = authenticate(request, email=mail, password=contraseña)
-            if user is not None:
+            if user is not None and user.tipo_usuario == 'personal':
                 personal_auth_login(request, user)
                 return redirect('/personal_vacunatorio/')
             else:
@@ -186,7 +186,7 @@ def vacunacion_fallida(request, **kwargs): #Inasistencia
 
     #Generar nueva solicitud
 
-    messages.success(request, "La ausencia al turno fué registrada con éxito.")
+    messages.success(request, "La ausencia al turno fue registrada con éxito.")
     return redirect('/personal_vacunatorio/turnos/')
 
 
@@ -195,6 +195,6 @@ def marcar_inasistencias(request):
     hoy = datetime.today().strftime('%Y-%m-%d')
     centro_vacunatorio = PersonalDetalles.objects.get(user_id=request.user.id).centro_vacunatorio
     turnos = PacientesTurnos.objects.filter(fecha_confirmada = hoy, turno_pendiente = True, solicitud_id__centro_vacunatorio = centro_vacunatorio).update(turno_perdido = True, turno_pendiente = False)
-    
-    messages.success(request, "La ausencia al turno fué registrada con éxito.")
+
+    messages.success(request, "La ausencia a todos los turnos fue registrada con éxito.")
     return redirect('/personal_vacunatorio/turnos/')
