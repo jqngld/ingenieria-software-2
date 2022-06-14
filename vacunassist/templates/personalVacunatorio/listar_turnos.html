@@ -48,7 +48,30 @@
                                 <th><input style="width: 100%;" type="text" placeholder="buscar por vacuna"/></th>
                                 <th>
                                     <!-- botón para marcar la ausencia de todos los turnos -->
-                                    <button type="button" class="btn btn-outline-danger" data-toggle="tooltip" data-placement="right" title="Marcar todos ausentes" onclick="window.location.href='marcar_inasistencias/'">
+                                    <div class="modal fade" id="confirm_ausence_all" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                                        <div class="modal-dialog modal-sm modal-dialog-centered" role="document">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title" id="exampleModalLongTitle">¿Confirmar ausencia?</h5>
+                                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                        <span aria-hidden="true">&times;</span>
+                                                    </button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <!-- <div class="container-fluid"> -->
+                                                        <button type="button" class="btn btn-danger" data-dismiss="modal" aria-label="Cancelar">
+                                                            <span aria-hidden="true">Cancelar</span>
+                                                        </button>
+                                                        <button type="button" class="btn btn-success" data-dismiss="modal" aria-label="Confirmar" onclick="window.location.href='marcar_inasistencias/'">
+                                                        <span aria-hidden="true">Confirmar</span>
+                                                    </button>
+                                                    <!-- </div> -->
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-- botón de confirmar inasistencia -->
+                                    <button type="button" class="btn btn-outline-danger" data-toggle="modal" data-target="#confirm_ausence_all" data-placement="right" title="Marcar todos ausentes">
                                         <i class="bi bi-x-square-fill"></i>
                                     </button>
                                 </th>
