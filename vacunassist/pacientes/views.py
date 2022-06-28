@@ -252,7 +252,7 @@ def restPassword(request):
                 form.save(from_email='blabla@blabla.com', email_template_name='registration/password_reset_email.html', request=request)
                 return redirect('/pacientes/restablecer-contrasenia-hecho')          
             else:
-                messages.error(request, " No existe ese mail")  
+                messages.error(request, " El mail ingresado no es correcto o no lo tenemos registrado en el sistema ")  
         else: 
               messages.error(request, " No existe ese mail") 
     form =  PasswordResetForm()     
