@@ -116,7 +116,6 @@ def vacunacion_exitosa(request, **kwargs):
 
     if request.method == 'POST':
         form = devolucionForm(request.POST)
-
         if form.is_valid():
             # cambio el estado del turno a completado
             turno = PacientesTurnos.objects.get(turno_id = kwargs['turno_id'])
@@ -154,7 +153,7 @@ def vacunacion_exitosa(request, **kwargs):
     return render(request, 'personalVacunatorio/devolucion.html', context)
     
 
-# def vacunacion_exitosa(request, **kwargs):
+ # def vacunacion_exitosa(request, **kwargs):
 
 #     vacuna = VacunasDetalles.objects.get(nombre=kwargs['vacuna_nombre'])
 #     paciente = PacientesDetalles.objects.get(dni=kwargs['paciente_dni'])

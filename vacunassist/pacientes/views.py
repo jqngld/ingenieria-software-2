@@ -1,3 +1,4 @@
+import email
 from django.contrib import messages
 from django.shortcuts import redirect, render
 from django.contrib.auth.decorators import login_required
@@ -240,15 +241,35 @@ class LoginAfterPasswordChangeView(PasswordChangeView):
 login_after_password_change = login_required(LoginAfterPasswordChangeView.as_view())
 
 
-class restPassword(PasswordResetView):
-      form_class = PasswordResetForm
-      success_url ="/pacientes/restablecer-contrasenia-hecho/"
+     
+     
+def restPassword(request):   
+    if request.method == "POST":
+        form = PasswordResetForm(data=request.POST)
+        if form.is_valid(): 
+            mail = form.cleaned_data.get("email")
+            if Usuarios.objects.filter(email=mail).exists():
+                form.save(from_email='blabla@blabla.com', email_template_name='registration/password_reset_email.html', request=request)
+                return redirect('/pacientes/restablecer-contrasenia-hecho')          
+            else:
+                messages.error(request, " No existe ese mail")  
+        else: 
+              messages.error(request, " No existe ese mail") 
+    form =  PasswordResetForm()     
+    context = {'form' : form}
+    return render(request, 'pacientes/restablecer-contrasenia.html', context)     
+     
       
 class restPasswordConfirm(PasswordResetConfirmView):
       form_class = SetPasswordForm
-     
+
+                
+#class restPassword(PasswordResetView):
+ #    form_class = PasswordResetForm
+  #   success_url ="/pacientes/restablecer-contrasenia-hecho/"     
 
 def restDone(request):
+    
     return render(request, 'pacientes/restablecer-contrasenia-hecho.html')     
       
       

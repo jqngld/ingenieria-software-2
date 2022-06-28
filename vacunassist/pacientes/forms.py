@@ -11,6 +11,17 @@ import random
 from email.mime.image import MIMEImage
 from datetime import date, datetime, timedelta
 from dateutil.relativedelta import relativedelta
+from django.template import loader
+from django.contrib.auth import authenticate, get_user_model, password_validation
+from django.contrib.auth.tokens import default_token_generator
+from django.contrib.sites.shortcuts import get_current_site
+from django.utils.http import urlsafe_base64_encode
+from django.utils.encoding import force_bytes
+
+
+
+
+
 
 
 class  UserSign(forms.Form):
@@ -18,7 +29,7 @@ class  UserSign(forms.Form):
    password = forms.CharField(label="Contraseña", widget=forms.PasswordInput())
    token = forms.IntegerField(label='token', required=True)
    
-   
+
    
 
 class UserSignUpForm(UserCreationForm):

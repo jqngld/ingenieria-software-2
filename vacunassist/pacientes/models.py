@@ -133,8 +133,8 @@ class PacientesTurnos(models.Model):
 class VacunasAplicadas(models.Model):
     vacuna = models.ForeignKey(VacunasDetalles, on_delete=models.CASCADE)
     paciente = models.ForeignKey(PacientesDetalles, on_delete=models.CASCADE) 
-    lote = models.CharField('lote', max_length=100, blank=False, null=False, default="no hay datos del lote")
-    observacion = models.CharField('observacion', max_length=100, blank=True, null=True, default="sin observaciones")
+    lote = models.CharField('lote', max_length=100, blank=False, null=False, default=" ")
+    observacion = models.CharField('observacion', max_length=100, blank=True, null=True)
     fecha_vacunacion = models.DateField('Fecha de Vacunacion', blank=False)
 
     class Meta:
