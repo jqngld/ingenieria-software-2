@@ -62,7 +62,7 @@
             <a class="nav-link text-uppercase text-expanded" href="/admin/pacientes/pacientesturnos/">Turnos</a>
           </li>
          <li class="nav-item {% if request.path|slice:'18' == '/admin/logout/' %}active{% endif %} px-lg-6">
-           <a class="nav-link text-uppercase text-expanded" href="logout/">Cerrar Sesión</a>
+           <a class="nav-link text-uppercase text-expanded" href="/admin/logout/">Cerrar Sesión</a>
          </li>
            {% else %}
                <li class="nav-item {% if request.path == '/admin/login/' %}active{% endif %} px-lg-6">
