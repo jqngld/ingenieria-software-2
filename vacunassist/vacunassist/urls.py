@@ -22,6 +22,7 @@ from vacunassist.views import *
 urlpatterns = [
     path('', home),
     path('admin/', admin.site.urls),
+    path('administrador/', include('administrador.urls')),
     path('pacientes/', include('pacientes.urls')),
     path('personal_vacunatorio/', include('personalVacunatorio.urls')),
 ]

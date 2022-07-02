@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'crispy_forms',
     'pacientes', 
     'personalVacunatorio',
+    'administrador',
 ]
 
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
