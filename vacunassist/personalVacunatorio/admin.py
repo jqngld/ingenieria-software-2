@@ -1,3 +1,4 @@
+from django import forms
 from django.contrib import admin
 from django.contrib import messages
 from django.shortcuts import render, redirect
@@ -47,6 +48,8 @@ class PersonalAdmin(admin.ModelAdmin):
             form.base_fields['password2'].widget.render_value = True
             form.base_fields['password1'].initial = obj.password
             form.base_fields['password2'].initial = obj.password
+            form.base_fields['password1'].widget = forms.HiddenInput()
+            form.base_fields['password2'].widget = forms.HiddenInput()
 
             form.base_fields['nombre'].initial = user.nombre
             form.base_fields['apellido'].initial = user.apellido
