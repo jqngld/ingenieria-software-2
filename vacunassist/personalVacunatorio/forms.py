@@ -77,14 +77,22 @@ class PersonalSignUpForm(UserCreationForm):
         user.tipo_usuario = 'personal'
         user.save()
         
-        personal_details = PersonalDetalles(
-            user = user,
-            nombre             = self.cleaned_data['nombre'],
-            apellido           = self.cleaned_data['apellido'],
-            numero_telefono    = self.cleaned_data['numero_telefono'],
-            fecha_nacimiento   = self.cleaned_data['fecha_nacimiento'],
-            centro_vacunatorio = self.cleaned_data['centro_vacunatorio'],
-        )
+        if PersonalDetalles.objects.filter(user=user).exists():
+            personal_details = PersonalDetalles.objects.get(user=user)
+            personal_details.nombre             = self.cleaned_data['nombre']
+            personal_details.apellido           = self.cleaned_data['apellido']
+            personal_details.numero_telefono    = self.cleaned_data['numero_telefono']
+            personal_details.fecha_nacimiento   = self.cleaned_data['fecha_nacimiento']
+            personal_details.centro_vacunatorio = self.cleaned_data['centro_vacunatorio']
+        else:
+            personal_details = PersonalDetalles(
+                user = user,
+                nombre             = self.cleaned_data['nombre'],
+                apellido           = self.cleaned_data['apellido'],
+                numero_telefono    = self.cleaned_data['numero_telefono'],
+                fecha_nacimiento   = self.cleaned_data['fecha_nacimiento'],
+                centro_vacunatorio = self.cleaned_data['centro_vacunatorio'],
+            )
         personal_details.save()
 
         return user

@@ -39,18 +39,19 @@ class PersonalAdmin(admin.ModelAdmin):
     def get_form(self, request, obj=None, **kwargs):
         form = super(PersonalAdmin, self).get_form(request, obj, **kwargs)
 
-        user = PersonalDetalles.objects.get(user=obj.id)
+        print(obj)
+        if not obj is None:
+            user = PersonalDetalles.objects.get(user=obj.id)
 
-        print(obj.password)
-        form.base_fields['password1'].widget.render_value = True
-        form.base_fields['password2'].widget.render_value = True
-        form.base_fields['password1'].initial = obj.password
-        form.base_fields['password2'].initial = obj.password
-        
-        form.base_fields['nombre'].initial = user.nombre
-        form.base_fields['apellido'].initial = user.apellido
-        form.base_fields['numero_telefono'].initial = user.numero_telefono
-        form.base_fields['fecha_nacimiento'].initial = user.fecha_nacimiento.strftime('%Y-%m-%d')
+            form.base_fields['password1'].widget.render_value = True
+            form.base_fields['password2'].widget.render_value = True
+            form.base_fields['password1'].initial = obj.password
+            form.base_fields['password2'].initial = obj.password
+
+            form.base_fields['nombre'].initial = user.nombre
+            form.base_fields['apellido'].initial = user.apellido
+            form.base_fields['numero_telefono'].initial = user.numero_telefono
+            form.base_fields['fecha_nacimiento'].initial = user.fecha_nacimiento.strftime('%Y-%m-%d')
 
         return form
 
