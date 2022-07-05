@@ -1,10 +1,141 @@
 from django.contrib import admin
+from django.contrib import messages
+from django.shortcuts import render, redirect
 from .models import *
 
 
-# admin.site.register(Usuarios)
-admin.site.register(VacunasDetalles)
-admin.site.register(PacientesTurnos)
-admin.site.register(PacientesDetalles)
-admin.site.register(PacientesSolicitudes)
-admin.site.register(VacunasAplicadas)
+
+
+
+
+class SolicitudesNoRiesgo(PacientesSolicitudes):
+    class Meta:
+        proxy = True
+        verbose_name = 'solicitudes de pacientes'
+        verbose_name_plural = 'Solicitudes de Pacientes'
+
+@admin.register(SolicitudesNoRiesgo)
+class SolicitudesNoRiesgoAdmin(admin.ModelAdmin):
+
+    actions = ['asignar_turno']
+    fields = ('paciente', 'vacuna', 'centro_vacunatorio', 'format_fecha_solicitud', 'format_fecha_estimada')
+    list_filter = ('paciente__nombre', 'paciente__apellido', 'centro_vacunatorio')
+    list_display = ('paciente', 'centro_vacunatorio', 'vacuna', 'format_fecha_solicitud', 'format_fecha_estimada')
+    readonly_fields = ('paciente', 'vacuna', 'centro_vacunatorio', 'format_fecha_solicitud', 'format_fecha_estimada')
+
+
+    # función para no permitir que se añada un elemento
+    def has_add_permission(self, request):
+        return False
+
+    # función para no permitir que se elimine un elemento
+    def has_delete_permission(self, request, obj=None):
+        return False
+
+    # sobreescribo el método de buscado de elementos para filtrar por criterios
+    def get_search_results(self, request, queryset, search_term):
+        queryset, use_distinct = super().get_search_results(request, queryset, search_term)
+
+        queryset = PacientesSolicitudes.objects.select_related('paciente')\
+                    .filter(solicitud_aprobada=0, paciente__es_paciente_riesgo=0)
+
+        return queryset, use_distinct
+    
+
+    # aplico formatos a las fechas que se listan
+    @admin.display(description='Fecha Solicitud')
+    def format_fecha_solicitud(self, obj):
+        return obj.fecha_solicitud.strftime('%d-%m-%Y')
+
+    @admin.display(description='Fecha Sugerida')
+    def format_fecha_estimada(self, obj):
+        return obj.fecha_estimada.strftime('%d-%m-%Y')        
+
+    # registro la acción para asignar fechas a las solicitudes
+    @admin.action(description='Asignar fecha a solicitudes seleccionadas')
+    def asignar_turno(self, request, queryset):
+
+        if 'apply' in request.POST:
+            confirmed_date = request.POST.get('confirmed_date')
+            for solicitud in queryset:
+                turno = PacientesTurnos(
+                    solicitud        = solicitud,
+                    turno_perdido    = 0,
+                    turno_pendiente  = 1,
+                    turno_completado = 0,
+                    fecha_confirmada = confirmed_date,
+                )
+                turno.save()
+                solicitud.solicitud_aprobada = 1
+                solicitud.save()
+            messages.success(request, 'Se confirmó la fecha de turno %s para %s solicitudes.' % (confirmed_date, queryset.count()))
+            return redirect('%s' % (request.get_full_path()))
+
+        context = {'orders' : queryset}
+        return render(request, 'admin/asignar_turno_intermedio.html', context)
+
+
+class SolicitudesRiesgo(PacientesSolicitudes):
+    class Meta:
+        proxy = True
+        verbose_name = 'solicitudes de pacientes de riesgo'
+        verbose_name_plural = 'Solicitudes de Pacientes de Riesgo'
+
+@admin.register(SolicitudesRiesgo)
+class SolicitudesRiesgoAdmin(admin.ModelAdmin):
+
+    actions = ['asignar_turno']
+    fields = ('paciente', 'vacuna', 'centro_vacunatorio', 'format_fecha_solicitud', 'format_fecha_estimada')
+    list_filter = ('paciente__nombre', 'paciente__apellido', 'centro_vacunatorio')
+    list_display = ('paciente', 'centro_vacunatorio', 'vacuna', 'format_fecha_solicitud', 'format_fecha_estimada')
+    readonly_fields = ('paciente', 'vacuna', 'centro_vacunatorio', 'format_fecha_solicitud', 'format_fecha_estimada')
+
+
+    # función para no permitir que se añada un elemento
+    def has_add_permission(self, request):
+        return False
+
+    # función para no permitir que se elimine un elemento
+    def has_delete_permission(self, request, obj=None):
+        return False
+
+    # sobreescribo el método de buscado de elementos para filtrar por criterios
+    def get_search_results(self, request, queryset, search_term):
+        queryset, use_distinct = super().get_search_results(request, queryset, search_term)
+
+        queryset = PacientesSolicitudes.objects.select_related('paciente')\
+                    .filter(solicitud_aprobada=0, paciente__es_paciente_riesgo=1)
+
+        return queryset, use_distinct
+    
+
+    # aplico formatos a las fechas que se listan
+    @admin.display(description='Fecha Solicitud')
+    def format_fecha_solicitud(self, obj):
+        return obj.fecha_solicitud.strftime('%d-%m-%Y')
+
+    @admin.display(description='Fecha Sugerida')
+    def format_fecha_estimada(self, obj):
+        return obj.fecha_estimada.strftime('%d-%m-%Y')
+
+    # registro la acción para asignar fechas a las solicitudes
+    @admin.action(description='Asignar fecha a solicitudes seleccionadas')
+    def asignar_turno(self, request, queryset):
+
+        if 'apply' in request.POST:
+            confirmed_date = request.POST.get('confirmed_date')
+            for solicitud in queryset:
+                turno = PacientesTurnos(
+                    solicitud        = solicitud,
+                    turno_perdido    = 0,
+                    turno_pendiente  = 1,
+                    turno_completado = 0,
+                    fecha_confirmada = confirmed_date,
+                )
+                turno.save()
+                solicitud.solicitud_aprobada = 1
+                solicitud.save()
+            messages.success(request, 'Se confirmó la fecha de turno %s para %s solicitudes.' % (confirmed_date, queryset.count()))
+            return redirect('%s' % (request.get_full_path()))
+        context = {'orders' : queryset}
+        return render(request, 'admin/asignar_turno_intermedio.html', context)

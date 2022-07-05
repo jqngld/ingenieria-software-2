@@ -6,7 +6,7 @@ from personalVacunatorio.models import PersonalDetalles
 from pacientes.models import VacunasAplicadas
 
 
-class  PersonalSignIn(forms.Form):
+class PersonalSignIn(forms.Form):
    
     email = forms.EmailField(
         max_length=200,
@@ -33,6 +33,26 @@ class PersonalSignUpForm(UserCreationForm):
     ]
 
     
+    nombre = forms.CharField(
+        max_length=100,
+        required=True,
+        widget=forms.TextInput(attrs = {'class' : 'form-control','placeholder' : 'Nombre'})
+    )
+    apellido = forms.CharField(
+        max_length=100,
+        required=True,
+        widget=forms.TextInput(attrs = {'class' : 'form-control','placeholder' : 'Apellido'})
+    )
+    numero_telefono = forms.IntegerField(
+        label='Número Teléfono',
+        required=False,
+        widget=forms.TextInput(attrs = {'class' : 'form-control','placeholder' : 'Número de teléfono'})
+    )
+    fecha_nacimiento = forms.DateField(
+        required=True,
+        label='Fecha Nacimiento',
+        widget=forms.DateInput(attrs = {'type': 'date', 'class' : 'form-control', 'placeholder' : 'Fecha de Nacimiento'})
+    )
     email = forms.EmailField(
         max_length=200,
         required=True,
@@ -47,7 +67,8 @@ class PersonalSignUpForm(UserCreationForm):
 
     class Meta:
         model = Usuarios
-        fields = ('email', 'password1', 'password2', 'centro_vacunatorio',)
+        fields = ('nombre', 'apellido', 'numero_telefono', 'fecha_nacimiento',
+                  'email', 'password1', 'password2', 'centro_vacunatorio',)
 
     def save(self, commit=True):
         # if not commit:
@@ -58,6 +79,10 @@ class PersonalSignUpForm(UserCreationForm):
         
         personal_details = PersonalDetalles(
             user = user,
+            nombre             = self.cleaned_data['nombre'],
+            apellido           = self.cleaned_data['apellido'],
+            numero_telefono    = self.cleaned_data['numero_telefono'],
+            fecha_nacimiento   = self.cleaned_data['fecha_nacimiento'],
             centro_vacunatorio = self.cleaned_data['centro_vacunatorio'],
         )
         personal_details.save()

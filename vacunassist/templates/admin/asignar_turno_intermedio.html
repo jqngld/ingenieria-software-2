@@ -1,0 +1,54 @@
+<!-- 'admin/asignar_turno_intermedio.html' -->
+{% extends "admin/base_site.html" %}
+
+{% block content %}
+
+
+<div class="container">
+    <div class="row justify-content-md-center">
+        <div class="col-md-6 my-4">
+            <div class="card">
+                
+                <form action="" method="POST">
+                    {% csrf_token %}
+                    
+                    {% for order in orders %}
+                    <!-- <p>{{ order }}</p> -->
+                    <input type="hidden" name="_selected_action" value="{{ order.pk }}">
+                    {% endfor %}
+                    
+                    <div class="row my-3 mx-3">
+                        <h1 style="color:black">Indique la fecha de confirmación para los turnos seleccionados:</h1>
+                        <div class="col-md-6">
+                            <div class="fieldWrapper">
+                                <!-- <label for="confirmed_date_id">Fecha confirmada</label> -->
+                                <input type="date" id="confirmed_date_id" class="form-control" name="confirmed_date" required="true">
+                            </div>
+                        </div>
+                    </div>
+    
+                    <div class="row my-3 mx-3">
+                        <div class="col-sm-6">
+                            <input type="hidden" name="action" value="asignar_turno">
+                            <button type="button" class="btn btn-dark" onClick="history.go(-1);">Atrás</button>
+                            <button type="submit" class="btn btn-success" name="apply">Asignar</button>
+                        </div>
+                    </div>
+
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script>
+    confirmed_date_id.min = new Date().toISOString().split("T")[0];
+
+    // $('.datepicker').datepicker({ min: new Date(2015,3,20),
+    //     max: new Date(2015,7,14)
+    // });
+</script>
+
+{% endblock %}
+

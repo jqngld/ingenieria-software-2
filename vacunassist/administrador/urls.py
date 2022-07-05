@@ -4,6 +4,7 @@ from administrador.views import *
 
 # admin.site.password_change_template = 'admin/change_password.html'
 # admin.site.password_change_done_template = 'admin/change_password_done.html'
+
 admin.site.index_template = 'admin/index.html'
 
 urlpatterns = [
