@@ -6,7 +6,9 @@ from django.contrib.auth import logout as personal_logout
 from django.contrib.auth import login as personal_auth_login
 from django.contrib.auth.decorators import login_required
 from django.views import View
-
+from django.contrib.auth.views import PasswordChangeView,PasswordResetView,PasswordResetConfirmView, PasswordResetCompleteView
+from django.contrib.auth.forms import PasswordChangeForm ,PasswordResetForm,SetPasswordForm
+from django.urls import reverse_lazy
 from pacientes.models import *
 from .forms import *
 
@@ -197,3 +199,46 @@ def marcar_inasistencias(request):
 
     messages.success(request, "La ausencia a todos los turnos fue registrada con éxito.")
     return redirect('/personal_vacunatorio/turnos/')
+
+
+
+
+
+class LoginAfterPasswordChangeView(PasswordChangeView):
+    @property
+    def success_url(self):
+        return reverse_lazy('inicio_sesion/')
+
+login_after_password_change = login_required(LoginAfterPasswordChangeView.as_view())
+
+
+     
+     
+def restPasswordPer(request):   
+    if request.method == "POST":
+        form = PasswordResetForm(data=request.POST)
+        if form.is_valid(): 
+            mail = form.cleaned_data.get("email")
+            if Usuarios.objects.filter(email=mail).exists():
+                form.save(from_email='blabla@blabla.com', email_template_name='registration/password_reset_email.html', request=request)
+                return redirect('/personal_vacunatorio/restablecer-contrasenia-hecho')          
+            else:
+                messages.error(request, " El mail ingresado no es correcto o no lo tenemos registrado en el sistema ")  
+        else: 
+              messages.error(request, " No existe ese mail") 
+    form =  PasswordResetForm()     
+    context = {'form' : form}
+    return render(request, 'personalVacunatorio/restablecer-contrasenia.html', context)     
+     
+      
+class restPasswordConfirm(PasswordResetConfirmView):
+      form_class = SetPasswordForm
+
+                
+#class restPassword(PasswordResetView):
+ #    form_class = PasswordResetForm
+  #   success_url ="/pacientes/restablecer-contrasenia-hecho/"     
+
+def restDone(request):
+    
+    return render(request, 'personalVacunatorio/restablecer-contrasenia-hecho.html')     

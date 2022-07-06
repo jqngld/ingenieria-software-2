@@ -17,14 +17,13 @@
 {% endif %}
 <div class="container">
     <div class="row justify-content-md-center">
-        <div class="col-md-6 my-4">
-            <div class="card">
-                <form method="POST" style="  width: 100%; max-width: 600px; margin: 15 auto; display: flex;flex-direction: column; justify-content: center; align-items: center;">
-                    {% csrf_token %}
-                    {{ form|crispy}}
-                    <button type="submit" class="btn btn-primary" id="submit">iniciar sesi&oacute;n</button>
-                </form>
-            </div>
+    <div class="col-md-6 my-4">
+        <div class="card">
+<form method="POST" style="  width: 100%; max-width: 600px; margin: 15 auto; display: flex;flex-direction: column; justify-content: center; align-items: center;">
+    {% csrf_token %}
+    {{ form|crispy}}
+    <a style="margin:15" href="{% url 'reset_passwordPer' %}">Olvidé mi contraseña</a>
+    <button type="submit" class="btn btn-primary" id="submit">iniciar sesi&oacute;n</button>
         </div>
     </div>
 </div>
