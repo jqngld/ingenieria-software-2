@@ -5,13 +5,40 @@ from .models import *
 
 
 # admin.site.register(Usuarios)
-admin.site.register(VacunasDetalles)
-admin.site.register(PacientesTurnos)
-admin.site.register(PacientesDetalles)
-admin.site.register(PacientesSolicitudes)
-admin.site.register(VacunasAplicadas) 
+# admin.site.register(VacunasDetalles)
+# admin.site.register(PacientesTurnos)
+# admin.site.register(PacientesDetalles)
+# admin.site.register(PacientesSolicitudes)
+# admin.site.register(VacunasAplicadas) 
 
+class UsuariosPacientes(Usuarios):
+    class Meta:
+        proxy = True
+        verbose_name_plural = 'Pacientes'
 
+@admin.register(UsuariosPacientes)
+class PacienteAdmin(admin.ModelAdmin):
+    # actions = ['list_admins']
+
+    # función para no permitir que se añada un elemento
+    def has_add_permission(self, request):
+        return False
+
+    # función para no permitir que se modifique un elemento
+    def has_change_permission(self, request, obj=None):
+        return False
+
+    # función para no permitir que se elimine un elemento
+    def has_delete_permission(self, request, obj=None):
+        return False
+
+    # sobreescribo el método de buscado de elementos para filtrar por criterios
+    def get_search_results(self, request, queryset, search_term):
+        queryset, use_distinct = super().get_search_results(request, queryset, search_term)
+
+        queryset = queryset.filter(tipo_usuario='paciente')
+
+        return queryset, use_distinct
 
 
 class SolicitudesNoRiesgo(PacientesSolicitudes):

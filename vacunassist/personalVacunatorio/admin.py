@@ -1,14 +1,9 @@
-from django import forms
 from django.contrib import admin
 from django.contrib import messages
 from django.shortcuts import render, redirect
 
-from .forms import PersonalSignUpForm, PersonalChangeForm
-from .models import PersonalDetalles
 from pacientes.models import Usuarios
-
-import copy
-from datetime import datetime
+from .forms import PersonalSignUpForm, PersonalChangeForm
 
 
 class UsuariosAdministradores(Usuarios):
@@ -19,7 +14,7 @@ class UsuariosAdministradores(Usuarios):
 @admin.register(UsuariosAdministradores)
 class PersonalAdmin(admin.ModelAdmin):
     # form = PersonalSignUpForm
-    actions = ['list_admins']
+    # actions = ['list_admins']
 
 
     def get_form(self, request, obj=None, **kwargs):
@@ -42,7 +37,7 @@ class PersonalAdmin(admin.ModelAdmin):
         return queryset, use_distinct
 
 
-    @admin.action(description='Listar Usuarios seleccionado/s')
+    # @admin.action(description='Listar Usuarios seleccionado/s')
     def list_admins(self, request, queryset):
 
         if 'apply' in request.POST:
