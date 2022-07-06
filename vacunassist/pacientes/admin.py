@@ -4,6 +4,12 @@ from django.shortcuts import render, redirect
 from .models import *
 
 
+# admin.site.register(Usuarios)
+admin.site.register(VacunasDetalles)
+admin.site.register(PacientesTurnos)
+admin.site.register(PacientesDetalles)
+admin.site.register(PacientesSolicitudes)
+admin.site.register(VacunasAplicadas) 
 
 
 
@@ -40,7 +46,7 @@ class SolicitudesNoRiesgoAdmin(admin.ModelAdmin):
                     .filter(solicitud_aprobada=0, paciente__es_paciente_riesgo=0)
 
         return queryset, use_distinct
-    
+
 
     # aplico formatos a las fechas que se listan
     @admin.display(description='Fecha Solicitud')
@@ -107,7 +113,7 @@ class SolicitudesRiesgoAdmin(admin.ModelAdmin):
                     .filter(solicitud_aprobada=0, paciente__es_paciente_riesgo=1)
 
         return queryset, use_distinct
-    
+
 
     # aplico formatos a las fechas que se listan
     @admin.display(description='Fecha Solicitud')
