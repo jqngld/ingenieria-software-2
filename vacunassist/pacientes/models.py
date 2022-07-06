@@ -58,8 +58,8 @@ class Usuarios(AbstractBaseUser):
 
 class PacientesDetalles(models.Model):
 
-    paciente_id = models.AutoField(primary_key=True)
     user = models.OneToOneField(Usuarios, on_delete=models.CASCADE)
+    paciente_id = models.AutoField(primary_key=True)
     
     dni = models.IntegerField('DNI', unique=True, blank=False, null=False)
     token = models.IntegerField('Token', blank=False, null=False)
