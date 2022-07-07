@@ -17,6 +17,7 @@ class UsuariosAdministradores(Usuarios):
 class PersonalAdmin(admin.ModelAdmin):
 
     # actions = ['list_admins']
+    list_display_links = None
     fields = (('nombre', 'apellido',), ('email', 'numero_telefono'), 'fecha_nacimiento', 'centro_vacunatorio') # campos dentro de change view
     list_display = ('nombre', 'apellido', 'email', 'centro_vacunatorio', 'boton')    # campos en la tabla del listado
     search_fields = ('nombre', 'apellido', 'email', 'centro_vacunatorio')
@@ -30,7 +31,12 @@ class PersonalAdmin(admin.ModelAdmin):
         link_change_info = "'http://127.0.0.1:8000/admin/personalVacunatorio/usuariosadministradores/%s/change/'" % (obj.pk)
         link_change_password = "'http://127.0.0.1:8000/admin/personalVacunatorio/usuariosadministradores/%s/change/'" % (obj.pk)
 
-        return mark_safe('<button type="button" onclick="window.location.href=%s" class="btn btn-success btn-sm" name="apply"><i class="bi bi-key"></i></button> <button type="button" onclick="window.location.href=%s" class="btn btn-success btn-sm" name="apply"><i class="bi bi-pencil"></i></button>' % (link_change_password, link_change_info))
+        return mark_safe(\
+                '\
+                <button type="button" title="Cambiar Contraseña" onclick="window.location.href=%s" class="btn btn-success btn-sm" name="apply"><i class="bi bi-key"></i></button>\
+                <button type="button" title="Editar Información" onclick="window.location.href=%s" class="btn btn-success btn-sm" name="apply"><i class="bi bi-pencil"></i></button>\
+                ' % (link_change_password, link_change_info)\
+                )
 
     @admin.display(description='Nombre')
     def nombre(self, obj):
