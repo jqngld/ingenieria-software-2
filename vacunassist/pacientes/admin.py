@@ -11,6 +11,40 @@ from .models import *
 # admin.site.register(PacientesSolicitudes)
 # admin.site.register(VacunasAplicadas) 
 
+class VacunaAdmin(admin.ModelAdmin):
+      fields = ('vacuna','lote','paciente__nombre')
+      list_filter = ('vacuna','lote','paciente__nombre','paciente__apellido')
+      list_display = ('vacuna','lote','nombrePaciente',)  
+      search_fields = ('paciente__nombre','paciente__apellido') 
+      
+      def nombrePaciente(self,obj):
+        return obj.paciente.nombre
+      nombrePaciente.short_description = 'nombre'
+         
+     
+      def apellido(self,obj):
+        return obj.paciente.apellido
+    
+    
+      
+         # función para no permitir que se añada un elemento
+      def has_add_permission(self, request):
+         return False
+
+    # función para no permitir que se modifique un elemento
+      def has_change_permission(self, request, obj=None):
+        return False
+
+    # función para no permitir que se elimine un elemento
+      def has_delete_permission(self, request, obj=None):
+        return False
+ 
+
+
+
+
+
+
 class UsuariosPacientes(Usuarios):
     class Meta:
         proxy = True
@@ -187,3 +221,9 @@ class SolicitudesRiesgoAdmin(admin.ModelAdmin):
             return redirect('%s' % (request.get_full_path()))
         context = {'orders' : queryset}
         return render(request, 'admin/asignar_turno_intermedio.html', context)
+    
+    
+    
+    
+    
+admin.site.register(VacunasAplicadas,VacunaAdmin)     
