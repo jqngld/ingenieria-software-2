@@ -1,4 +1,4 @@
-from attr import fields
+
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from pacientes.models import Usuarios
