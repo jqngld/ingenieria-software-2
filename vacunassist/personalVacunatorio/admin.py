@@ -2,8 +2,9 @@ from django.contrib import admin
 from django.contrib import messages
 from django.shortcuts import render, redirect
 
-from pacientes.models import Usuarios
 from .forms import PersonalSignUpForm, PersonalChangeForm
+from .models import PersonalDetalles
+from pacientes.models import Usuarios
 
 
 class UsuariosAdministradores(Usuarios):
@@ -21,11 +22,20 @@ class PersonalAdmin(admin.ModelAdmin):
         if obj is None:
             # formulario para agregar un nuevo usuario personal
             kwargs['form'] = PersonalSignUpForm
+            form = super().get_form(request, obj, **kwargs)
         else:
             # formulario para modificar un usuario personal
             kwargs['form'] = PersonalChangeForm
+            form = super().get_form(request, obj, **kwargs)
 
-        return super().get_form(request, obj, **kwargs)
+            personal_user = PersonalDetalles.objects.get(user=obj.id)
+            form.base_fields['nombre'].initial = personal_user.nombre
+            form.base_fields['apellido'].initial = personal_user.apellido
+            form.base_fields['numero_telefono'].initial = personal_user.numero_telefono
+            form.base_fields['centro_vacunatorio'].initial = personal_user.centro_vacunatorio
+            form.base_fields['fecha_nacimiento'].initial = personal_user.fecha_nacimiento.strftime('%Y-%m-%d')
+
+        return form
 
 
     # sobreescribo el método de buscado de elementos para filtrar por criterios
