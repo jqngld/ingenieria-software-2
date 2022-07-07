@@ -69,8 +69,7 @@ class SolicitudesNoRiesgoAdmin(admin.ModelAdmin):
     def get_search_results(self, request, queryset, search_term):
         queryset, use_distinct = super().get_search_results(request, queryset, search_term)
 
-        queryset = PacientesSolicitudes.objects.select_related('paciente')\
-                    .filter(solicitud_aprobada=0, paciente__es_paciente_riesgo=0)
+        queryset = queryset.select_related('paciente').filter(solicitud_aprobada=0, paciente__es_paciente_riesgo=0)
 
         return queryset, use_distinct
 
@@ -136,8 +135,7 @@ class SolicitudesRiesgoAdmin(admin.ModelAdmin):
     def get_search_results(self, request, queryset, search_term):
         queryset, use_distinct = super().get_search_results(request, queryset, search_term)
 
-        queryset = PacientesSolicitudes.objects.select_related('paciente')\
-                    .filter(solicitud_aprobada=0, paciente__es_paciente_riesgo=1)
+        queryset = queryset.select_related('paciente').filter(solicitud_aprobada=0, paciente__es_paciente_riesgo=1)
 
         return queryset, use_distinct
 
