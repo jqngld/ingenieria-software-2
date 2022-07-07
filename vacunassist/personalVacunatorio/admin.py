@@ -1,6 +1,7 @@
 from django.contrib import admin
 from django.contrib import messages
 from django.shortcuts import render, redirect
+from django.utils.html import mark_safe
 
 from .forms import PersonalSignUpForm, PersonalChangeForm
 from .models import PersonalDetalles
@@ -14,10 +15,38 @@ class UsuariosAdministradores(Usuarios):
 
 @admin.register(UsuariosAdministradores)
 class PersonalAdmin(admin.ModelAdmin):
-    # form = PersonalSignUpForm
+
     # actions = ['list_admins']
-    # list_display = ('email',) Continuar
-    # search_fields = ('email',)
+    fields = (('nombre', 'apellido',), ('email', 'numero_telefono'), 'fecha_nacimiento', 'centro_vacunatorio') # campos dentro de change view
+    list_display = ('nombre', 'apellido', 'email', 'centro_vacunatorio', 'boton')    # campos en la tabla del listado
+    search_fields = ('nombre', 'apellido', 'email', 'centro_vacunatorio')
+
+
+    @admin.display(description='Botón')
+    def boton(self, obj):
+        # el parámetro 'obj.pk' es el id del objeto dentro de la línea, hay que pasarlo en
+        # el link para saber qué objeto se va a usar
+        return mark_safe('<button type="button" onclick="window.location.href=%s" class="btn btn-success btn-sm" name="apply">Detalle</button>' % (f"'http://127.0.0.1:8000/admin/personalVacunatorio/usuariosadministradores/{obj.pk}/change/'"))
+
+    @admin.display(description='Nombre')
+    def nombre(self, obj):
+        return obj.personaldetalles.nombre
+
+    @admin.display(description='Apellido')
+    def apellido(self, obj):
+        return obj.personaldetalles.apellido
+
+    @admin.display(description='Número Teléfono')
+    def numero_telefono(self, obj):
+        return obj.personaldetalles.numero_telefono
+
+    @admin.display(description='Fecha Nacimiento')
+    def fecha_nacimiento(self, obj):
+        return obj.personaldetalles.fecha_nacimiento
+
+    @admin.display(description='Centro Vacunatorio')
+    def centro_vacunatorio(self, obj):
+        return obj.personaldetalles.apellido
 
 
     def get_form(self, request, obj=None, **kwargs):

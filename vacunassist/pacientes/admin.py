@@ -3,6 +3,8 @@ from django.contrib import messages
 from django.shortcuts import render, redirect
 from .models import *
 
+from datetime import date
+from dateutil.relativedelta import relativedelta
 
 # admin.site.register(Usuarios)
 # admin.site.register(VacunasDetalles)
@@ -53,7 +55,7 @@ class UsuariosPacientes(Usuarios):
 @admin.register(UsuariosPacientes)
 class PacienteAdmin(admin.ModelAdmin):
     # actions = ['list_admins']
-    list_display = ('format_nombre','format_apellido','format_dni','email','format_centro_vacunatorio')
+    list_display = ('format_nombre','format_apellido','format_dni','edad','email','format_centro_vacunatorio')
     search_fields = ('email','pacientesdetalles__nombre','pacientesdetalles__apellido','pacientesdetalles__dni', 'pacientesdetalles__centro_vacunatorio',)
 
     # función para no permitir que se añada un elemento
@@ -83,6 +85,10 @@ class PacienteAdmin(admin.ModelAdmin):
     @admin.display(description='Apellido')
     def format_apellido(self, obj):
         return obj.pacientesdetalles.apellido
+
+    @admin.display(description='Edad')
+    def edad(self, obj):
+        return relativedelta(date.today(), obj.pacientesdetalles.fecha_nacimiento).years
 
     @admin.display(description='Dni')
     def format_dni(self, obj):
