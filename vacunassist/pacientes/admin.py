@@ -19,7 +19,7 @@ class UsuariosPacientes(Usuarios):
 @admin.register(UsuariosPacientes)
 class PacienteAdmin(admin.ModelAdmin):
     # actions = ['list_admins']
-    list_display = ('email','format_nombre','format_apellido','format_dni','format_centro_vacunatorio',)
+    list_display = ('format_nombre','format_apellido','format_dni','email','format_centro_vacunatorio')
     search_fields = ('email','pacientesdetalles__nombre','pacientesdetalles__apellido','pacientesdetalles__dni', 'pacientesdetalles__centro_vacunatorio',)
 
     # función para no permitir que se añada un elemento
