@@ -16,6 +16,8 @@ class UsuariosAdministradores(Usuarios):
 class PersonalAdmin(admin.ModelAdmin):
     # form = PersonalSignUpForm
     # actions = ['list_admins']
+    # list_display = ('email',) Continuar
+    # search_fields = ('email',)
 
 
     def get_form(self, request, obj=None, **kwargs):

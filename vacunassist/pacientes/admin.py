@@ -19,6 +19,8 @@ class UsuariosPacientes(Usuarios):
 @admin.register(UsuariosPacientes)
 class PacienteAdmin(admin.ModelAdmin):
     # actions = ['list_admins']
+    list_display = ('email','format_nombre','format_apellido','format_dni','format_centro_vacunatorio',)
+    search_fields = ('email','pacientesdetalles__nombre','pacientesdetalles__apellido','pacientesdetalles__dni', 'pacientesdetalles__centro_vacunatorio',)
 
     # función para no permitir que se añada un elemento
     def has_add_permission(self, request):
@@ -36,10 +38,25 @@ class PacienteAdmin(admin.ModelAdmin):
     def get_search_results(self, request, queryset, search_term):
         queryset, use_distinct = super().get_search_results(request, queryset, search_term)
 
-        queryset = queryset.filter(tipo_usuario='paciente')
+        queryset = queryset.filter(tipo_usuario='paciente').select_related("pacientesdetalles")
 
         return queryset, use_distinct
 
+    @admin.display(description='Nombre')
+    def format_nombre(self, obj):
+        return obj.pacientesdetalles.nombre
+
+    @admin.display(description='Apellido')
+    def format_apellido(self, obj):
+        return obj.pacientesdetalles.apellido
+
+    @admin.display(description='Dni')
+    def format_dni(self, obj):
+        return obj.pacientesdetalles.dni
+
+    @admin.display(description='Centro')
+    def format_centro_vacunatorio(self, obj):
+        return obj.pacientesdetalles.centro_vacunatorio
 
 class SolicitudesNoRiesgo(PacientesSolicitudes):
     class Meta:
