@@ -22,11 +22,15 @@ class PersonalAdmin(admin.ModelAdmin):
     search_fields = ('nombre', 'apellido', 'email', 'centro_vacunatorio')
 
 
-    @admin.display(description='Botón')
+    @admin.display(description='Acciones')
     def boton(self, obj):
         # el parámetro 'obj.pk' es el id del objeto dentro de la línea, hay que pasarlo en
-        # el link para saber qué objeto se va a usar
-        return mark_safe('<button type="button" onclick="window.location.href=%s" class="btn btn-success btn-sm" name="apply">Detalle</button>' % (f"'http://127.0.0.1:8000/admin/personalVacunatorio/usuariosadministradores/{obj.pk}/change/'"))
+        # el link para saber qué objeto se va a usar, estos botones son de ejemplo y hacen lo mismo
+
+        link_change_info = "'http://127.0.0.1:8000/admin/personalVacunatorio/usuariosadministradores/%s/change/'" % (obj.pk)
+        link_change_password = "'http://127.0.0.1:8000/admin/personalVacunatorio/usuariosadministradores/%s/change/'" % (obj.pk)
+
+        return mark_safe('<button type="button" onclick="window.location.href=%s" class="btn btn-success btn-sm" name="apply"><i class="bi bi-key"></i></button> <button type="button" onclick="window.location.href=%s" class="btn btn-success btn-sm" name="apply"><i class="bi bi-pencil"></i></button>' % (link_change_password, link_change_info))
 
     @admin.display(description='Nombre')
     def nombre(self, obj):
