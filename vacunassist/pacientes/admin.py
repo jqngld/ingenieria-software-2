@@ -2,6 +2,9 @@ from django.contrib import admin
 from django.contrib import messages
 from django.shortcuts import render, redirect
 from .models import *
+from django.utils.html import mark_safe
+from django.urls import reverse
+from django.utils.safestring import mark_safe  
 
 from datetime import date
 from dateutil.relativedelta import relativedelta
@@ -13,19 +16,20 @@ from dateutil.relativedelta import relativedelta
 # admin.site.register(PacientesSolicitudes)
 # admin.site.register(VacunasAplicadas) 
 
-class VacunaAdmin(admin.ModelAdmin):
+
+class VacunaAdmin(admin.ModelAdmin):      
       fields = ('vacuna','lote','paciente')
       list_filter = ('vacuna','lote','paciente', 'fecha_vacunacion')
       list_display = ('vacuna','lote','nombrePaciente','apellido','fecha_vacunacion')  
-      search_fields = ('paciente__nombre','paciente__apellido') 
+      search_fields = ('paciente__nombre','paciente__apellido','vacuna__nombre') 
       
       
-        # sobreescribo el método de buscado de elementos para filtrar por criterios
+    # sobreescribo el método de buscado de elementos para filtrar por criterios
       def get_search_results(self, request, queryset, search_term):
         queryset, use_distinct = super().get_search_results(request, queryset, search_term)
-        
-        queryset = queryset.select_related('paciente')
-        
+
+        queryset = queryset.select_related("paciente")
+
         return queryset, use_distinct
       
       def nombrePaciente(self,obj):
@@ -35,7 +39,6 @@ class VacunaAdmin(admin.ModelAdmin):
      
       def apellido(self,obj):
         return obj.paciente.apellido
-    
     
     
       
@@ -55,8 +58,6 @@ class VacunaAdmin(admin.ModelAdmin):
 
 
 
-
-
 class UsuariosPacientes(Usuarios):
     class Meta:
         proxy = True
@@ -65,8 +66,29 @@ class UsuariosPacientes(Usuarios):
 @admin.register(UsuariosPacientes)
 class PacienteAdmin(admin.ModelAdmin):
     # actions = ['list_admins']
-    list_display = ('format_nombre','format_apellido','format_dni','edad','email','format_centro_vacunatorio')
-    search_fields = ('email','pacientesdetalles__nombre','pacientesdetalles__apellido','pacientesdetalles__dni', 'pacientesdetalles__centro_vacunatorio',)
+    list_display = ('format_nombre','format_apellido','format_dni','edad','email','format_centro_vacunatorio','boton')
+    search_fields = ('email','pacientesdetalles__nombre','pacientesdetalles__apellido','pacientesdetalles__dni', 'pacientesdetalles__centro_vacunatorio')
+    
+
+    
+    
+    
+    @admin.display(description='Acciones')
+    def boton(self, obj):
+        # el parámetro 'obj.pk' es el id del objeto dentro de la línea, hay que pasarlo en
+        # el link para saber qué objeto se va a usar, estos botones son de ejemplo y hacen lo mismo
+
+        link_change_info = "'http://127.0.0.1:8000/admin/pacientes/vacunasaplicadas/%s/change/'" % (obj.pk)
+        
+
+        return mark_safe(\
+                '\
+                <button type="button" title="Cambiar Contraseña" onclick="window.location.href=%s" class="btn btn-success btn-sm" name="apply"><i class="bi bi-key"></i></button>\
+                <button type="button" title="Editar Información" onclick="window.location.href=%s" class="btn btn-success btn-sm" name="apply"><i class="bi bi-pencil"></i></button>\
+                ' % ("" , link_change_info)\
+                )
+    
+
 
     # función para no permitir que se añada un elemento
     def has_add_permission(self, request):
@@ -80,7 +102,13 @@ class PacienteAdmin(admin.ModelAdmin):
     def has_delete_permission(self, request, obj=None):
         return False
 
-  
+    # sobreescribo el método de buscado de elementos para filtrar por criterios
+    def get_search_results(self, request, queryset, search_term):
+        queryset, use_distinct = super().get_search_results(request, queryset, search_term)
+
+        queryset = queryset.filter(tipo_usuario='paciente').select_related("pacientesdetalles")
+
+        return queryset, use_distinct
 
     @admin.display(description='Nombre')
     def format_nombre(self, obj):
@@ -114,7 +142,8 @@ class SolicitudesNoRiesgoAdmin(admin.ModelAdmin):
     actions = ['asignar_turno']
     fields = ('paciente', 'vacuna', 'centro_vacunatorio', 'format_fecha_solicitud', 'format_fecha_estimada')
     list_filter = ('paciente__nombre', 'paciente__apellido', 'centro_vacunatorio')
-    list_display = ('paciente', 'centro_vacunatorio', 'vacuna', 'format_fecha_solicitud', 'format_fecha_estimada')
+    search_fields = ('paciente__nombre', 'paciente__apellido', 'centro_vacunatorio','vacuna__nombre')
+    list_display = ('nombre','apellido' ,'centro_vacunatorio', 'vacuna', 'format_fecha_solicitud', 'format_fecha_estimada')
     readonly_fields = ('paciente', 'vacuna', 'centro_vacunatorio', 'format_fecha_solicitud', 'format_fecha_estimada')
 
 
@@ -142,7 +171,13 @@ class SolicitudesNoRiesgoAdmin(admin.ModelAdmin):
 
     @admin.display(description='Fecha Sugerida')
     def format_fecha_estimada(self, obj):
-        return obj.fecha_estimada.strftime('%d-%m-%Y')        
+        return obj.fecha_estimada.strftime('%d-%m-%Y')   
+    
+    def nombre(self,obj):
+        return obj.paciente.nombre
+     
+    def apellido(self,obj):
+        return obj.paciente.apellido
 
     # registro la acción para asignar fechas a las solicitudes
     @admin.action(description='Asignar fecha a solicitudes seleccionadas')
@@ -236,4 +271,6 @@ class SolicitudesRiesgoAdmin(admin.ModelAdmin):
     
     
     
-admin.site.register(VacunasAplicadas,VacunaAdmin)     
+admin.site.register(VacunasAplicadas,VacunaAdmin)
+   
+      

@@ -20,7 +20,7 @@ class PersonalAdmin(admin.ModelAdmin):
     list_display_links = None
     fields = (('nombre', 'apellido',), ('email', 'numero_telefono'), 'fecha_nacimiento', 'centro_vacunatorio') # campos dentro de change view
     list_display = ('nombre', 'apellido', 'email', 'centro_vacunatorio', 'boton')    # campos en la tabla del listado
-    search_fields = ('nombre', 'apellido', 'email', 'centro_vacunatorio')
+    search_fields = ('personaldetalles__nombre', 'personaldetalles__apellido', 'email', 'personaldetalles__centro_vacunatorio')
 
 
     @admin.display(description='Acciones')
@@ -83,7 +83,7 @@ class PersonalAdmin(admin.ModelAdmin):
     def get_search_results(self, request, queryset, search_term):
         queryset, use_distinct = super().get_search_results(request, queryset, search_term)
 
-        queryset = queryset.filter(tipo_usuario='personal')
+        queryset = queryset.filter(tipo_usuario='personal').select_related('personaldetalles')
 
         return queryset, use_distinct
 
