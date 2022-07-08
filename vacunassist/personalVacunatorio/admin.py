@@ -56,7 +56,7 @@ class PersonalAdmin(admin.ModelAdmin):
 
     @admin.display(description='Centro Vacunatorio')
     def centro_vacunatorio(self, obj):
-        return obj.personaldetalles.apellido
+        return obj.personaldetalles.centro_vacunatorio
 
 
     def get_form(self, request, obj=None, **kwargs):

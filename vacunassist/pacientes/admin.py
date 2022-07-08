@@ -19,7 +19,7 @@ from dateutil.relativedelta import relativedelta
 
 class VacunaAdmin(admin.ModelAdmin):      
       fields = ('vacuna','lote','paciente')
-      list_filter = ('vacuna','lote','paciente', 'fecha_vacunacion')
+      list_filter = ('vacuna','lote','paciente__nombre', 'fecha_vacunacion')
       list_display = ('vacuna','lote','nombrePaciente','apellido','fecha_vacunacion')  
       search_fields = ('paciente__nombre','paciente__apellido','vacuna__nombre') 
       
