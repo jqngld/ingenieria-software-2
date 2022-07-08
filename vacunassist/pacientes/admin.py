@@ -14,10 +14,19 @@ from dateutil.relativedelta import relativedelta
 # admin.site.register(VacunasAplicadas) 
 
 class VacunaAdmin(admin.ModelAdmin):
-      fields = ('vacuna','lote','paciente__nombre')
-      list_filter = ('vacuna','lote','paciente__nombre','paciente__apellido')
-      list_display = ('vacuna','lote','nombrePaciente',)  
+      fields = ('vacuna','lote','paciente')
+      list_filter = ('vacuna','lote','paciente', 'fecha_vacunacion')
+      list_display = ('vacuna','lote','nombrePaciente','apellido','fecha_vacunacion')  
       search_fields = ('paciente__nombre','paciente__apellido') 
+      
+      
+        # sobreescribo el método de buscado de elementos para filtrar por criterios
+      def get_search_results(self, request, queryset, search_term):
+        queryset, use_distinct = super().get_search_results(request, queryset, search_term)
+        
+        queryset = queryset.select_related('paciente')
+        
+        return queryset, use_distinct
       
       def nombrePaciente(self,obj):
         return obj.paciente.nombre
@@ -26,6 +35,7 @@ class VacunaAdmin(admin.ModelAdmin):
      
       def apellido(self,obj):
         return obj.paciente.apellido
+    
     
     
       
@@ -70,13 +80,7 @@ class PacienteAdmin(admin.ModelAdmin):
     def has_delete_permission(self, request, obj=None):
         return False
 
-    # sobreescribo el método de buscado de elementos para filtrar por criterios
-    def get_search_results(self, request, queryset, search_term):
-        queryset, use_distinct = super().get_search_results(request, queryset, search_term)
-
-        queryset = queryset.filter(tipo_usuario='paciente').select_related("pacientesdetalles")
-
-        return queryset, use_distinct
+  
 
     @admin.display(description='Nombre')
     def format_nombre(self, obj):
