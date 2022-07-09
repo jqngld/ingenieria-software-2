@@ -1,5 +1,5 @@
 from django.contrib import messages
-from django.shortcuts import render
+from django.shortcuts import redirect, render
 from django.contrib.auth import update_session_auth_hash
 from django.contrib.auth.views import PasswordChangeView
 from django.contrib.auth.forms import PasswordChangeForm
@@ -39,3 +39,11 @@ class PersonalChangePassword(PersonalPasswordChangeView):
     form_class = PasswordChangeForm
     template_name = 'admin/personal_password_change_form.html'
     success_url ="/admin/personalVacunatorio/usuariosadministradores/"
+
+def personal_detele_user(request, *args, **kwargs):
+
+    personal_user = Usuarios.objects.get(id=kwargs['pk'])
+    messages.success(request, 'El usuario "%s" fue eliminado correctamente.' % (personal_user.email))
+
+    personal_user.delete()
+    return redirect('/admin/personalVacunatorio/usuariosadministradores/')

@@ -25,13 +25,13 @@ from administrador.views import *
 
 urlpatterns = [
     path('', home),
-    path('admin/pacientes/info/vacunasaplicadas/<int:pk>/', ver_vacunas, name="ver_vacunas"),
-    path('admin/personalVacunatorio/cambiarcontrasena/<int:pk>/', PersonalChangePassword.as_view(), name="personal_change_password"),
+    path('admin/pacientes/info/vacunasaplicadas/<int:pk>/', ver_vacunas, name='ver_vacunas'),
+    path('admin/personalVacunatorio/eliminar/<int:pk>/', personal_detele_user, name='personal_detele_user'),
+    path('admin/personalVacunatorio/cambiarcontrasena/<int:pk>/', PersonalChangePassword.as_view(), name='personal_change_password'),
     path('admin/', admin.site.urls),
     path('administrador/', include('administrador.urls')),
     path('pacientes/', include('pacientes.urls')),
     path('personal_vacunatorio/', include('personalVacunatorio.urls')),
-    
 ]
 
 if settings.DEBUG:

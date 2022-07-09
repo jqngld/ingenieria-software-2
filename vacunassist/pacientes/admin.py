@@ -1,20 +1,12 @@
 from django.contrib import admin
 from django.contrib import messages
 from django.shortcuts import render, redirect
-from .models import *
 from django.utils.html import mark_safe
-from django.urls import reverse
-from django.utils.safestring import mark_safe  
+
+from .models import *
 
 from datetime import date
 from dateutil.relativedelta import relativedelta
-
-# admin.site.register(Usuarios)
-# admin.site.register(VacunasDetalles)
-# admin.site.register(PacientesTurnos)
-# admin.site.register(PacientesDetalles)
-# admin.site.register(PacientesSolicitudes)
-# admin.site.register(VacunasAplicadas) 
 
 
 class VacunaAdmin(admin.ModelAdmin):      
@@ -23,26 +15,20 @@ class VacunaAdmin(admin.ModelAdmin):
     list_display = ('vacuna','lote','nombrePaciente','apellido','fecha_vacunacion')  
     search_fields = ('paciente__nombre','paciente__apellido','vacuna__nombre','fecha_vacunacion') 
       
-      
-      
     # sobreescribo el método de buscado de elementos para filtrar por criterios
     def get_search_results(self, request, queryset, search_term):
         queryset, use_distinct = super().get_search_results(request, queryset, search_term)
 
         queryset = queryset.select_related("paciente")
-
         return queryset, use_distinct
       
     def nombrePaciente(self,obj):
         return obj.paciente.nombre
     nombrePaciente.short_description = 'nombre'
-         
-     
+          
     def apellido(self,obj):
         return obj.paciente.apellido
-    
-    
-      
+         
          # función para no permitir que se añada un elemento
     def has_add_permission(self, request):
          return False
@@ -56,9 +42,6 @@ class VacunaAdmin(admin.ModelAdmin):
         return False
  
 
-
-
-
 class UsuariosPacientes(Usuarios):
     class Meta:
         proxy = True
@@ -69,10 +52,7 @@ class PacienteAdmin(admin.ModelAdmin):
     # actions = ['list_admins']
     list_display = ('format_nombre','format_apellido','format_dni','edad','email','format_centro_vacunatorio','boton')
     search_fields = ('email','pacientesdetalles__nombre','pacientesdetalles__apellido','pacientesdetalles__dni', 'pacientesdetalles__centro_vacunatorio')
-    
 
-    
-    
     
     @admin.display(description='Acciones')
     def boton(self, obj):
@@ -87,7 +67,6 @@ class PacienteAdmin(admin.ModelAdmin):
                 ' % (link_ver_vacunas)\
                 )
     
-
 
     # función para no permitir que se añada un elemento
     def has_add_permission(self, request):
