@@ -18,40 +18,41 @@ from dateutil.relativedelta import relativedelta
 
 
 class VacunaAdmin(admin.ModelAdmin):      
-      fields = ('vacuna','lote','paciente')
-      list_filter = ('vacuna','lote','paciente__nombre', 'fecha_vacunacion')
-      list_display = ('vacuna','lote','nombrePaciente','apellido','fecha_vacunacion')  
-      search_fields = ('paciente__nombre','paciente__apellido','vacuna__nombre') 
+    fields = ('vacuna','lote','paciente')
+    list_filter = ('vacuna','lote','paciente__nombre', 'fecha_vacunacion')
+    list_display = ('vacuna','lote','nombrePaciente','apellido','fecha_vacunacion')  
+    search_fields = ('paciente__nombre','paciente__apellido','vacuna__nombre','fecha_vacunacion') 
+      
       
       
     # sobreescribo el método de buscado de elementos para filtrar por criterios
-      def get_search_results(self, request, queryset, search_term):
+    def get_search_results(self, request, queryset, search_term):
         queryset, use_distinct = super().get_search_results(request, queryset, search_term)
 
         queryset = queryset.select_related("paciente")
 
         return queryset, use_distinct
       
-      def nombrePaciente(self,obj):
+    def nombrePaciente(self,obj):
         return obj.paciente.nombre
-      nombrePaciente.short_description = 'nombre'
+    nombrePaciente.short_description = 'nombre'
          
      
-      def apellido(self,obj):
+    def apellido(self,obj):
         return obj.paciente.apellido
     
     
       
          # función para no permitir que se añada un elemento
-      def has_add_permission(self, request):
+    def has_add_permission(self, request):
          return False
 
     # función para no permitir que se modifique un elemento
-      def has_change_permission(self, request, obj=None):
+    def has_change_permission(self, request, obj=None):
         return False
 
     # función para no permitir que se elimine un elemento
-      def has_delete_permission(self, request, obj=None):
+    def has_delete_permission(self, request, obj=None):
         return False
  
 
@@ -78,14 +79,12 @@ class PacienteAdmin(admin.ModelAdmin):
         # el parámetro 'obj.pk' es el id del objeto dentro de la línea, hay que pasarlo en
         # el link para saber qué objeto se va a usar, estos botones son de ejemplo y hacen lo mismo
 
-        link_change_info = "'http://127.0.0.1:8000/admin/pacientes/vacunasaplicadas/%s/change/'" % (obj.pk)
+        link_ver_vacunas = "'/admin/pacientes/info/vacunasaplicadas/%s/'" % (obj.pk)
         
-
         return mark_safe(\
                 '\
-                <button type="button" title="Cambiar Contraseña" onclick="window.location.href=%s" class="btn btn-success btn-sm" name="apply"><i class="bi bi-key"></i></button>\
-                <button type="button" title="Editar Información" onclick="window.location.href=%s" class="btn btn-success btn-sm" name="apply"><i class="bi bi-pencil"></i></button>\
-                ' % ("" , link_change_info)\
+                <button type="button" title="Ver Vacunas" onclick="window.location.href=%s" class="btn btn-success btn-sm" name="apply"><i class="bi bi-file-medical"></i></button>\
+                ' % (link_ver_vacunas)\
                 )
     
 

@@ -9,4 +9,5 @@ admin.site.index_template = 'admin/index.html'
 
 urlpatterns = [
     path('', home_admin, name='home_admin'),
+
 ]

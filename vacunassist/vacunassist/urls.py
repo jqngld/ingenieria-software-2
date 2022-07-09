@@ -18,16 +18,19 @@ from django.conf import settings
 from django.contrib import admin
 from django.urls import include, path
 from django.conf.urls.static import static
+from administrador.views import ver_vacunas
 
 from vacunassist.views import *
 
 
 urlpatterns = [
     path('', home),
+    path('admin/pacientes/info/vacunasaplicadas/<int:pk>/', ver_vacunas, name="ver_vacunas"),
     path('admin/', admin.site.urls),
     path('administrador/', include('administrador.urls')),
     path('pacientes/', include('pacientes.urls')),
     path('personal_vacunatorio/', include('personalVacunatorio.urls')),
+    
 ]
 
 if settings.DEBUG:
