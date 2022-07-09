@@ -43,7 +43,13 @@
 {% endblock %}
 {% block blockbots %}<meta name="robots" content="NONE,NOARCHIVE">{% endblock %}
 </head>
-
+<style>
+  .errorlist {
+    width: 100% !important;
+    margin-left: 0px !important;
+    padding-left: 0px !important;
+  }
+</style>
 <body class="{% if is_popup %}popup {% endif %}{% block bodyclass %}{% endblock %}"
   data-admin-utc-offset="{% now "Z" %}">
 

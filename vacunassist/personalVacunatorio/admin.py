@@ -28,8 +28,8 @@ class PersonalAdmin(admin.ModelAdmin):
         # el parámetro 'obj.pk' es el id del objeto dentro de la línea, hay que pasarlo en
         # el link para saber qué objeto se va a usar, estos botones son de ejemplo y hacen lo mismo
 
-        link_change_info = "'http://127.0.0.1:8000/admin/personalVacunatorio/usuariosadministradores/%s/change/'" % (obj.pk)
-        link_change_password = "'http://127.0.0.1:8000/admin/personalVacunatorio/usuariosadministradores/%s/change/'" % (obj.pk)
+        link_change_info = "'%s/change'" % (obj.pk)
+        link_change_password = "'/admin/personalVacunatorio/cambiarcontrasena/%s/'" % (obj.pk)
 
         return mark_safe(\
                 '\
