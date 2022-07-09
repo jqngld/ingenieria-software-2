@@ -67,8 +67,10 @@ class UsuariosPacientes(Usuarios):
 @admin.register(UsuariosPacientes)
 class PacienteAdmin(admin.ModelAdmin):
     # actions = ['list_admins']
+        
     list_display = ('format_nombre','format_apellido','format_dni','edad','email','format_centro_vacunatorio','boton')
-    search_fields = ('email','pacientesdetalles__nombre','pacientesdetalles__apellido','pacientesdetalles__dni', 'pacientesdetalles__centro_vacunatorio')
+    fields = ('format_nombre','format_apellido','format_dni','edad','email','format_centro_vacunatorio','format_sexo','format_riesgo')
+    search_fields = ('email','pacientesdetalles__nombre','pacientesdetalles__apellido','pacientesdetalles__dni', 'pacientesdetalles__centro_vacunatorio','pacientesdetalles__fecha_nacimiento')
     
 
     
@@ -116,6 +118,18 @@ class PacienteAdmin(admin.ModelAdmin):
     @admin.display(description='Apellido')
     def format_apellido(self, obj):
         return obj.pacientesdetalles.apellido
+    
+    @admin.display(description='sexo')
+    def format_sexo(self, obj):
+        return obj.pacientesdetalles.sexo
+    
+    @admin.display(description='riesgo')
+    def format_riesgo(self, obj):
+         if (obj.pacientesdetalles.es_paciente_riesgo):
+            return "si"
+         else: 
+           return "no"
+ 
 
     @admin.display(description='Edad')
     def edad(self, obj):
