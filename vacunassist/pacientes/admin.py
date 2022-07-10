@@ -163,12 +163,12 @@ class SolicitudesNoRiesgoAdmin(admin.ModelAdmin):
         # el parámetro 'obj.pk' es el id del objeto dentro de la línea, hay que pasarlo en
         # el link para saber qué objeto se va a usar, estos botones son de ejemplo y hacen lo mismo
 
-        link_ver_vacunas = "'/admin/pacientes/turno_asignado/%s/'" % (obj.pk)
+        link_asignar_turno = "'/admin/pacientes/turno_asignado/%s/'" % (obj.pk)
         
         return mark_safe(\
                 '\
                 <button type="button" title="Ver Vacunas" onclick="window.location.href=%s" class="btn btn-success btn-sm" name="apply"><i class="bi bi-file-medical"></i></button>\
-                ' % (link_ver_vacunas)\
+                ' % (link_asignar_turno)\
                 )
     
     # función para no permitir que se añada un elemento
