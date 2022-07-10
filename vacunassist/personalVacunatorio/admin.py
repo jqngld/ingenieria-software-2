@@ -1,7 +1,8 @@
 from django.contrib import admin
 from django.contrib import messages
-from django.shortcuts import render, redirect
 from django.utils.html import mark_safe
+from django.shortcuts import render, redirect
+from django.template.loader import render_to_string
 
 from .forms import PersonalSignUpForm, PersonalChangeForm
 from .models import PersonalDetalles
@@ -16,11 +17,10 @@ class UsuariosAdministradores(Usuarios):
 @admin.register(UsuariosAdministradores)
 class PersonalAdmin(admin.ModelAdmin):
 
-    # actions = ['list_admins']
-    list_display_links = None
-    fields = (('nombre', 'apellido',), ('email', 'numero_telefono'), 'fecha_nacimiento', 'centro_vacunatorio') # campos dentro de change view
-    list_display = ('nombre', 'apellido', 'email', 'centro_vacunatorio', 'boton')    # campos en la tabla del listado
+    actions = ['delete_multiple_users']
+    list_display = ('nombre', 'apellido', 'email', 'centro_vacunatorio', 'boton')
     search_fields = ('personaldetalles__nombre', 'personaldetalles__apellido', 'email', 'personaldetalles__centro_vacunatorio')
+    list_display_links = None
 
 
     @admin.display(description='Acciones')
@@ -28,15 +28,8 @@ class PersonalAdmin(admin.ModelAdmin):
         # el parámetro 'obj.pk' es el id del objeto dentro de la línea, hay que pasarlo en
         # el link para saber qué objeto se va a usar, estos botones son de ejemplo y hacen lo mismo
 
-        link_change_info = "'%s/change'" % (obj.pk)
-        link_change_password = "'/admin/personalVacunatorio/cambiarcontrasena/%s/'" % (obj.pk)
-
-        return mark_safe(\
-                '\
-                <button type="button" title="Cambiar Contraseña" onclick="window.location.href=%s" class="btn btn-success btn-sm" name="apply"><i class="bi bi-key"></i></button>\
-                <button type="button" title="Editar Información" onclick="window.location.href=%s" class="btn btn-success btn-sm" name="apply"><i class="bi bi-pencil"></i></button>\
-                ' % (link_change_password, link_change_info)\
-                )
+        render_action_buttons = render_to_string('admin/personal_action_buttons.html', {'pk' : obj.pk})
+        return mark_safe(render_action_buttons)
 
     @admin.display(description='Nombre')
     def nombre(self, obj):
@@ -58,6 +51,17 @@ class PersonalAdmin(admin.ModelAdmin):
     def centro_vacunatorio(self, obj):
         return obj.personaldetalles.centro_vacunatorio
 
+
+    # función para no permitir que se elimine un elemento
+    def has_delete_permission(self, request, obj=None):
+        return False
+
+    def get_fields(self, request, obj=None):
+        if obj is None:
+            fields = (('nombre', 'apellido',), ('email', 'numero_telefono'), 'fecha_nacimiento', 'centro_vacunatorio', ('password1', 'password2'))
+        else:
+            fields = (('nombre', 'apellido',), ('email', 'numero_telefono'), 'fecha_nacimiento', 'centro_vacunatorio')
+        return fields
 
     def get_form(self, request, obj=None, **kwargs):
         if obj is None:
@@ -82,14 +86,13 @@ class PersonalAdmin(admin.ModelAdmin):
     # sobreescribo el método de buscado de elementos para filtrar por criterios
     def get_search_results(self, request, queryset, search_term):
         queryset, use_distinct = super().get_search_results(request, queryset, search_term)
-
         queryset = queryset.filter(tipo_usuario='personal').select_related('personaldetalles')
 
         return queryset, use_distinct
 
 
-    # @admin.action(description='Listar Usuarios seleccionado/s')
-    def list_admins(self, request, queryset):
+    @admin.action(description='Eliminar Usuarios seleccionados')
+    def delete_multiple_users(self, request, queryset):
 
         if 'apply' in request.POST:
             print('> Listar administradores vacunatorios:')
