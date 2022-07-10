@@ -1,10 +1,12 @@
 from django.contrib import messages
-from django.shortcuts import render
+from django.shortcuts import redirect, render
 from django.contrib.auth import update_session_auth_hash
 from django.contrib.auth.views import PasswordChangeView
 from django.contrib.auth.forms import PasswordChangeForm
 
-from pacientes.models import Usuarios, VacunasAplicadas
+from pacientes.models import Usuarios, VacunasAplicadas,PacientesSolicitudes
+from pacientes.models import PacientesTurnos
+
 
 
 def home_admin(request):
@@ -39,3 +41,22 @@ class PersonalChangePassword(PersonalPasswordChangeView):
     form_class = PasswordChangeForm
     template_name = 'admin/personal_password_change_form.html'
     success_url ="/admin/personalVacunatorio/usuariosadministradores/"
+    
+    
+def admin_asignar_turno(request,**kwargs):
+     if request.method == 'POST':
+       solicitud = PacientesSolicitudes.objects.get(solicitud_id=kwargs['pk'])
+       confirmed_date = solicitud.fecha_estimada
+       turno = PacientesTurnos(
+          solicitud=solicitud,
+          turno_perdido    = 0,
+          turno_pendiente  = 1,
+          turno_completado = 0,
+          fecha_confirmada = confirmed_date,
+        )               
+       turno.save()
+       solicitud.solicitud_aprobada = 1
+       solicitud.save()
+       messages.success(request,"se confirmo turno el dia ",confirmed_date ,(confirmed_date))
+       return redirect('/admin/pacientes/solicitudesnoriesgo/')
+     return render(request, 'admin/turno_asignado.html')    
