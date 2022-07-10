@@ -3,8 +3,13 @@ from django.shortcuts import redirect, render
 from django.contrib.auth import update_session_auth_hash
 from django.contrib.auth.views import PasswordChangeView
 from django.contrib.auth.forms import PasswordChangeForm
+from administrador.forms import SalesSearchForm
 
-from pacientes.models import Usuarios, VacunasAplicadas
+from .utils import get_chart
+from pacientes.models import PacientesSolicitudes, Usuarios, VacunasAplicadas
+
+import pandas
+pandas.set_option('display.max_columns', None)  
 
 
 def home_admin(request):
@@ -47,3 +52,41 @@ def personal_detele_user(request, *args, **kwargs):
 
     personal_user.delete()
     return redirect('/admin/personalVacunatorio/usuariosadministradores/')
+
+
+def search_dates(request):
+
+    df_solicitudes = None
+
+    chart = None
+    no_data = None
+    search_form = SalesSearchForm(request.POST or None)
+
+    if request.method == 'POST':
+        date_to = request.POST.get('date_to')
+        date_from = request.POST.get('date_from')
+        chart_type = request.POST.get('chart_type')
+        results_by = request.POST.get('results_by')
+        print(date_from, date_to, chart_type)
+
+        solicitudes = PacientesSolicitudes.objects.filter(fecha_estimada__lte=date_to, fecha_estimada__gte=date_from)
+
+        if len(solicitudes) > 0:
+            df_solicitudes = pandas.DataFrame(solicitudes.values())
+
+            # sales_df['fecha_estimada'] = sales_df['fecha_estimada']
+            # sales_df.rename({'customer_id': 'customer', 'salesman_id': 'salesman', 'id': 'sales_id'}, axis=1,
+            #                 inplace=True)
+
+            chart = get_chart(chart_type, df_solicitudes, results_by)
+            df_solicitudes = df_solicitudes.to_html()
+
+        else:
+            messages.warning(request, 'No se encontró información para los filtros seleccionados.')
+
+    context = {
+        'chart': chart,
+        'sales_df': df_solicitudes,
+        'search_form': search_form,
+    }
+    return render(request, 'admin/search_dates.html', context)

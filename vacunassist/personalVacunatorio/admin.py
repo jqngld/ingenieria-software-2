@@ -28,7 +28,7 @@ class PersonalAdmin(admin.ModelAdmin):
         # el parámetro 'obj.pk' es el id del objeto dentro de la línea, hay que pasarlo en
         # el link para saber qué objeto se va a usar, estos botones son de ejemplo y hacen lo mismo
 
-        render_action_buttons = render_to_string('admin/personal_popup_delete_user.html', {'pk' : obj.pk})
+        render_action_buttons = render_to_string('admin/personal_action_buttons.html', {'pk' : obj.pk})
         return mark_safe(render_action_buttons)
 
     @admin.display(description='Nombre')
