@@ -240,7 +240,7 @@ class UserSignUpForm(UserCreationForm):
                 )
                 vacuna_covid_2.save()
             else:
-                if paciente.es_paciente_riesgo:
+                if paciente.es_paciente_riesgo and paciente_edad >= 18:
                     solicitud_covid2 = PacientesSolicitudes(
                         paciente_id = paciente.paciente_id,
                         vacuna_id = 1,
@@ -250,17 +250,18 @@ class UserSignUpForm(UserCreationForm):
                     )
                     solicitud_covid2.save()
                 else:
-                    solicitud_covid2 = PacientesSolicitudes(
-                        paciente_id = paciente.paciente_id,
-                        vacuna_id = 2,
-                        solicitud_aprobada = 0,
-                        fecha_estimada = datetime.today() + relativedelta(days=random.randint(15,60)),  #Genera números aleatorios entre dos valores
-                        centro_vacunatorio = paciente.centro_vacunatorio
-                    )
+                    if paciente_edad >= 18:
+                        solicitud_covid2 = PacientesSolicitudes(
+                            paciente_id = paciente.paciente_id,
+                            vacuna_id = 2,
+                            solicitud_aprobada = 0,
+                            fecha_estimada = datetime.today() + relativedelta(days=random.randint(30,90)),  #Genera números aleatorios entre dos valores
+                            centro_vacunatorio = paciente.centro_vacunatorio
+                        )
                     solicitud_covid2.save()
             
         else:
-            if paciente.es_paciente_riesgo:
+            if paciente.es_paciente_riesgo and paciente_edad:
                 solicitud_covid1 = PacientesSolicitudes(
                     paciente_id = paciente.paciente_id,
                     vacuna_id = 1,
@@ -270,14 +271,15 @@ class UserSignUpForm(UserCreationForm):
                 )
                 solicitud_covid1.save()
             else:
-                solicitud_covid1 = PacientesSolicitudes(
-                        paciente_id = paciente.paciente_id,
-                        vacuna_id = 2,
-                        solicitud_aprobada = 0,
-                        fecha_estimada = datetime.today() + relativedelta(days=random.randint(15,60)),  #Genera números aleatorios entre dos valores
-                        centro_vacunatorio = paciente.centro_vacunatorio
+                if paciente_edad >= 18:
+                    solicitud_covid1 = PacientesSolicitudes(
+                            paciente_id = paciente.paciente_id,
+                            vacuna_id = 2,
+                            solicitud_aprobada = 0,
+                            fecha_estimada = datetime.today() + relativedelta(days=random.randint(30,90)),  #Genera números aleatorios entre dos valores
+                            centro_vacunatorio = paciente.centro_vacunatorio
                     )
-                solicitud_covid1.save()
+                    solicitud_covid1.save()
 
         if self.cleaned_data['vacuna_gripe']:
             vacuna_gripe = VacunasAplicadas(
@@ -292,7 +294,7 @@ class UserSignUpForm(UserCreationForm):
                 paciente_id = paciente.paciente_id,
                 vacuna_id = 3,
                 solicitud_aprobada = 0,
-                fecha_estimada = datetime.today() + relativedelta(months=3) if paciente.es_paciente_riesgo else datetime.today() + relativedelta(months=6),
+                fecha_estimada = datetime.today() + relativedelta(months=3) if paciente_edad > 60 else datetime.today() + relativedelta(months=6),
                 centro_vacunatorio = paciente.centro_vacunatorio
             )
             solicitud_gripe.save()
@@ -304,6 +306,16 @@ class UserSignUpForm(UserCreationForm):
                 fecha_vacunacion = self.cleaned_data['fecha_vacunacion_fa']
             )
             vacuna_fa.save()
+        
+        else:
+            solicitud_fiebre_amarilla = PacientesSolicitudes(
+                paciente_id = paciente.paciente_id,
+                vacuna_id = 4,
+                solicitud_aprobada = 0,
+                fecha_estimada = datetime.today(),
+                centro_vacunatorio = paciente.centro_vacunatorio
+            )
+            solicitud_fiebre_amarilla.save()
 
     def clean_dni(self):
         dni = self.cleaned_data.get('dni')
