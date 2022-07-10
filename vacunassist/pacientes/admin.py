@@ -229,7 +229,7 @@ class SolicitudesRiesgoAdmin(admin.ModelAdmin):
 
         return queryset, use_distinct
 
-
+   
     # aplico formatos a las fechas que se listan
     @admin.display(description='Fecha Solicitud')
     def format_fecha_solicitud(self, obj):
@@ -237,7 +237,7 @@ class SolicitudesRiesgoAdmin(admin.ModelAdmin):
 
     @admin.display(description='Fecha Sugerida')
     def format_fecha_estimada(self, obj):
-        return obj.fecha_estimada.strftime('%d-%m-%Y')
+        return obj.fecha_estimada.strftime('%d-%m-%Y')    
 
     # registro la acción para asignar fechas a las solicitudes
     @admin.action(description='Asignar fecha a solicitudes seleccionadas')
@@ -271,9 +271,11 @@ class Turnos(PacientesTurnos):
         
 @admin.register(Turnos)
 class TurnosAdmin(admin.ModelAdmin):
-    list_display = ('fecha_confirmada','turno_perdido','turno_pendiente','turno_completado',)
-    fields = ('fecha_confirmada','turno_perdido','turno_pendiente','turno_completado',)
-    search_fields = ('fecha_confirmada','turno_perdido','turno_pendiente','turno_completado',)
+    list_display = ('format_nombre','format_apellido','format_dni','format_vacuna','fecha_confirmada','turno_perdido','turno_pendiente','turno_completado',)
+    list_filter = ('solicitud__paciente__nombre','solicitud__paciente__apellido','solicitud__paciente__dni','solicitud__vacuna__nombre',)
+    fields = ('format_nombre','format_apellido','format_dni','format_vacuna','fecha_confirmada','turno_perdido','turno_pendiente','turno_completado',)
+    search_fields = ('solicitud__paciente__nombre','solicitud__paciente__apellido','solicitud__paciente__dni','solicitud__vacuna__nombre','fecha_confirmada','turno_perdido','turno_pendiente','turno_completado',)
+    readonly_fields = ('format_nombre','format_apellido','format_dni','format_vacuna','fecha_confirmada','turno_perdido','turno_pendiente','turno_completado',)
 
      # función para no permitir que se añada un elemento
     def has_add_permission(self, request):
@@ -284,9 +286,25 @@ class TurnosAdmin(admin.ModelAdmin):
         queryset, use_distinct = super().get_search_results(request, queryset, search_term)
 
         queryset = queryset.select_related('solicitud').filter(turno_pendiente=1)
-
-
+        
         return queryset, use_distinct
+
+    @admin.display(description='Nombre')
+    def format_nombre(self, obj):
+        return obj.solicitud.paciente.nombre
+
+    @admin.display(description='Apellido')
+    def format_apellido(self, obj):
+        return obj.solicitud.paciente.apellido
+
+    @admin.display(description='Dni')
+    def format_dni(self, obj):
+        return obj.solicitud.paciente.dni
+
+    @admin.display(description='Vacuna')
+    def format_vacuna(self, obj):
+        return obj.solicitud.vacuna.nombre
+
     
     
 admin.site.register(VacunasAplicadas,VacunaAdmin)
