@@ -54,6 +54,8 @@ class PacienteAdmin(admin.ModelAdmin):
     list_display = ('format_nombre','format_apellido','format_dni','edad','email','format_centro_vacunatorio','boton')
     fields = ('format_nombre','format_apellido','format_dni','edad','email','format_centro_vacunatorio','format_sexo','format_riesgo')
     search_fields = ('email','pacientesdetalles__nombre','pacientesdetalles__apellido','pacientesdetalles__dni', 'pacientesdetalles__centro_vacunatorio','pacientesdetalles__fecha_nacimiento')
+
+     #ver la impresión de edad para buscar
     
     
     @admin.display(description='Acciones')
@@ -206,6 +208,7 @@ class SolicitudesRiesgoAdmin(admin.ModelAdmin):
     actions = ['asignar_turno']
     fields = ('paciente', 'vacuna', 'centro_vacunatorio', 'format_fecha_solicitud', 'format_fecha_estimada')
     list_filter = ('paciente__nombre', 'paciente__apellido', 'centro_vacunatorio')
+    search_fields = ('paciente__nombre', 'paciente__apellido', 'centro_vacunatorio','vacuna__nombre')
     list_display = ('paciente', 'centro_vacunatorio', 'vacuna', 'format_fecha_solicitud', 'format_fecha_estimada')
     readonly_fields = ('paciente', 'vacuna', 'centro_vacunatorio', 'format_fecha_solicitud', 'format_fecha_estimada')
 
@@ -260,6 +263,30 @@ class SolicitudesRiesgoAdmin(admin.ModelAdmin):
     
     
     
+class Turnos(PacientesTurnos):
+    class Meta:
+        proxy = True
+        verbose_name = 'turnos de pacientes'
+        verbose_name_plural = 'Turnos de Pacientes'
+        
+@admin.register(Turnos)
+class TurnosAdmin(admin.ModelAdmin):
+    list_display = ('fecha_confirmada','turno_perdido','turno_pendiente','turno_completado',)
+    fields = ('fecha_confirmada','turno_perdido','turno_pendiente','turno_completado',)
+    search_fields = ('fecha_confirmada','turno_perdido','turno_pendiente','turno_completado',)
+
+     # función para no permitir que se añada un elemento
+    def has_add_permission(self, request):
+        return False
+
+ # sobreescribo el método de buscado de elementos para filtrar por criterios
+    def get_search_results(self, request, queryset, search_term):
+        queryset, use_distinct = super().get_search_results(request, queryset, search_term)
+
+        queryset = queryset.select_related('solicitud').filter(turno_pendiente=1)
+
+
+        return queryset, use_distinct
     
     
 admin.site.register(VacunasAplicadas,VacunaAdmin)
