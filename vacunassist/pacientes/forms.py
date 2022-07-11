@@ -222,7 +222,7 @@ class UserSignUpForm(UserCreationForm):
         '''Se registran aquellas vacunas que el usuario indicó haberse aplicado.'''
 
         fecha_nacimiento = datetime(int(self.cleaned_data['ano_nacimiento']), int(self.cleaned_data['mes_nacimiento']), int(self.cleaned_data['dia_nacimiento']))
-        paciente_edad = relativedelta(datetime.now(), fecha_nacimiento)
+        paciente_edad = relativedelta(datetime.now(), fecha_nacimiento).years
 
         if self.cleaned_data['vacuna_covid_1']:
             vacuna_covid_1 = VacunasAplicadas(
