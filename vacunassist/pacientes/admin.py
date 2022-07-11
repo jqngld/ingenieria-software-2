@@ -137,7 +137,7 @@ class SolicitudesNoRiesgoAdmin(admin.ModelAdmin):
     actions = ['asignar_turno']
     fields = ('paciente', 'vacuna', 'centro_vacunatorio', 'format_fecha_solicitud', 'format_fecha_estimada')
     list_filter = ('vacuna__nombre', 'centro_vacunatorio')
-    search_fields = ('nombre', 'apellido', 'centro_vacunatorio','vacuna__nombre')
+    search_fields = ('paciente__nombre', 'paciente__apellido', 'centro_vacunatorio','vacuna__nombre')
     list_display = ('nombre','apellido', 'centro_vacunatorio', 'vacuna', 'format_fecha_solicitud', 'format_fecha_estimada','boton')
     readonly_fields = ('paciente', 'vacuna', 'centro_vacunatorio', 'format_fecha_solicitud', 'format_fecha_estimada')
 
@@ -218,7 +218,7 @@ class SolicitudesRiesgoAdmin(admin.ModelAdmin):
     actions = ['asignar_turno']
     fields = ('paciente', 'vacuna', 'centro_vacunatorio', 'format_fecha_solicitud', 'format_fecha_estimada')
     list_filter = ('vacuna__nombre', 'centro_vacunatorio')
-    search_fields = ('nombre', 'apellido', 'centro_vacunatorio','vacuna__nombre')
+    search_fields = ('paciente__nombre', 'paciente__apellido', 'centro_vacunatorio','vacuna__nombre')
     list_display = ('nombre','apellido', 'centro_vacunatorio', 'vacuna', 'format_fecha_solicitud', 'format_fecha_estimada','boton')
     readonly_fields = ('paciente', 'vacuna', 'centro_vacunatorio', 'format_fecha_solicitud', 'format_fecha_estimada')
 
