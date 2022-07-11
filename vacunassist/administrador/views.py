@@ -5,6 +5,9 @@ from django.contrib.auth.views import PasswordChangeView
 from django.contrib.auth.forms import PasswordChangeForm
 from administrador.forms import SalesSearchForm
 
+from pacientes.models import Usuarios, VacunasAplicadas,PacientesSolicitudes
+from pacientes.models import PacientesTurnos
+
 from .utils import get_chart
 from pacientes.models import PacientesSolicitudes, Usuarios, VacunasAplicadas
 
@@ -44,6 +47,26 @@ class PersonalChangePassword(PersonalPasswordChangeView):
     form_class = PasswordChangeForm
     template_name = 'admin/personal_password_change_form.html'
     success_url ="/admin/personalVacunatorio/usuariosadministradores/"
+    
+    
+def admin_asignar_turno(request,**kwargs):
+    solicitud = PacientesSolicitudes.objects.get(solicitud_id=kwargs['pk'])
+    confirmed_date = solicitud.fecha_estimada
+    turno = PacientesTurnos(
+       solicitud=solicitud,
+       turno_perdido    = 0,
+       turno_pendiente  = 1,
+       turno_completado = 0,
+       fecha_confirmada = confirmed_date,
+     )               
+    turno.save()
+    solicitud.solicitud_aprobada = 1
+    solicitud.save()
+    messages.success(request,'se confirmo turno el dia %s' % (confirmed_date))
+    if not (solicitud.paciente.es_paciente_riesgo):
+      return redirect('/admin/pacientes/solicitudesnoriesgo/')   
+    else:
+      return redirect('/admin/pacientes/solicitudesriesgo/')
 
 def personal_detele_user(request, *args, **kwargs):
 
