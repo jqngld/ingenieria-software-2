@@ -2,6 +2,7 @@ from django.contrib import admin
 from django.contrib import messages
 from django.shortcuts import render, redirect
 from django.utils.html import mark_safe
+from django.template.loader import render_to_string
 
 from .models import *
 
@@ -53,6 +54,7 @@ class PacienteAdmin(admin.ModelAdmin):
     # actions = ['list_admins']    
     list_display = ('format_nombre','format_apellido','format_dni','edad','email','format_centro_vacunatorio','boton')
     fields = ('format_nombre','format_apellido','format_dni','edad','email','format_centro_vacunatorio','format_sexo','format_riesgo')
+    list_filter = ('pacientesdetalles__centro_vacunatorio',)
     search_fields = ('email','pacientesdetalles__nombre','pacientesdetalles__apellido','pacientesdetalles__dni', 'pacientesdetalles__centro_vacunatorio','pacientesdetalles__fecha_nacimiento')
 
      #ver la impresión de edad para buscar
@@ -134,9 +136,9 @@ class SolicitudesNoRiesgoAdmin(admin.ModelAdmin):
 
     actions = ['asignar_turno']
     fields = ('paciente', 'vacuna', 'centro_vacunatorio', 'format_fecha_solicitud', 'format_fecha_estimada')
-    list_filter = ('paciente__nombre', 'paciente__apellido', 'centro_vacunatorio')
-    search_fields = ('paciente__nombre', 'paciente__apellido', 'centro_vacunatorio','vacuna__nombre')
-    list_display = ('nombre','apellido' ,'centro_vacunatorio', 'vacuna', 'format_fecha_solicitud', 'format_fecha_estimada','boton')
+    list_filter = ('vacuna__nombre', 'centro_vacunatorio')
+    search_fields = ('nombre', 'apellido', 'centro_vacunatorio','vacuna__nombre')
+    list_display = ('nombre','apellido', 'centro_vacunatorio', 'vacuna', 'format_fecha_solicitud', 'format_fecha_estimada','boton')
     readonly_fields = ('paciente', 'vacuna', 'centro_vacunatorio', 'format_fecha_solicitud', 'format_fecha_estimada')
 
     @admin.display(description='Acciones')
@@ -144,14 +146,10 @@ class SolicitudesNoRiesgoAdmin(admin.ModelAdmin):
         # el parámetro 'obj.pk' es el id del objeto dentro de la línea, hay que pasarlo en
         # el link para saber qué objeto se va a usar, estos botones son de ejemplo y hacen lo mismo
 
-        link_asignar_turno = "'/admin/pacientes/turno_asignado/%s/'" % (obj.pk)
-        
-        return mark_safe(\
-                '\
-                <button type="button" title="Ver Vacunas" onclick="window.location.href=%s" class="btn btn-success btn-sm" name="apply"><i class="bi bi-file-medical"></i></button>\
-                ' % (link_asignar_turno)\
-                )
-    
+      render_action_buttons = render_to_string('admin/pacientes_actions_buttons.html', {'pk' : obj.pk})
+      return mark_safe(render_action_buttons)
+  
+  
     # función para no permitir que se añada un elemento
     def has_add_permission(self, request):
         return False
@@ -219,12 +217,19 @@ class SolicitudesRiesgoAdmin(admin.ModelAdmin):
 
     actions = ['asignar_turno']
     fields = ('paciente', 'vacuna', 'centro_vacunatorio', 'format_fecha_solicitud', 'format_fecha_estimada')
-    list_filter = ('paciente__nombre', 'paciente__apellido', 'centro_vacunatorio')
-    search_fields = ('paciente__nombre', 'paciente__apellido', 'centro_vacunatorio','vacuna__nombre')
-    list_display = ('paciente', 'centro_vacunatorio', 'vacuna', 'format_fecha_solicitud', 'format_fecha_estimada')
+    list_filter = ('vacuna__nombre', 'centro_vacunatorio')
+    search_fields = ('nombre', 'apellido', 'centro_vacunatorio','vacuna__nombre')
+    list_display = ('nombre','apellido', 'centro_vacunatorio', 'vacuna', 'format_fecha_solicitud', 'format_fecha_estimada','boton')
     readonly_fields = ('paciente', 'vacuna', 'centro_vacunatorio', 'format_fecha_solicitud', 'format_fecha_estimada')
 
+    @admin.display(description='Acciones')
+    def boton(self, obj):
+        # el parámetro 'obj.pk' es el id del objeto dentro de la línea, hay que pasarlo en
+        # el link para saber qué objeto se va a usar, estos botones son de ejemplo y hacen lo mismo
 
+      render_action_buttons = render_to_string('admin/pacientes_actions_buttons.html', {'pk' : obj.pk})
+      return mark_safe(render_action_buttons)
+  
     # función para no permitir que se añada un elemento
     def has_add_permission(self, request):
         return False
@@ -249,7 +254,13 @@ class SolicitudesRiesgoAdmin(admin.ModelAdmin):
 
     @admin.display(description='Fecha Sugerida')
     def format_fecha_estimada(self, obj):
-        return obj.fecha_estimada.strftime('%d-%m-%Y')    
+        return obj.fecha_estimada.strftime('%d-%m-%Y')  
+
+    def nombre(self,obj):
+        return obj.paciente.nombre
+     
+    def apellido(self,obj):
+        return obj.paciente.apellido  
 
     # registro la acción para asignar fechas a las solicitudes
     @admin.action(description='Asignar fecha a solicitudes seleccionadas')
@@ -284,7 +295,7 @@ class Turnos(PacientesTurnos):
 @admin.register(Turnos)
 class TurnosAdmin(admin.ModelAdmin):
     list_display = ('format_nombre','format_apellido','format_dni','format_vacuna','fecha_confirmada','turno_perdido','turno_pendiente','turno_completado',)
-    list_filter = ('solicitud__paciente__nombre','solicitud__paciente__apellido','solicitud__paciente__dni','solicitud__vacuna__nombre',)
+    list_filter = ('solicitud__vacuna__nombre','fecha_confirmada','solicitud__centro_vacunatorio',)
     fields = ('format_nombre','format_apellido','format_dni','format_vacuna','fecha_confirmada','turno_perdido','turno_pendiente','turno_completado',)
     search_fields = ('solicitud__paciente__nombre','solicitud__paciente__apellido','solicitud__paciente__dni','solicitud__vacuna__nombre','fecha_confirmada','turno_perdido','turno_pendiente','turno_completado',)
     readonly_fields = ('format_nombre','format_apellido','format_dni','format_vacuna','fecha_confirmada','turno_perdido','turno_pendiente','turno_completado',)
