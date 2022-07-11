@@ -1,4 +1,6 @@
 import enum
+import numpy as np
+import pandas as pd
 import uuid, base64
 from .models import *
 from io import BytesIO
@@ -31,11 +33,30 @@ def get_graph():
 
 def get_chart(chart_type, data, results_by, **kwargs):
     pyplot.switch_backend('AGG')
-    fig = pyplot.figure(figsize=(8, 4))
+    fig = pyplot.figure(figsize=(10, 4))
     key = get_key(results_by)
 
-    d = data.sort_values('fecha_estimada', ascending=True).groupby('fecha_estimada', as_index=False)['solicitud_id'].agg('count')
+    line_color = {
+        'Terminal' : 'red',
+        'Cementerio' : 'green',
+        'Municipalidad' : 'blue',
+    }
+
+    d = data.sort_values('fecha_estimada', ascending=True).groupby(['fecha_estimada', 'centro_vacunatorio'], as_index=False)['solicitud_id'].agg('count')
+    print('Normal:')
+    print(d)
+    # d = data.sort_values('fecha_estimada', ascending=True).groupby(['fecha_estimada', 'centro_vacunatorio'])['solicitud_id'].count().unstack(fill_value=0).stack()
+
+    d = pd.pivot_table(d, index=['fecha_estimada', 'centro_vacunatorio'], values='solicitud_id', fill_value=0, dropna=False, aggfunc=np.sum).reset_index()
+    print('Pivot:')
+    print(d)
     d['fecha_estimada'] = d['fecha_estimada'].apply(lambda x: x.strftime('%d/%m/%Y'))
+    xlabels = d['fecha_estimada'].unique()
+    print(xlabels)
+
+
+    for centro in ['Terminal', 'Cementerio', 'Municipalidad']:
+        pyplot.plot(xlabels, d.query(f"centro_vacunatorio=='{centro}'")['solicitud_id'], color=line_color[centro], marker='o', linestyle='-.', linewidth=1, label=centro)
 
     if chart_type == '#1':
         print("Bar graph")
@@ -45,10 +66,10 @@ def get_chart(chart_type, data, results_by, **kwargs):
         pyplot.pie(data=d,x='fecha_estimada', labels=d['solicitud_id'])
     elif chart_type == '#3':
         print("Line graph")
-        pyplot.plot(d['fecha_estimada'], d['solicitud_id'], color='gray', marker='o', linestyle='solid', linewidth=2, label='Centro')
-        for i, v in zip(d['fecha_estimada'], d['solicitud_id']):
-            label = int(v)
-            pyplot.annotate(label, (i,v), textcoords='offset points', xytext=(0,10), ha='center')
+        # pyplot.plot(d['fecha_estimada'], d['solicitud_id'], color='gray', marker='o', linestyle='solid', linewidth=2, label='Centro')
+        # for i, v in zip(d['fecha_estimada'], d['solicitud_id']):
+        #     label = int(v)
+        #     pyplot.annotate(label, (i,v), textcoords='offset points', xytext=(0,10), ha='center')
     else:
         print("Apparently...chart_type not identified")
 
