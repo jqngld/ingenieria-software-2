@@ -137,8 +137,8 @@ class SolicitudesNoRiesgoAdmin(admin.ModelAdmin):
     actions = ['asignar_turno']
     fields = ('paciente', 'vacuna', 'centro_vacunatorio', 'format_fecha_solicitud', 'format_fecha_estimada')
     list_filter = ('vacuna__nombre', 'centro_vacunatorio')
-    search_fields = ('paciente__nombre', 'paciente__apellido', 'centro_vacunatorio','vacuna__nombre')
-    list_display = ('nombre','apellido' ,'centro_vacunatorio', 'vacuna', 'format_fecha_solicitud', 'format_fecha_estimada','boton')
+    search_fields = ('nombre', 'apellido', 'centro_vacunatorio','vacuna__nombre')
+    list_display = ('nombre','apellido', 'centro_vacunatorio', 'vacuna', 'format_fecha_solicitud', 'format_fecha_estimada','boton')
     readonly_fields = ('paciente', 'vacuna', 'centro_vacunatorio', 'format_fecha_solicitud', 'format_fecha_estimada')
 
     @admin.display(description='Acciones')
@@ -218,8 +218,8 @@ class SolicitudesRiesgoAdmin(admin.ModelAdmin):
     actions = ['asignar_turno']
     fields = ('paciente', 'vacuna', 'centro_vacunatorio', 'format_fecha_solicitud', 'format_fecha_estimada')
     list_filter = ('vacuna__nombre', 'centro_vacunatorio')
-    search_fields = ('paciente__nombre', 'paciente__apellido', 'centro_vacunatorio','vacuna__nombre')
-    list_display = ('paciente', 'centro_vacunatorio', 'vacuna', 'format_fecha_solicitud', 'format_fecha_estimada','boton')
+    search_fields = ('nombre', 'apellido', 'centro_vacunatorio','vacuna__nombre')
+    list_display = ('nombre','apellido', 'centro_vacunatorio', 'vacuna', 'format_fecha_solicitud', 'format_fecha_estimada','boton')
     readonly_fields = ('paciente', 'vacuna', 'centro_vacunatorio', 'format_fecha_solicitud', 'format_fecha_estimada')
 
     @admin.display(description='Acciones')
@@ -254,7 +254,13 @@ class SolicitudesRiesgoAdmin(admin.ModelAdmin):
 
     @admin.display(description='Fecha Sugerida')
     def format_fecha_estimada(self, obj):
-        return obj.fecha_estimada.strftime('%d-%m-%Y')    
+        return obj.fecha_estimada.strftime('%d-%m-%Y')  
+
+    def nombre(self,obj):
+        return obj.paciente.nombre
+     
+    def apellido(self,obj):
+        return obj.paciente.apellido  
 
     # registro la acción para asignar fechas a las solicitudes
     @admin.action(description='Asignar fecha a solicitudes seleccionadas')
