@@ -243,7 +243,7 @@ class UserSignUpForm(UserCreationForm):
                 if paciente.es_paciente_riesgo and paciente_edad >= 18:
                     solicitud_covid2 = PacientesSolicitudes(
                         paciente_id = paciente.paciente_id,
-                        vacuna_id = 1,
+                        vacuna_id = 2,
                         solicitud_aprobada = 0,
                         fecha_estimada = datetime.today() + relativedelta(days=7),
                         centro_vacunatorio = paciente.centro_vacunatorio
@@ -274,7 +274,7 @@ class UserSignUpForm(UserCreationForm):
                 if paciente_edad >= 18:
                     solicitud_covid1 = PacientesSolicitudes(
                             paciente_id = paciente.paciente_id,
-                            vacuna_id = 2,
+                            vacuna_id = 1,
                             solicitud_aprobada = 0,
                             fecha_estimada = datetime.today() + relativedelta(days=random.randint(30,90)),  #Genera números aleatorios entre dos valores
                             centro_vacunatorio = paciente.centro_vacunatorio

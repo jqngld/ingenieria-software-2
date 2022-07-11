@@ -53,6 +53,7 @@ class PacienteAdmin(admin.ModelAdmin):
     # actions = ['list_admins']    
     list_display = ('format_nombre','format_apellido','format_dni','edad','email','format_centro_vacunatorio','boton')
     fields = ('format_nombre','format_apellido','format_dni','edad','email','format_centro_vacunatorio','format_sexo','format_riesgo')
+    list_filter = ('pacientesdetalles__centro_vacunatorio',)
     search_fields = ('email','pacientesdetalles__nombre','pacientesdetalles__apellido','pacientesdetalles__dni', 'pacientesdetalles__centro_vacunatorio','pacientesdetalles__fecha_nacimiento')
 
      #ver la impresión de edad para buscar
@@ -134,7 +135,7 @@ class SolicitudesNoRiesgoAdmin(admin.ModelAdmin):
 
     actions = ['asignar_turno']
     fields = ('paciente', 'vacuna', 'centro_vacunatorio', 'format_fecha_solicitud', 'format_fecha_estimada')
-    list_filter = ('paciente__nombre', 'paciente__apellido', 'centro_vacunatorio')
+    list_filter = ('vacuna__nombre', 'centro_vacunatorio')
     search_fields = ('paciente__nombre', 'paciente__apellido', 'centro_vacunatorio','vacuna__nombre')
     list_display = ('nombre','apellido' ,'centro_vacunatorio', 'vacuna', 'format_fecha_solicitud', 'format_fecha_estimada')
     readonly_fields = ('paciente', 'vacuna', 'centro_vacunatorio', 'format_fecha_solicitud', 'format_fecha_estimada')
@@ -207,7 +208,7 @@ class SolicitudesRiesgoAdmin(admin.ModelAdmin):
 
     actions = ['asignar_turno']
     fields = ('paciente', 'vacuna', 'centro_vacunatorio', 'format_fecha_solicitud', 'format_fecha_estimada')
-    list_filter = ('paciente__nombre', 'paciente__apellido', 'centro_vacunatorio')
+    list_filter = ('vacuna__nombre', 'centro_vacunatorio')
     search_fields = ('paciente__nombre', 'paciente__apellido', 'centro_vacunatorio','vacuna__nombre')
     list_display = ('paciente', 'centro_vacunatorio', 'vacuna', 'format_fecha_solicitud', 'format_fecha_estimada')
     readonly_fields = ('paciente', 'vacuna', 'centro_vacunatorio', 'format_fecha_solicitud', 'format_fecha_estimada')
@@ -272,7 +273,7 @@ class Turnos(PacientesTurnos):
 @admin.register(Turnos)
 class TurnosAdmin(admin.ModelAdmin):
     list_display = ('format_nombre','format_apellido','format_dni','format_vacuna','fecha_confirmada','turno_perdido','turno_pendiente','turno_completado',)
-    list_filter = ('solicitud__paciente__nombre','solicitud__paciente__apellido','solicitud__paciente__dni','solicitud__vacuna__nombre',)
+    list_filter = ('solicitud__vacuna__nombre','fecha_confirmada','solicitud__centro_vacunatorio',)
     fields = ('format_nombre','format_apellido','format_dni','format_vacuna','fecha_confirmada','turno_perdido','turno_pendiente','turno_completado',)
     search_fields = ('solicitud__paciente__nombre','solicitud__paciente__apellido','solicitud__paciente__dni','solicitud__vacuna__nombre','fecha_confirmada','turno_perdido','turno_pendiente','turno_completado',)
     readonly_fields = ('format_nombre','format_apellido','format_dni','format_vacuna','fecha_confirmada','turno_perdido','turno_pendiente','turno_completado',)
