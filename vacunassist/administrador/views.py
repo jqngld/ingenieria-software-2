@@ -50,7 +50,6 @@ class PersonalChangePassword(PersonalPasswordChangeView):
     
     
 def admin_asignar_turno(request,**kwargs):
-     if request.method == 'POST':
        solicitud = PacientesSolicitudes.objects.get(solicitud_id=kwargs['pk'])
        confirmed_date = solicitud.fecha_estimada
        turno = PacientesTurnos(
@@ -63,9 +62,8 @@ def admin_asignar_turno(request,**kwargs):
        turno.save()
        solicitud.solicitud_aprobada = 1
        solicitud.save()
-       messages.success(request,"se confirmo turno el dia ",confirmed_date ,(confirmed_date))
-       return redirect('/admin/pacientes/solicitudesnoriesgo/')
-     return render(request, 'admin/turno_asignado.html')    
+       messages.success(request,'se confirmo turno el dia %s' % (confirmed_date))
+       return redirect('/admin/pacientes/solicitudesnoriesgo/') 
 
 def personal_detele_user(request, *args, **kwargs):
 

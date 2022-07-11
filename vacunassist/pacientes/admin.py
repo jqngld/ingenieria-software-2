@@ -2,6 +2,7 @@ from django.contrib import admin
 from django.contrib import messages
 from django.shortcuts import render, redirect
 from django.utils.html import mark_safe
+from django.template.loader import render_to_string
 
 from .models import *
 
@@ -144,14 +145,10 @@ class SolicitudesNoRiesgoAdmin(admin.ModelAdmin):
         # el parámetro 'obj.pk' es el id del objeto dentro de la línea, hay que pasarlo en
         # el link para saber qué objeto se va a usar, estos botones son de ejemplo y hacen lo mismo
 
-        link_asignar_turno = "'/admin/pacientes/turno_asignado/%s/'" % (obj.pk)
-        
-        return mark_safe(\
-                '\
-                <button type="button" title="Ver Vacunas" onclick="window.location.href=%s" class="btn btn-success btn-sm" name="apply"><i class="bi bi-file-medical"></i></button>\
-                ' % (link_asignar_turno)\
-                )
-    
+      render_action_buttons = render_to_string('admin/pacientes_actions_buttons.html', {'pk' : obj.pk})
+      return mark_safe(render_action_buttons)
+  
+  
     # función para no permitir que se añada un elemento
     def has_add_permission(self, request):
         return False
