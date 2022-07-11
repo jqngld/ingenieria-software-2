@@ -12,9 +12,9 @@ from dateutil.relativedelta import relativedelta
 
 class VacunaAdmin(admin.ModelAdmin):      
     fields = ('vacuna','lote','paciente')
-    list_filter = ('vacuna','lote','paciente__nombre', 'fecha_vacunacion')
+    list_filter = ('vacuna','lote', 'fecha_vacunacion')
     list_display = ('vacuna','lote','nombrePaciente','apellido','fecha_vacunacion')  
-    search_fields = ('paciente__nombre','paciente__apellido','vacuna__nombre','fecha_vacunacion') 
+    search_fields = ('paciente__nombre','paciente__apellido','vacuna__nombre','lote', 'fecha_vacunacion') 
       
     # sobreescribo el método de buscado de elementos para filtrar por criterios
     def get_search_results(self, request, queryset, search_term):
@@ -294,10 +294,10 @@ class Turnos(PacientesTurnos):
         
 @admin.register(Turnos)
 class TurnosAdmin(admin.ModelAdmin):
-    list_display = ('format_nombre','format_apellido','format_dni','format_vacuna','fecha_confirmada','turno_perdido','turno_pendiente','turno_completado',)
+    list_display = ('format_nombre','format_apellido','format_dni','format_vacuna','format_centro_vacunatorio','fecha_confirmada','turno_perdido','turno_pendiente','turno_completado',)
     list_filter = ('solicitud__vacuna__nombre','fecha_confirmada','solicitud__centro_vacunatorio',)
     fields = ('format_nombre','format_apellido','format_dni','format_vacuna','fecha_confirmada','turno_perdido','turno_pendiente','turno_completado',)
-    search_fields = ('solicitud__paciente__nombre','solicitud__paciente__apellido','solicitud__paciente__dni','solicitud__vacuna__nombre','fecha_confirmada','turno_perdido','turno_pendiente','turno_completado',)
+    search_fields = ('solicitud__paciente__nombre','solicitud__paciente__apellido','solicitud__paciente__dni','solicitud__vacuna__nombre','solicitud__centro_vacunatorio','fecha_confirmada','turno_perdido','turno_pendiente','turno_completado',)
     readonly_fields = ('format_nombre','format_apellido','format_dni','format_vacuna','fecha_confirmada','turno_perdido','turno_pendiente','turno_completado',)
 
      # función para no permitir que se añada un elemento
@@ -327,6 +327,10 @@ class TurnosAdmin(admin.ModelAdmin):
     @admin.display(description='Vacuna')
     def format_vacuna(self, obj):
         return obj.solicitud.vacuna.nombre
+
+    @admin.display(description='Centro')
+    def format_centro_vacunatorio(self, obj):
+        return obj.solicitud.centro_vacunatorio    
 
     
     
