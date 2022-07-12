@@ -3,6 +3,7 @@ from django.contrib import messages
 from django.shortcuts import render, redirect
 from django.utils.html import mark_safe
 from django.template.loader import render_to_string
+from pandas import describe_option
 
 from .models import *
 
@@ -12,10 +13,11 @@ from dateutil.relativedelta import relativedelta
 
 class VacunaAdmin(admin.ModelAdmin):      
     fields = ('vacuna','lote','paciente')
-    list_filter = ('vacuna','lote','paciente__nombre', 'fecha_vacunacion')
-    list_display = ('vacuna','lote','nombrePaciente','apellido','fecha_vacunacion')  
-    search_fields = ('paciente__nombre','paciente__apellido','vacuna__nombre','fecha_vacunacion') 
-      
+    list_filter = ('fecha_vacunacion',)
+    list_display = ('vacuna','lote','observacion','nombrePaciente','apellido','fecha_vacunacion')  
+    search_fields = ('paciente__nombre','paciente__apellido','vacuna__nombre','lote', 'fecha_vacunacion') 
+    list_display_links = None
+
     # sobreescribo el método de buscado de elementos para filtrar por criterios
     def get_search_results(self, request, queryset, search_term):
         queryset, use_distinct = super().get_search_results(request, queryset, search_term)
@@ -52,12 +54,10 @@ class UsuariosPacientes(Usuarios):
 class PacienteAdmin(admin.ModelAdmin):
     
     # actions = ['list_admins']    
-    list_display = ('format_nombre','format_apellido','format_dni','edad','email','format_centro_vacunatorio','boton')
+    list_display = ('format_nombre','format_apellido','format_dni','format_fecha_nacimiento','email','format_centro_vacunatorio','boton')
     fields = ('format_nombre','format_apellido','format_dni','edad','email','format_centro_vacunatorio','format_sexo','format_riesgo')
-    list_filter = ('pacientesdetalles__centro_vacunatorio',)
     search_fields = ('email','pacientesdetalles__nombre','pacientesdetalles__apellido','pacientesdetalles__dni', 'pacientesdetalles__centro_vacunatorio','pacientesdetalles__fecha_nacimiento')
-
-     #ver la impresión de edad para buscar
+    list_display_links = None
     
     
     @admin.display(description='Acciones')
@@ -69,7 +69,7 @@ class PacienteAdmin(admin.ModelAdmin):
         
         return mark_safe(\
                 '\
-                <button type="button" title="Ver Vacunas" onclick="window.location.href=%s" class="btn btn-success btn-sm" name="apply"><i class="bi bi-file-medical"></i></button>\
+                <button type="button" title="Ver Vacunas" onclick="window.location.href=%s" class="btn btn-success btn-sm" name="apply"><i class="bi bi-shield-plus"></i></button>\
                 ' % (link_ver_vacunas)\
                 )
     
@@ -104,6 +104,10 @@ class PacienteAdmin(admin.ModelAdmin):
     @admin.display(description='sexo')
     def format_sexo(self, obj):
         return obj.pacientesdetalles.sexo
+
+    @admin.display(description='Nacimiento')
+    def format_fecha_nacimiento(self, obj):
+        return obj.pacientesdetalles.fecha_nacimiento
     
     @admin.display(description='riesgo')
     def format_riesgo(self, obj):
@@ -136,10 +140,10 @@ class SolicitudesNoRiesgoAdmin(admin.ModelAdmin):
 
     actions = ['asignar_turno']
     fields = ('paciente', 'vacuna', 'centro_vacunatorio', 'format_fecha_solicitud', 'format_fecha_estimada')
-    list_filter = ('vacuna__nombre', 'centro_vacunatorio')
-    search_fields = ('nombre', 'apellido', 'centro_vacunatorio','vacuna__nombre')
+    search_fields = ('paciente__nombre', 'paciente__apellido', 'centro_vacunatorio','vacuna__nombre')
     list_display = ('nombre','apellido', 'centro_vacunatorio', 'vacuna', 'format_fecha_solicitud', 'format_fecha_estimada','boton')
     readonly_fields = ('paciente', 'vacuna', 'centro_vacunatorio', 'format_fecha_solicitud', 'format_fecha_estimada')
+    list_display_links = None
 
     @admin.display(description='Acciones')
     def boton(self, obj):
@@ -217,11 +221,11 @@ class SolicitudesRiesgoAdmin(admin.ModelAdmin):
 
     actions = ['asignar_turno']
     fields = ('paciente', 'vacuna', 'centro_vacunatorio', 'format_fecha_solicitud', 'format_fecha_estimada')
-    list_filter = ('vacuna__nombre', 'centro_vacunatorio')
-    search_fields = ('nombre', 'apellido', 'centro_vacunatorio','vacuna__nombre')
+    search_fields = ('paciente__nombre', 'paciente__apellido', 'centro_vacunatorio','vacuna__nombre')
     list_display = ('nombre','apellido', 'centro_vacunatorio', 'vacuna', 'format_fecha_solicitud', 'format_fecha_estimada','boton')
     readonly_fields = ('paciente', 'vacuna', 'centro_vacunatorio', 'format_fecha_solicitud', 'format_fecha_estimada')
-
+    list_display_links = None
+    
     @admin.display(description='Acciones')
     def boton(self, obj):
         # el parámetro 'obj.pk' es el id del objeto dentro de la línea, hay que pasarlo en
@@ -285,30 +289,60 @@ class SolicitudesRiesgoAdmin(admin.ModelAdmin):
         return render(request, 'admin/asignar_turno_intermedio.html', context)
     
     
-    
+
+class format_estado_turno_Filter(admin.SimpleListFilter):
+
+    title = 'estado del turno'
+    parameter_name = 'format_estado_turno'
+
+    def lookups(self, request, model_admin):
+        return (
+            ('Perdido', 'Perdido'),
+            ('Pendiente', 'Pendiente'),
+            ('Completado', 'Completado'),
+        )
+
+    def queryset(self, request, queryset):
+        value = self.value()
+        if value == 'Perdido':
+            return queryset.filter(turno_perdido=1)
+        elif value == 'Pendiente':
+            return queryset.filter(turno_pendiente=1)
+        elif value == 'Completado':
+            return queryset.filter(turno_completado=1)
+        return queryset
+
+
 class Turnos(PacientesTurnos):
     class Meta:
         proxy = True
         verbose_name = 'turnos de pacientes'
         verbose_name_plural = 'Turnos de Pacientes'
+
         
 @admin.register(Turnos)
 class TurnosAdmin(admin.ModelAdmin):
-    list_display = ('format_nombre','format_apellido','format_dni','format_vacuna','fecha_confirmada','turno_perdido','turno_pendiente','turno_completado',)
-    list_filter = ('solicitud__vacuna__nombre','fecha_confirmada','solicitud__centro_vacunatorio',)
-    fields = ('format_nombre','format_apellido','format_dni','format_vacuna','fecha_confirmada','turno_perdido','turno_pendiente','turno_completado',)
-    search_fields = ('solicitud__paciente__nombre','solicitud__paciente__apellido','solicitud__paciente__dni','solicitud__vacuna__nombre','fecha_confirmada','turno_perdido','turno_pendiente','turno_completado',)
-    readonly_fields = ('format_nombre','format_apellido','format_dni','format_vacuna','fecha_confirmada','turno_perdido','turno_pendiente','turno_completado',)
+    list_display = ('format_nombre','format_apellido','format_dni','format_vacuna','format_centro_vacunatorio','fecha_confirmada','format_estado_turno',)
+    list_filter = (format_estado_turno_Filter,)
+    fields = ('format_nombre','format_apellido','format_dni','format_vacuna','fecha_confirmada','format_estado_turno',)
+    search_fields = ('solicitud__paciente__nombre','solicitud__paciente__apellido','solicitud__paciente__dni','solicitud__vacuna__nombre','solicitud__centro_vacunatorio','fecha_confirmada',)
+    readonly_fields = ('format_nombre','format_apellido','format_dni','format_vacuna','fecha_confirmada','format_estado_turno',)
+    list_display_links = None
+
 
      # función para no permitir que se añada un elemento
     def has_add_permission(self, request):
+        return False
+
+    # función para no permitir que se elimine un elemento
+    def has_delete_permission(self, request, obj=None):
         return False
 
  # sobreescribo el método de buscado de elementos para filtrar por criterios
     def get_search_results(self, request, queryset, search_term):
         queryset, use_distinct = super().get_search_results(request, queryset, search_term)
 
-        queryset = queryset.select_related('solicitud').filter(turno_pendiente=1)
+        queryset = queryset.select_related('solicitud')
         
         return queryset, use_distinct
 
@@ -328,6 +362,19 @@ class TurnosAdmin(admin.ModelAdmin):
     def format_vacuna(self, obj):
         return obj.solicitud.vacuna.nombre
 
+    @admin.display(description='Centro')
+    def format_centro_vacunatorio(self, obj):
+        return obj.solicitud.centro_vacunatorio    
+
+    @admin.display(description='Estado')
+    def format_estado_turno(self, obj):
+        if(obj.turno_perdido == 1):
+            return "Perdido"
+        elif(obj.turno_pendiente == 1):
+            return "Pendiente"
+        else:
+            return "Completado"
+    
     
     
 admin.site.register(VacunasAplicadas,VacunaAdmin)

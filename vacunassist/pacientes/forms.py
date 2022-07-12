@@ -222,7 +222,7 @@ class UserSignUpForm(UserCreationForm):
         '''Se registran aquellas vacunas que el usuario indicó haberse aplicado.'''
 
         fecha_nacimiento = datetime(int(self.cleaned_data['ano_nacimiento']), int(self.cleaned_data['mes_nacimiento']), int(self.cleaned_data['dia_nacimiento']))
-        paciente_edad = relativedelta(datetime.now(), fecha_nacimiento)
+        paciente_edad = relativedelta(datetime.now(), fecha_nacimiento).years
 
         if self.cleaned_data['vacuna_covid_1']:
             vacuna_covid_1 = VacunasAplicadas(
@@ -240,7 +240,7 @@ class UserSignUpForm(UserCreationForm):
                 )
                 vacuna_covid_2.save()
             else:
-                if paciente.es_paciente_riesgo:
+                if paciente.es_paciente_riesgo and paciente_edad >= 18:
                     solicitud_covid2 = PacientesSolicitudes(
                         paciente_id = paciente.paciente_id,
                         vacuna_id = 2,
@@ -250,17 +250,18 @@ class UserSignUpForm(UserCreationForm):
                     )
                     solicitud_covid2.save()
                 else:
-                    solicitud_covid2 = PacientesSolicitudes(
-                        paciente_id = paciente.paciente_id,
-                        vacuna_id = 2,
-                        solicitud_aprobada = 0,
-                        fecha_estimada = datetime.today() + relativedelta(days=random.randint(15,60)),  #Genera números aleatorios entre dos valores
-                        centro_vacunatorio = paciente.centro_vacunatorio
-                    )
-                    solicitud_covid2.save()
+                    if paciente_edad >= 18:
+                        solicitud_covid2 = PacientesSolicitudes(
+                            paciente_id = paciente.paciente_id,
+                            vacuna_id = 2,
+                            solicitud_aprobada = 0,
+                            fecha_estimada = datetime.today() + relativedelta(days=random.randint(30,90)),  #Genera números aleatorios entre dos valores
+                            centro_vacunatorio = paciente.centro_vacunatorio
+                        )   
+                        solicitud_covid2.save()
             
         else:
-            if paciente.es_paciente_riesgo:
+            if paciente.es_paciente_riesgo and paciente_edad >= 18:
                 solicitud_covid1 = PacientesSolicitudes(
                     paciente_id = paciente.paciente_id,
                     vacuna_id = 1,

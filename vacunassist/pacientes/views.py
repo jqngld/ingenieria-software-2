@@ -147,7 +147,7 @@ def solicitud_fiebre_amarilla(request):
             paciente_id = paciente.paciente_id,
             vacuna_id = 4,
             solicitud_aprobada = 0,
-            fecha_estimada = datetime.today() + relativedelta(months=6),
+            fecha_estimada = datetime.today(),
             centro_vacunatorio = paciente.centro_vacunatorio
         )
         solicitud_fa.save()
@@ -252,7 +252,7 @@ def restPassword(request):
                 form.save(from_email='blabla@blabla.com', email_template_name='registration/password_reset_email.html', request=request)
                 return redirect('/pacientes/restablecer-contrasenia-hecho')          
             else:
-                messages.error(request, " El mail ingresado no es correcto o no lo tenemos registrado en el sistema ")  
+                messages.error(request, " El mail ingresado no se encuentra registrado en el sistema ")  
         else: 
               messages.error(request, " No existe ese mail") 
     form =  PasswordResetForm()     

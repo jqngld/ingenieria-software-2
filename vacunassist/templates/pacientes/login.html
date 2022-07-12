@@ -23,6 +23,8 @@
     {% csrf_token %}
     {{ form|crispy}}
     <a style="margin:15" href="{% url 'reset_password' %}">Olvidé mi contraseña</a>
+    <a style="margin:15" href="/personal_vacunatorio/inicio_sesion/"> Soy Personal de Vacunatorio</a>
+    <a style="margin:15" href="/admin/"> Soy Administrador</a>
     <button type="submit" class="btn btn-primary" id="submit">iniciar sesi&oacute;n</button>
         </div>
     </div>
