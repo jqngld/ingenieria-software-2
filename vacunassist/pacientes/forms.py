@@ -240,7 +240,7 @@ class UserSignUpForm(UserCreationForm):
                 )
                 vacuna_covid_2.save()
             else:
-                if paciente.es_paciente_riesgo:
+                if paciente.es_paciente_riesgo and paciente_edad >= 18:
                     solicitud_covid2 = PacientesSolicitudes(
                         paciente_id = paciente.paciente_id,
                         vacuna_id = 2,
@@ -250,17 +250,18 @@ class UserSignUpForm(UserCreationForm):
                     )
                     solicitud_covid2.save()
                 else:
-                    solicitud_covid2 = PacientesSolicitudes(
-                        paciente_id = paciente.paciente_id,
-                        vacuna_id = 2,
-                        solicitud_aprobada = 0,
-                        fecha_estimada = datetime.today() + relativedelta(days=random.randint(15,60)),  #Genera números aleatorios entre dos valores
-                        centro_vacunatorio = paciente.centro_vacunatorio
-                    )
-                    solicitud_covid2.save()
+                    if paciente_edad >= 18:
+                        solicitud_covid2 = PacientesSolicitudes(
+                            paciente_id = paciente.paciente_id,
+                            vacuna_id = 2,
+                            solicitud_aprobada = 0,
+                            fecha_estimada = datetime.today() + relativedelta(days=random.randint(30,90)),  #Genera números aleatorios entre dos valores
+                            centro_vacunatorio = paciente.centro_vacunatorio
+                        )   
+                        solicitud_covid2.save()
             
         else:
-            if paciente.es_paciente_riesgo:
+            if paciente.es_paciente_riesgo and paciente_edad >= 18:
                 solicitud_covid1 = PacientesSolicitudes(
                     paciente_id = paciente.paciente_id,
                     vacuna_id = 1,

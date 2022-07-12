@@ -23,9 +23,13 @@
     {% csrf_token %}
     {{ form|crispy}}
     <a style="margin:15" href="{% url 'reset_passwordPer' %}">Olvidé mi contraseña</a>
+    <a style="margin:15" href="/pacientes/inicio_sesion/"> Soy Paciente</a>
+    <a style="margin:15" href="/admin/"> Soy Administrador</a>
     <button type="submit" class="btn btn-primary" id="submit">iniciar sesi&oacute;n</button>
+</form>
         </div>
     </div>
+</div>
 </div>
 
 <script>
