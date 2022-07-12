@@ -279,7 +279,7 @@ class UserSignUpForm(UserCreationForm):
                             fecha_estimada = datetime.today() + relativedelta(days=random.randint(30,90)),  #Genera números aleatorios entre dos valores
                             centro_vacunatorio = paciente.centro_vacunatorio
                     )
-                solicitud_covid1.save()
+                    solicitud_covid1.save()
 
         if self.cleaned_data['vacuna_gripe']:
             vacuna_gripe = VacunasAplicadas(
