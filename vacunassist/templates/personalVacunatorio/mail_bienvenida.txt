@@ -1,0 +1,5 @@
+¡{{ nombre }}, Bienvenido a VacunAssist! Tu cuenta fue creada con éxito.
+Por motivos de seguridad, contáctese con el administrador para que le brinde su clave.
+¡Muchas gracias por elegirnos!
+
+VacunAssist.
