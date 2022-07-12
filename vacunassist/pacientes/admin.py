@@ -53,29 +53,25 @@ class UsuariosPacientes(Usuarios):
 @admin.register(UsuariosPacientes)
 class PacienteAdmin(admin.ModelAdmin):
     
-    # actions = ['list_admins']    
+    actions = ['delete_multiple_users']
     list_display = ('format_nombre','format_apellido','format_dni','format_fecha_nacimiento','email','format_centro_vacunatorio','boton')
     fields = ('format_nombre','format_apellido','format_dni','edad','email','format_centro_vacunatorio','format_sexo','format_riesgo')
     search_fields = ('email','pacientesdetalles__nombre','pacientesdetalles__apellido','pacientesdetalles__dni', 'pacientesdetalles__centro_vacunatorio','pacientesdetalles__fecha_nacimiento')
     list_display_links = None
     
-    
-    @admin.display(description='Acciones')
-    def boton(self, obj):
-        # el parámetro 'obj.pk' es el id del objeto dentro de la línea, hay que pasarlo en
-        # el link para saber qué objeto se va a usar, estos botones son de ejemplo y hacen lo mismo
 
-        render_action_buttons = render_to_string('admin/paciente_action_buttons.html', {'pk' : obj.pk})
-        return mark_safe(render_action_buttons)
+    @admin.action(description='Eliminar usuarios seleccionados')
+    def delete_multiple_users(self, request, queryset):
 
-        # link_ver_vacunas = "'/admin/pacientes/info/vacunasaplicadas/%s/'" % (obj.pk)
-        
-        # return mark_safe(\
-        #         '\
-        #         <button type="button" title="Ver Vacunas" onclick="window.location.href=%s" class="btn btn-success btn-sm" name="apply"><i class="bi bi-shield-plus"></i></button>\
-        #         ' % (link_ver_vacunas)\
-        #         )
-    
+        if 'apply' in request.POST:
+            for user in queryset:
+                user.delete()
+            messages.success(request, 'Se eliminaron correctamente %s usuarios administradores de vacunatorios.' % (queryset.count()))
+            return redirect('%s' % (request.get_full_path()))
+
+        context = {'orders' : queryset}
+        return render(request, 'admin/personal_multiple_delete.html', context)
+
 
     # función para no permitir que se añada un elemento
     def has_add_permission(self, request):
@@ -96,6 +92,15 @@ class PacienteAdmin(admin.ModelAdmin):
         queryset = queryset.filter(tipo_usuario='paciente').select_related("pacientesdetalles")
         return queryset, use_distinct
 
+
+    @admin.display(description='Acciones')
+    def boton(self, obj):
+        # el parámetro 'obj.pk' es el id del objeto dentro de la línea, hay que pasarlo en
+        # el link para saber qué objeto se va a usar, estos botones son de ejemplo y hacen lo mismo
+
+        render_action_buttons = render_to_string('admin/paciente_action_buttons.html', {'pk' : obj.pk})
+        return mark_safe(render_action_buttons)
+
     @admin.display(description='Nombre')
     def format_nombre(self, obj):
         return obj.pacientesdetalles.nombre
@@ -114,12 +119,11 @@ class PacienteAdmin(admin.ModelAdmin):
     
     @admin.display(description='riesgo')
     def format_riesgo(self, obj):
-         if (obj.pacientesdetalles.es_paciente_riesgo):
-            return "si"
-         else: 
-           return "no"
+        if obj.pacientesdetalles.es_paciente_riesgo:
+            return "Si"
+        else: 
+            return "No"
  
-
     @admin.display(description='Edad')
     def edad(self, obj):
         return relativedelta(date.today(), obj.pacientesdetalles.fecha_nacimiento).years
@@ -131,6 +135,7 @@ class PacienteAdmin(admin.ModelAdmin):
     @admin.display(description='Centro')
     def format_centro_vacunatorio(self, obj):
         return obj.pacientesdetalles.centro_vacunatorio
+
 
 class SolicitudesNoRiesgo(PacientesSolicitudes):
     class Meta:
