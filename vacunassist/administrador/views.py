@@ -94,6 +94,7 @@ def personal_detele_user(request, *args, **kwargs):
 
 def search_dates(request):
 
+    df_turnos = None
     df_solicitudes = None
 
     chart_turnos_1 = None
