@@ -65,13 +65,16 @@ class PacienteAdmin(admin.ModelAdmin):
         # el parámetro 'obj.pk' es el id del objeto dentro de la línea, hay que pasarlo en
         # el link para saber qué objeto se va a usar, estos botones son de ejemplo y hacen lo mismo
 
-        link_ver_vacunas = "'/admin/pacientes/info/vacunasaplicadas/%s/'" % (obj.pk)
+        render_action_buttons = render_to_string('admin/paciente_action_buttons.html', {'pk' : obj.pk})
+        return mark_safe(render_action_buttons)
+
+        # link_ver_vacunas = "'/admin/pacientes/info/vacunasaplicadas/%s/'" % (obj.pk)
         
-        return mark_safe(\
-                '\
-                <button type="button" title="Ver Vacunas" onclick="window.location.href=%s" class="btn btn-success btn-sm" name="apply"><i class="bi bi-shield-plus"></i></button>\
-                ' % (link_ver_vacunas)\
-                )
+        # return mark_safe(\
+        #         '\
+        #         <button type="button" title="Ver Vacunas" onclick="window.location.href=%s" class="btn btn-success btn-sm" name="apply"><i class="bi bi-shield-plus"></i></button>\
+        #         ' % (link_ver_vacunas)\
+        #         )
     
 
     # función para no permitir que se añada un elemento

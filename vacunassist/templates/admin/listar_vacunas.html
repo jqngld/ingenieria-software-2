@@ -4,12 +4,12 @@
 {% block content %}
 
 
-<div class="card">
+<div class="card" style="min-width: 1280px;">
     <div class="card-header" style="min-height: 224px;">
         <div class="row" style="margin-top: 10px;">
             <div class="col-md-12 text-center ">
                 <strong class="card-title">
-                    <h2>Listado de Vacunas Aplicadas</h2>
+                    <h2>Listado de Vacunas Aplicadas: {{ paciente_apellido }}, {{ paciente_nombre }}</h2>
                 </strong>
             </div>
         </div>
@@ -37,7 +37,7 @@
                 <div class="col-md-12 mt-4">
                     <div class="card">
                         <div class="card-body">
-                            <p class="card-text">Por el momento usted no registra vacunas aplicadas.</p>
+                            <p class="card-text">Por el momento este paciente no registra vacunas aplicadas.</p>
                         </div>
                     </div>
                 </div>

@@ -5,5 +5,5 @@ from admin_interface.models import Theme
 
 AdminSite.site_url = None
 
-#admin.site.unregister(Theme)
+admin.site.unregister(Theme)
 admin.site.unregister(Group)

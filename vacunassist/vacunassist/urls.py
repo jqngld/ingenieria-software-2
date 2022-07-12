@@ -25,6 +25,7 @@ from administrador.views import *
 
 urlpatterns = [
     path('', home),
+    path('admin/pacientes/eliminar/<int:pk>/', paciente_detele_user, name='paciente_detele_user'),
     path('admin/pacientes/asignar_turno/<int:pk>/',admin_asignar_turno, name="asignar_turno"),
     path('admin/pacientes/info/vacunasaplicadas/<int:pk>/', ver_vacunas, name="ver_vacunas"),
     path('admin/personalVacunatorio/cambiarcontrasena/<int:pk>/', PersonalChangePassword.as_view(), name="personal_change_password"),

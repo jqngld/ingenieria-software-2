@@ -5,7 +5,7 @@ from django.contrib.auth.views import PasswordChangeView
 from django.contrib.auth.forms import PasswordChangeForm
 from administrador.forms import SalesSearchForm
 
-from pacientes.models import Usuarios, VacunasAplicadas,PacientesSolicitudes
+from pacientes.models import PacientesDetalles, Usuarios, VacunasAplicadas,PacientesSolicitudes
 from pacientes.models import PacientesTurnos
 
 from .utils import get_chart_solicitud, get_chart_turnos
@@ -20,10 +20,16 @@ def home_admin(request):
 
 
 def ver_vacunas(request,*args,**kwargs):
+    paciente = PacientesDetalles.objects.get(user=kwargs['pk'])
     vacunas = VacunasAplicadas.objects.filter(paciente_id__user=kwargs['pk'])\
         .values('vacuna_id__nombre', 'fecha_vacunacion', 'vacuna_id')
 
-    return render(request, "admin/listar_vacunas.html/", {'vacunas' : vacunas})
+    context = {
+        'vacunas' : vacunas,
+        'paciente_nombre' : paciente.nombre,
+        'paciente_apellido' : paciente.apellido,
+    }
+    return render(request, "admin/listar_vacunas.html/", context)
 
 
 class PersonalPasswordChangeView(PasswordChangeView):
@@ -67,6 +73,15 @@ def admin_asignar_turno(request,**kwargs):
       return redirect('/admin/pacientes/solicitudesnoriesgo/')   
     else:
       return redirect('/admin/pacientes/solicitudesriesgo/')
+
+def paciente_detele_user(request, *args, **kwargs):
+
+    patient_user = Usuarios.objects.get(id=kwargs['pk'])
+    messages.success(request, 'El usuario "%s" fue eliminado correctamente.' % (patient_user.email))
+
+    patient_user.delete()
+    return redirect('/admin/pacientes/usuariospacientes/')
+
 
 def personal_detele_user(request, *args, **kwargs):
 
