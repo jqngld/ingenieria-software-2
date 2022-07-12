@@ -1,4 +1,5 @@
 import enum
+from turtle import width
 import numpy as np
 import pandas as pd
 import uuid, base64
@@ -31,51 +32,107 @@ def get_graph():
     buffer.close()
     return graph
 
-def get_chart(chart_type, data, results_by, **kwargs):
+def get_chart_solicitud(data, centro, **kwargs):
     pyplot.switch_backend('AGG')
-    fig = pyplot.figure(figsize=(10, 4))
-    key = get_key(results_by)
+    pyplot.figure(figsize=(10, 4))
+    # fig = pyplot.figure(figsize=(12, 4))
+    # key = get_key(results_by)
 
+    nombres_vacuna = {
+        1 : 'Covid (1ra)',
+        2 : 'Covid (2da)',
+        3 : 'Gripe',
+        4 : 'Fiebre Amarilla',
+    }
     line_color = {
-        'Terminal' : 'red',
-        'Cementerio' : 'green',
-        'Municipalidad' : 'blue',
+        1 : 'red',
+        2 : 'green',
+        3 : 'blue',
+        4 : 'yellow',
     }
 
-    d = data.sort_values('fecha_estimada', ascending=True).groupby(['fecha_estimada', 'centro_vacunatorio'], as_index=False)['solicitud_id'].agg('count')
-    print('Normal:')
-    print(d)
-    # d = data.sort_values('fecha_estimada', ascending=True).groupby(['fecha_estimada', 'centro_vacunatorio'])['solicitud_id'].count().unstack(fill_value=0).stack()
+    d = data.sort_values('fecha_estimada', ascending=True).query(f"centro_vacunatorio=='{centro}'").groupby(['fecha_estimada', 'vacuna_id'], as_index=False)['solicitud_id'].agg('count')
 
-    d = pd.pivot_table(d, index=['fecha_estimada', 'centro_vacunatorio'], values='solicitud_id', fill_value=0, dropna=False, aggfunc=np.sum).reset_index()
-    print('Pivot:')
-    print(d)
+    try:
+        vacunas = list(d['vacuna_id'].unique())
+        for vacuna in [1, 2, 3, 4]:
+            # si no hay solicitudes para algún centro, se agrega un valor para que aparezca la línea
+            if vacuna not in vacunas:
+                d = d.append({
+                    'vacuna_id' : vacuna,
+                    'solicitud_id' : 0,
+                    'fecha_estimada' : d.iat[0,0],
+                    }, ignore_index=True)
+    except Exception:
+        return False
+
+    d = pd.pivot_table(d, index=['fecha_estimada', 'vacuna_id'], values='solicitud_id', fill_value=0, dropna=False, aggfunc=np.sum).reset_index()
     d['fecha_estimada'] = d['fecha_estimada'].apply(lambda x: x.strftime('%d/%m/%Y'))
+
     xlabels = d['fecha_estimada'].unique()
-    print(xlabels)
+    for vacuna in [1, 2, 3, 4]:
+        fechas = d.query(f"vacuna_id=='{vacuna}'")['fecha_estimada']
+        cantidades = d.query(f"vacuna_id=='{vacuna}'")['solicitud_id']
 
+        pyplot.plot(xlabels, d.query(f"vacuna_id=={vacuna}")['solicitud_id'], color=line_color[vacuna], marker='o', linestyle='-.', linewidth=1, label=nombres_vacuna[vacuna])
 
-    for centro in ['Terminal', 'Cementerio', 'Municipalidad']:
-        pyplot.plot(xlabels, d.query(f"centro_vacunatorio=='{centro}'")['solicitud_id'], color=line_color[centro], marker='o', linestyle='-.', linewidth=1, label=centro)
-
-    if chart_type == '#1':
-        print("Bar graph")
-        pyplot.bar(d['fecha_estimada'], d['solicitud_id'])
-    elif chart_type == '#2':
-        print("Pie chart")
-        pyplot.pie(data=d,x='fecha_estimada', labels=d['solicitud_id'])
-    elif chart_type == '#3':
-        print("Line graph")
-        # pyplot.plot(d['fecha_estimada'], d['solicitud_id'], color='gray', marker='o', linestyle='solid', linewidth=2, label='Centro')
-        # for i, v in zip(d['fecha_estimada'], d['solicitud_id']):
-        #     label = int(v)
-        #     pyplot.annotate(label, (i,v), textcoords='offset points', xytext=(0,10), ha='center')
-    else:
-        print("Apparently...chart_type not identified")
-
-    pyplot.title('Cantidad de solicitudes por fecha sugerida.')
+    pyplot.title(f'Centro: {centro}')
     pyplot.xlabel('Fecha de Solicitud')
     pyplot.ylabel('Solicitudes Recibidas')
+    pyplot.tight_layout()
+    pyplot.legend()
+    chart = get_graph()
+    
+    return chart
+
+
+def get_chart_turnos(data, centro, **kwargs):
+    pyplot.switch_backend('AGG')
+    pyplot.figure(figsize=(10, 4))
+    # fig = pyplot.figure(figsize=(12, 4))
+    # key = get_key(results_by)
+
+    nombres_vacuna = {
+        1 : 'Covid (1ra)',
+        2 : 'Covid (2da)',
+        3 : 'Gripe',
+        4 : 'Fiebre Amarilla',
+    }
+    line_color = {
+        1 : 'red',
+        2 : 'green',
+        3 : 'blue',
+        4 : 'yellow',
+    }
+
+    d = data.sort_values('fecha_confirmada', ascending=True).query(f"centro_vacunatorio=='{centro}'").groupby(['fecha_confirmada', 'vacuna_id'], as_index=False)['turno_id'].agg('count')
+
+    try:
+        vacunas = list(d['vacuna_id'].unique())
+        for vacuna in [1, 2, 3, 4]:
+            # si no hay solicitudes para algún centro, se agrega un valor para que aparezca la línea
+            if vacuna not in vacunas:
+                d = d.append({
+                    'vacuna_id' : vacuna,
+                    'turno_id' : 0,
+                    'fecha_confirmada' : d.iat[0,0],
+                    }, ignore_index=True)
+    except Exception:
+        return False
+
+    d = pd.pivot_table(d, index=['fecha_confirmada', 'vacuna_id'], values='turno_id', fill_value=0, dropna=False, aggfunc=np.sum).reset_index()
+    d['fecha_confirmada'] = d['fecha_confirmada'].apply(lambda x: x.strftime('%d/%m/%Y'))
+
+    xlabels = d['fecha_confirmada'].unique()
+    for vacuna in [1, 2, 3, 4]:
+        fechas = d.query(f"vacuna_id=='{vacuna}'")['fecha_confirmada']
+        cantidades = d.query(f"vacuna_id=='{vacuna}'")['turno_id']
+
+        pyplot.plot(xlabels, d.query(f"vacuna_id=={vacuna}")['turno_id'], color=line_color[vacuna], marker='o', linestyle='-.', linewidth=1, label=nombres_vacuna[vacuna])
+
+    pyplot.title(f'Centro: {centro}')
+    pyplot.xlabel('Fecha de Turno')
+    pyplot.ylabel('Turnos Esperados')
     pyplot.tight_layout()
     pyplot.legend()
     chart = get_graph()

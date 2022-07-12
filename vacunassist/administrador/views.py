@@ -8,7 +8,7 @@ from administrador.forms import SalesSearchForm
 from pacientes.models import Usuarios, VacunasAplicadas,PacientesSolicitudes
 from pacientes.models import PacientesTurnos
 
-from .utils import get_chart
+from .utils import get_chart_solicitud, get_chart_turnos
 from pacientes.models import PacientesSolicitudes, Usuarios, VacunasAplicadas
 
 import pandas
@@ -81,35 +81,60 @@ def search_dates(request):
 
     df_solicitudes = None
 
-    chart = None
-    no_data = None
+    chart_turnos_1 = None
+    chart_turnos_2 = None
+    chart_turnos_3 = None
+
+    chart_solicitudes_1 = None
+    chart_solicitudes_2 = None
+    chart_solicitudes_3 = None
+
     search_form = SalesSearchForm(request.POST or None)
 
     if request.method == 'POST':
+        # agregar filtro para pacientes de riesgo
         date_to = request.POST.get('date_to')
         date_from = request.POST.get('date_from')
-        chart_type = request.POST.get('chart_type')
-        results_by = request.POST.get('results_by')
-        print(date_from, date_to, chart_type)
 
+        turnos = PacientesTurnos.objects.filter(fecha_confirmada__lte=date_to, fecha_confirmada__gte=date_from, turno_pendiente=1)
         solicitudes = PacientesSolicitudes.objects.filter(fecha_estimada__lte=date_to, fecha_estimada__gte=date_from)
 
         if len(solicitudes) > 0:
             df_solicitudes = pandas.DataFrame(solicitudes.values())
 
+            df_turnos = pandas.DataFrame(turnos.values())\
+                            .merge(df_solicitudes, on='solicitud_id', how='left')
+
+            df_solicitudes = pandas.DataFrame(solicitudes.filter(solicitud_aprobada=0).values())
+            
+
             # sales_df['fecha_estimada'] = sales_df['fecha_estimada']
             # sales_df.rename({'customer_id': 'customer', 'salesman_id': 'salesman', 'id': 'sales_id'}, axis=1,
             #                 inplace=True)
 
-            chart = get_chart(chart_type, df_solicitudes, results_by)
+            chart_solicitudes_1 = get_chart_solicitud(df_solicitudes, 'Terminal')
+            chart_solicitudes_2 = get_chart_solicitud(df_solicitudes, 'Cementerio')
+            chart_solicitudes_3 = get_chart_solicitud(df_solicitudes, 'Municipalidad')
+
+            chart_turnos_1 = get_chart_turnos(df_turnos, 'Terminal')
+            chart_turnos_2 = get_chart_turnos(df_turnos, 'Cementerio')
+            chart_turnos_3 = get_chart_turnos(df_turnos, 'Municipalidad')
+
+            df_turnos = df_turnos.to_html()
             df_solicitudes = df_solicitudes.to_html()
 
         else:
             messages.warning(request, 'No se encontró información para los filtros seleccionados.')
 
     context = {
-        'chart': chart,
-        'sales_df': df_solicitudes,
+        'turnos': df_turnos,
+        'solicitudes': df_solicitudes,
         'search_form': search_form,
+        'chart_turnos_1' : chart_turnos_1,
+        'chart_turnos_2' : chart_turnos_2,
+        'chart_turnos_3' : chart_turnos_3,
+        'chart_solicitudes_1' : chart_solicitudes_1,
+        'chart_solicitudes_2' : chart_solicitudes_2,
+        'chart_solicitudes_3' : chart_solicitudes_3,
     }
     return render(request, 'admin/search_dates.html', context)
