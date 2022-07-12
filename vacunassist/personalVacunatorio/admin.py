@@ -91,18 +91,14 @@ class PersonalAdmin(admin.ModelAdmin):
         return queryset, use_distinct
 
 
-    @admin.action(description='Eliminar Usuarios seleccionados')
+    @admin.action(description='Eliminar usuarios seleccionados')
     def delete_multiple_users(self, request, queryset):
 
         if 'apply' in request.POST:
-            print('> Listar administradores vacunatorios:')
             for user in queryset:
-                print(user.email)
-
-            confirmed_date = request.POST.get('confirmed_date')
-            messages.success(request, 'Se confirmó la fecha de turno %s para %s solicitudes.' % (confirmed_date, queryset.count()))
-
+                user.delete()
+            messages.success(request, 'Se eliminaron correctamente %s usuarios administradores de vacunatorios.' % (queryset.count()))
             return redirect('%s' % (request.get_full_path()))
 
         context = {'orders' : queryset}
-        return render(request, 'admin/asignar_turno_intermedio.html', context)
+        return render(request, 'admin/personal_multiple_delete.html', context)
