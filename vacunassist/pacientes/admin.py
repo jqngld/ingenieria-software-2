@@ -58,7 +58,7 @@ class PacienteAdmin(admin.ModelAdmin):
     fields = ('format_nombre','format_apellido','format_dni','edad','email','format_centro_vacunatorio','format_sexo','format_riesgo')
     search_fields = ('email','pacientesdetalles__nombre','pacientesdetalles__apellido','pacientesdetalles__dni', 'pacientesdetalles__centro_vacunatorio','pacientesdetalles__fecha_nacimiento')
     list_display_links = None
-    
+
 
     @admin.action(description='Eliminar usuarios seleccionados')
     def delete_multiple_users(self, request, queryset):
@@ -66,7 +66,7 @@ class PacienteAdmin(admin.ModelAdmin):
         if 'apply' in request.POST:
             for user in queryset:
                 user.delete()
-            messages.success(request, 'Se eliminaron correctamente %s usuarios administradores de vacunatorios.' % (queryset.count()))
+            messages.success(request, 'Se eliminaron correctamente %s usuarios pacientes.' % (queryset.count()))
             return redirect('%s' % (request.get_full_path()))
 
         context = {'orders' : queryset}
@@ -152,14 +152,16 @@ class SolicitudesNoRiesgoAdmin(admin.ModelAdmin):
     list_display = ('nombre','apellido', 'centro_vacunatorio', 'vacuna', 'format_fecha_solicitud', 'format_fecha_estimada','boton')
     readonly_fields = ('paciente', 'vacuna', 'centro_vacunatorio', 'format_fecha_solicitud', 'format_fecha_estimada')
     list_display_links = None
+    ordering = ['solicitud_id']
+
 
     @admin.display(description='Acciones')
     def boton(self, obj):
         # el parámetro 'obj.pk' es el id del objeto dentro de la línea, hay que pasarlo en
         # el link para saber qué objeto se va a usar, estos botones son de ejemplo y hacen lo mismo
 
-      render_action_buttons = render_to_string('admin/pacientes_actions_buttons.html', {'pk' : obj.pk})
-      return mark_safe(render_action_buttons)
+        render_action_buttons = render_to_string('admin/pacientes_actions_buttons.html', {'pk' : obj.pk})
+        return mark_safe(render_action_buttons)
   
   
     # función para no permitir que se añada un elemento
@@ -188,9 +190,11 @@ class SolicitudesNoRiesgoAdmin(admin.ModelAdmin):
     def format_fecha_estimada(self, obj):
         return obj.fecha_estimada.strftime('%d-%m-%Y')   
     
+    @admin.display(description='Nombre')
     def nombre(self,obj):
         return obj.paciente.nombre
      
+    @admin.display(description='Apellido')
     def apellido(self,obj):
         return obj.paciente.apellido
 
@@ -233,6 +237,7 @@ class SolicitudesRiesgoAdmin(admin.ModelAdmin):
     list_display = ('nombre','apellido', 'centro_vacunatorio', 'vacuna', 'format_fecha_solicitud', 'format_fecha_estimada','boton')
     readonly_fields = ('paciente', 'vacuna', 'centro_vacunatorio', 'format_fecha_solicitud', 'format_fecha_estimada')
     list_display_links = None
+    ordering = ['solicitud_id']
     
     @admin.display(description='Acciones')
     def boton(self, obj):
