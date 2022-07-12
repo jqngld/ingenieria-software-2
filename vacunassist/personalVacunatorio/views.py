@@ -95,7 +95,96 @@ def listar_turnos_diarios(request):
     return render(request, "personalVacunatorio/listar_turnos.html/", {'turnos' : turnos, 'personal_centro' : centro_vacunatorio})
 
 
+@login_required(login_url='/personal_vacunatorio/login_error/')
+def listar_historial_atendidos(request):
 
+    today = datetime.today().strftime('%Y-%m-%d')
+    centro_vacunatorio = PersonalDetalles.objects.get(user_id=request.user.id).centro_vacunatorio
+
+    turnos = PacientesTurnos.objects.filter(
+                turno_completado = 1,
+                fecha_confirmada=today,
+                solicitud_id__centro_vacunatorio=centro_vacunatorio)\
+                    .values('turno_id',
+                        'solicitud_id__vacuna_id__nombre',
+                        'solicitud_id__paciente_id__dni',
+                        'solicitud_id__paciente_id__sexo',
+                        'solicitud_id__paciente_id__nombre',
+                        'solicitud_id__paciente_id__apellido',
+                        'solicitud_id__paciente_id__fecha_nacimiento',
+                        'solicitud_id__paciente_id__es_paciente_riesgo',
+                        'solicitud_id__paciente_id__centro_vacunatorio')
+
+    for turno in turnos:
+        turno['vacuna_nombre']      = turno['solicitud_id__vacuna_id__nombre']
+        turno['paciente_dni']       = turno['solicitud_id__paciente_id__dni']
+        turno['paciente_sexo']      = turno['solicitud_id__paciente_id__sexo']
+        turno['paciente_nombre']    = turno['solicitud_id__paciente_id__nombre']
+        turno['paciente_apellido']  = turno['solicitud_id__paciente_id__apellido']
+        turno['paciente_centro']    = turno['solicitud_id__paciente_id__centro_vacunatorio']
+        turno['paciente_riesgo']    = turno['solicitud_id__paciente_id__es_paciente_riesgo']
+        fecha_nacimiento            = turno['solicitud_id__paciente_id__fecha_nacimiento']
+        turno['paciente_fecha_nac'] = turno['solicitud_id__paciente_id__fecha_nacimiento'].strftime('%d-%m-%Y')
+
+        del turno['solicitud_id__vacuna_id__nombre']
+        del turno['solicitud_id__paciente_id__dni']
+        del turno['solicitud_id__paciente_id__sexo']
+        del turno['solicitud_id__paciente_id__nombre']
+        del turno['solicitud_id__paciente_id__apellido']
+        del turno['solicitud_id__paciente_id__fecha_nacimiento']
+        del turno['solicitud_id__paciente_id__centro_vacunatorio']
+        del turno['solicitud_id__paciente_id__es_paciente_riesgo']
+
+        edad = relativedelta(datetime.now(), fecha_nacimiento)
+        turno['paciente_edad'] = edad.years
+
+    return render(request, "personalVacunatorio/listar_historial_atendidos.html/", {'turnos' : turnos, 'personal_centro' : centro_vacunatorio})
+
+
+@login_required(login_url='/personal_vacunatorio/login_error/')
+def listar_historial_ausentes(request):
+
+    today = datetime.today().strftime('%Y-%m-%d')
+    centro_vacunatorio = PersonalDetalles.objects.get(user_id=request.user.id).centro_vacunatorio
+
+    turnos = PacientesTurnos.objects.filter(
+                turno_perdido = 1,
+                fecha_confirmada=today,
+                solicitud_id__centro_vacunatorio=centro_vacunatorio)\
+                    .values('turno_id',
+                        'solicitud_id__vacuna_id__nombre',
+                        'solicitud_id__paciente_id__dni',
+                        'solicitud_id__paciente_id__sexo',
+                        'solicitud_id__paciente_id__nombre',
+                        'solicitud_id__paciente_id__apellido',
+                        'solicitud_id__paciente_id__fecha_nacimiento',
+                        'solicitud_id__paciente_id__es_paciente_riesgo',
+                        'solicitud_id__paciente_id__centro_vacunatorio')
+
+    for turno in turnos:
+        turno['vacuna_nombre']      = turno['solicitud_id__vacuna_id__nombre']
+        turno['paciente_dni']       = turno['solicitud_id__paciente_id__dni']
+        turno['paciente_sexo']      = turno['solicitud_id__paciente_id__sexo']
+        turno['paciente_nombre']    = turno['solicitud_id__paciente_id__nombre']
+        turno['paciente_apellido']  = turno['solicitud_id__paciente_id__apellido']
+        turno['paciente_centro']    = turno['solicitud_id__paciente_id__centro_vacunatorio']
+        turno['paciente_riesgo']    = turno['solicitud_id__paciente_id__es_paciente_riesgo']
+        fecha_nacimiento            = turno['solicitud_id__paciente_id__fecha_nacimiento']
+        turno['paciente_fecha_nac'] = turno['solicitud_id__paciente_id__fecha_nacimiento'].strftime('%d-%m-%Y')
+
+        del turno['solicitud_id__vacuna_id__nombre']
+        del turno['solicitud_id__paciente_id__dni']
+        del turno['solicitud_id__paciente_id__sexo']
+        del turno['solicitud_id__paciente_id__nombre']
+        del turno['solicitud_id__paciente_id__apellido']
+        del turno['solicitud_id__paciente_id__fecha_nacimiento']
+        del turno['solicitud_id__paciente_id__centro_vacunatorio']
+        del turno['solicitud_id__paciente_id__es_paciente_riesgo']
+
+        edad = relativedelta(datetime.now(), fecha_nacimiento)
+        turno['paciente_edad'] = edad.years
+
+    return render(request, "personalVacunatorio/listar_historial_ausentes.html/", {'turnos' : turnos, 'personal_centro' : centro_vacunatorio})
 
 
 def devolucion(request, **kwargs):
