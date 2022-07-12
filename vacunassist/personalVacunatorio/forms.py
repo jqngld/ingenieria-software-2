@@ -4,6 +4,12 @@ from django.contrib.auth.forms import UserCreationForm
 from pacientes.models import Usuarios
 from personalVacunatorio.models import PersonalDetalles
 from pacientes.models import VacunasAplicadas
+from email.mime.image import MIMEImage
+from django.template.loader import get_template
+from django.core.mail import EmailMultiAlternatives
+from vacunassist import settings
+import os
+
 
 from django.contrib.auth.hashers import check_password
 
@@ -132,6 +138,42 @@ class PersonalSignUpForm(UserCreationForm):
         fields = ('nombre', 'apellido', 'numero_telefono', 'fecha_nacimiento',
                   'email', 'password1', 'password2', 'centro_vacunatorio',)
 
+
+    def send_register_email(self):
+        '''Se envía un mail al correo del usuario paciente registrado con el token que
+        se generó para utilizar en el inicio de sesión.'''
+
+        subject = 'Registro de Usuario Exitoso.'
+        from_email = 'VacunAssist <%s>' % (settings.EMAIL_HOST_USER)
+        to_email = '%s' % (self.cleaned_data['email'])
+        reply_to_email = 'noreply@vacunassist.com'
+
+        image_dir = 'static/img'
+        image_name = 'vacunassist-logo.png'
+
+        context = {
+                    'nombre' : self.cleaned_data.get('nombre'),
+                    }
+
+        text_content = get_template('personalVacunatorio/mail_bienvenida.txt')
+        html_content = get_template('personalVacunatorio/mail_bienvenida.html')
+        text_content = text_content.render(context)
+        html_content = html_content.render(context)
+
+        email = EmailMultiAlternatives(subject, text_content, from_email, to=[to_email,], reply_to=[reply_to_email,])
+        email.mixed_subtype = 'related'
+        email.content_subtype = 'html'
+        email.attach_alternative(html_content, 'text/html')
+
+        file_path = os.path.join(image_dir, image_name)
+        with open(file_path, 'rb') as f:
+            image = MIMEImage(f.read())
+            image.add_header('Content-ID', '<%s>' % (image_name))
+            image.add_header('Content-Disposition', 'inline', filename=image_name)
+            email.attach(image)
+
+        email.send(fail_silently=False)
+
     def save(self, commit=True):
         # if not commit:
         #     raise NotImplementedError("Can't create User and UserProfile without database save")
@@ -156,12 +198,21 @@ class PersonalSignUpForm(UserCreationForm):
                 centro_vacunatorio = self.cleaned_data['centro_vacunatorio'],
             )
         personal_details.save()
+        self.send_register_email()
 
         return user
 
 
-class devolucionForm(forms.ModelForm):
+class devolucionForm(forms.Form):
     
-    class Meta:
-        model = VacunasAplicadas
-        fields = ['lote', 'observacion']
+    lote = forms.CharField(
+        max_length=100,
+        required=True,
+        widget=forms.TextInput(attrs = {'class' : 'form-control','placeholder' : 'Lote'})
+    )
+
+    observacion = forms.CharField(
+        max_length=100,
+        required=True,
+        widget=forms.TextInput(attrs = {'class' : 'form-control','placeholder' : 'Observacion'})
+    )
