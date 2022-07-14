@@ -1,0 +1,25 @@
+
+<button type="button" title="Asignar fecha sugerida" data-toggle="modal" data-target="#asign_turno_{{pk}}" data-placement="right" class="btn btn-success btn-sm"><i class="bi bi-calendar-check"></i></button>
+
+<div class="modal fade" id="asign_turno_{{pk}}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-sm modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLongTitle">¿Desea asignar el turno con la fecha sugerida?</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <!-- <div class="container-fluid"> -->
+                    <button type="button" class="btn btn-danger" data-dismiss="modal" aria-label="Cancelar">
+                        <span aria-hidden="true">Cancelar</span>
+                    </button>
+                    <button type="button" class="btn btn-success" data-dismiss="modal" aria-label="Confirmar" onclick="window.location.href='/admin/pacientes/asignar_turno/{{pk}}/'">
+                    <span aria-hidden="true">Confirmar</span>
+                </button>
+                <!-- </div> -->
+            </div>
+        </div>
+    </div>
+</div>

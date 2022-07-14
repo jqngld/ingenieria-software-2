@@ -1,0 +1,27 @@
+
+<button type="button" title="Cambiar Contraseña" onclick="window.location.href='/admin/personalVacunatorio/cambiarcontrasena/{{pk}}/'" class="btn btn-success btn-sm"><i class="bi bi-key"></i></button>
+<button type="button" title="Editar Información" onclick="window.location.href='{{pk}}/change'" class="btn btn-success btn-sm"><i class="bi bi-pencil"></i></button>
+<button type="button" title="Eliminar Usuario" data-toggle="modal" data-target="#delete_user_{{pk}}" data-placement="right" class="btn btn-danger btn-sm"><i class="bi bi-trash"></i></button>
+
+<div class="modal fade" id="delete_user_{{pk}}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-sm modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLongTitle">¿Desea eliminar este usuario? Esta acción no puede deshacerse.</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <!-- <div class="container-fluid"> -->
+                    <button type="button" class="btn btn-danger" data-dismiss="modal" aria-label="Cancelar">
+                        <span aria-hidden="true">Cancelar</span>
+                    </button>
+                    <button type="button" class="btn btn-success" data-dismiss="modal" aria-label="Confirmar" onclick="window.location.href='/admin/personalVacunatorio/eliminar/{{pk}}/'">
+                    <span aria-hidden="true">Confirmar</span>
+                </button>
+                <!-- </div> -->
+            </div>
+        </div>
+    </div>
+</div>

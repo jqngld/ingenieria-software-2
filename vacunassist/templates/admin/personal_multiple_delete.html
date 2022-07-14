@@ -1,0 +1,35 @@
+<!-- 'admin/personal_multiple_delete.html' -->
+{% extends "admin/base_site.html" %}
+
+{% block content %}
+
+
+<div class="container">
+    <div class="row justify-content-md-center">
+        <div class="col-md-6 my-4">
+            <div class="card">
+                
+                <form action="" method="POST">
+                    {% csrf_token %}
+                    
+                    {% for order in orders %}
+                    <!-- <p>{{ order }}</p> -->
+                    <input type="hidden" name="_selected_action" value="{{ order.pk }}">
+                    {% endfor %}
+                    
+                    <div class="row my-3 mx-3">
+                        <h1 style="color:black">¿Desea confirmar la eliminación de los usuarios seleccionados? Esta acción no puede deshacerse.</h1>
+                        <div class="col-sm-6">
+                            <input type="hidden" name="action" value="delete_multiple_users">
+                            <button type="button" class="btn btn-success" onClick="history.go(-1);">Cancelar</button>
+                            <button type="submit" class="btn btn-danger" name="apply">Eliminar</button>
+                        </div>
+                    </div>
+
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

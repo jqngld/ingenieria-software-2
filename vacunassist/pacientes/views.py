@@ -1,3 +1,4 @@
+import email
 from django.contrib import messages
 from django.shortcuts import redirect, render
 from django.contrib.auth.decorators import login_required
@@ -6,8 +7,8 @@ from django.contrib.auth import login as auth_login
 from django.contrib.auth import logout as django_logout
 from django.urls import reverse_lazy
 from django.views import View
-from django.contrib.auth.views import PasswordChangeView,PasswordResetView
-from django.contrib.auth.forms import PasswordChangeForm ,PasswordResetForm
+from django.contrib.auth.views import PasswordChangeView,PasswordResetView,PasswordResetConfirmView, PasswordResetCompleteView
+from django.contrib.auth.forms import PasswordChangeForm ,PasswordResetForm,SetPasswordForm
 from .models import *
 from .forms import *
 from django.shortcuts import HttpResponseRedirect
@@ -32,8 +33,8 @@ def inicio_pacientes(request):
 
 def login(request):   
     if request.method == "POST":
-       form = UserSign(data=request.POST)
-       if form.is_valid(): 
+        form = UserSign(data=request.POST)
+        if form.is_valid(): 
             mail = form.cleaned_data.get("email")
             contraseña = form.cleaned_data.get("password")
             token = form.cleaned_data.get("token")
@@ -42,9 +43,9 @@ def login(request):
                 auth_login(request, user)
                 return redirect('/pacientes/')
             else:
-                 messages.error(request, "Alguna/s de las credenciales ingresadas son incorrectas.")  
-       else: 
-             messages.error(request, "informacion")
+                messages.error(request, "Alguna/s de las credenciales ingresadas son incorrectas.")  
+        else: 
+            messages.error(request, "informacion")
     form = UserSign()     
     context = {'form' : form}
     return render(request, 'pacientes/login.html', context)
@@ -90,11 +91,13 @@ def signup2(request):
             return render(request, 'pacientes/signup2.html', context)
 
 
+@login_required(login_url='/pacientes/login_error/')
 def view_profile(request):
     paciente = PacientesDetalles.objects.get(user_id=request.user.id)
     return render(request, "pacientes/view_profile.html/", {"datos": paciente})
 
 
+@login_required(login_url='/pacientes/login_error/')
 def listar_vacunas(request):
     paciente = PacientesDetalles.objects.get(user_id=request.user.id)
 
@@ -103,6 +106,8 @@ def listar_vacunas(request):
 
     return render(request, "pacientes/listar_vacunas.html/", {'vacunas' : vacunas})
 
+
+@login_required(login_url='/pacientes/login_error/')
 def listar_solicitudes(request):
     paciente = PacientesDetalles.objects.get(user_id=request.user.id)
 
@@ -110,6 +115,8 @@ def listar_solicitudes(request):
         .values('vacuna_id__nombre', 'fecha_solicitud', 'solicitud_aprobada')
     return render(request, "pacientes/listar_solicitudes.html/", {'solicitudes' : solicitudes})
 
+
+@login_required(login_url='/pacientes/login_error/')
 def listar_turnos(request):
     paciente = PacientesDetalles.objects.get(user_id=request.user.id)
 
@@ -120,9 +127,16 @@ def listar_turnos(request):
     return render(request, "pacientes/listar_turnos.html/", {'turnos' : turnos})
 
 
+@login_required(login_url='/pacientes/login_error/')
 def solicitud_fiebre_amarilla(request):
 
     paciente = PacientesDetalles.objects.get(user_id=request.user.id)
+    
+    try:
+        solicitud = PacientesSolicitudes.objects.get(paciente_id=paciente.paciente_id, vacuna_id=4)
+    except:
+        pass
+
     paciente_edad = relativedelta(datetime.now(), paciente.fecha_nacimiento)
 
     vacuna_aplicada = VacunasAplicadas.objects.filter(paciente_id=paciente.paciente_id, vacuna_id=4).exists()
@@ -133,19 +147,22 @@ def solicitud_fiebre_amarilla(request):
             paciente_id = paciente.paciente_id,
             vacuna_id = 4,
             solicitud_aprobada = 0,
-            fecha_estimada = datetime.today() + relativedelta(months=6),
+            fecha_estimada = datetime.today(),
             centro_vacunatorio = paciente.centro_vacunatorio
         )
         solicitud_fa.save()
         messages.success(request, "La solicitud se ha realizado de forma exitosa.")
     
     else:
-        if paciente_edad.years >= 60:
-            messages.error(request, "La vacuna contra la fiebre amarilla solo se aplica a menores de 60 años.")
         if vacuna_aplicada:
-            messages.error(request, "Usted ya se ha aplicado la vacuna contra la fiebre amarilla.")                     
-        if solicitud_existente:
-            messages.error(request, "Usted ya ha solicitado un turno para aplicarse esta vacuna.")                     
+            messages.error(request, "Usted ya se ha aplicado la vacuna contra la fiebre amarilla.")
+        elif paciente_edad.years >= 60:
+            messages.error(request, "La vacuna contra la fiebre amarilla solo se aplica a menores de 60 años.")
+        elif solicitud_existente:
+            if solicitud.solicitud_aprobada:
+                messages.error(request, "Usted ya recibió un turno para aplicarse esta vacuna.")
+            else:
+                messages.error(request, "Usted ya ha solicitado un turno para aplicarse esta vacuna.")
 
     return redirect('/pacientes/mis_solicitudes/')
 
@@ -155,7 +172,7 @@ class cambiarPassword(PasswordChangeView):
       success_url ="/pacientes/mi_perfil/"
 
  
-# update view for details
+@login_required(login_url='/pacientes/login_error/')
 def editar_perfil(request):
     # dictionary for initial data with
     # field names as keys
@@ -193,7 +210,7 @@ class descargar_comprobante(View):
         solicitud = PacientesSolicitudes.objects.filter(paciente_id=paciente.paciente_id, vacuna_id=kwargs['vacuna_id'])\
             .values('centro_vacunatorio')
         vacuna = VacunasAplicadas.objects.filter(paciente_id=paciente.paciente_id, vacuna_id=kwargs['vacuna_id'])\
-            .values('vacuna_id__nombre', 'fecha_vacunacion')
+            .values('vacuna_id__nombre', 'fecha_vacunacion', 'lote', 'observacion')
 
         fecha_descarga = datetime.today()
 
@@ -215,6 +232,7 @@ class descargar_comprobante(View):
             return HttpResponse('We had some errors <pre>' + html + '</pre>')
         return response
 
+
 class LoginAfterPasswordChangeView(PasswordChangeView):
     @property
     def success_url(self):
@@ -223,15 +241,35 @@ class LoginAfterPasswordChangeView(PasswordChangeView):
 login_after_password_change = login_required(LoginAfterPasswordChangeView.as_view())
 
 
+     
+     
+def restPassword(request):   
+    if request.method == "POST":
+        form = PasswordResetForm(data=request.POST)
+        if form.is_valid(): 
+            mail = form.cleaned_data.get("email")
+            if Usuarios.objects.filter(email=mail).exists():
+                form.save(from_email='blabla@blabla.com', email_template_name='registration/password_reset_email.html', request=request)
+                return redirect('/pacientes/restablecer-contrasenia-hecho')          
+            else:
+                messages.error(request, " El mail ingresado no se encuentra registrado en el sistema ")  
+        else: 
+              messages.error(request, " No existe ese mail") 
+    form =  PasswordResetForm()     
+    context = {'form' : form}
+    return render(request, 'pacientes/restablecer-contrasenia.html', context)     
+     
+      
+class restPasswordConfirm(PasswordResetConfirmView):
+      form_class = SetPasswordForm
 
+                
+#class restPassword(PasswordResetView):
+ #    form_class = PasswordResetForm
+  #   success_url ="/pacientes/restablecer-contrasenia-hecho/"     
 
-class restPassword(PasswordResetView):
-      form_class = PasswordResetForm
-      success_url ="/pacientes/restablecer-contrasenia-hecho/"
-      
-      
-      
 def restDone(request):
+    
     return render(request, 'pacientes/restablecer-contrasenia-hecho.html')     
       
       

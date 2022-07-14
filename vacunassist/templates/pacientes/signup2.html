@@ -6,10 +6,20 @@
 
 {% block content %}
 <!-- <div class="col-lg-4 col-offset-1 centered"> -->
-<div class="container">
+<div class="container" id="card-container">
 <div class="row justify-content-md-center">
 <div class="col-md-6 my-4">
     <div class="card">
+        
+        {% if messages %}
+        {% for message in messages %}
+        <div class="{% if message.tags == 'error' %} alert alert-warning {% else %} alert alert-success {% endif %}" style="padding-top: 10px;">
+            <button class="close" data-dismiss="alert" aria-label="close">&times;</button>
+            {{ message }}
+        </div>
+        {% endfor %}
+        {% endif %}
+
     <form action="/pacientes/registro2/" method="POST" id="formulario">
         {% csrf_token %}
 
@@ -18,6 +28,13 @@
             <div class="row my-3 mx-3">
                 <h5><b>Información Personal</b></h5>
             </div>
+
+            <div class="row my-3 mx-3">
+                <div class="col-md-12">
+                    <span>Fecha de nacimiento</span>
+                </div>
+            </div>
+
             <div style="display:none"> 
             {{form.password1}}
             {{form.password2}}
@@ -214,7 +231,7 @@
 
             <div class="row my-3 mx-3">
                 <div class="col-sm-12">
-                    <button type="button" class="btn btn-dark">Atrás</button>
+                    <button type="button" class="btn btn-dark" onClick="history.go(-1);">Atrás</button>
                     <button type="submit" class="btn btn-success">Registrar</button>
                 </div>
             </div>
@@ -230,13 +247,90 @@
 
     <script>
 
+        function createAlert(alertType, alertText){
+            mensaje = document.createElement("div");
+            mensaje.className = "alert alert-" + alertType;
+            mensaje.textContent = alertText;
+
+            boton = document.createElement("button");
+            boton.className = "close";
+            boton.setAttribute("data-dismiss", "alert");
+            boton.setAttribute("aria-label", "close");
+            boton.textContent = "×";
+
+            mensaje.appendChild(boton);
+
+            return mensaje;
+        }
+
+        document.addEventListener("DOMContentLoaded", function() {
+            document.getElementById("formulario").addEventListener('submit', validateDateFields);
+        });
+
+        function validateDateFields(evento){
+
+            evento.preventDefault();
+
+            // primero se verifica que la fecha de nacimiento ingresada sea válida
+            var day   = document.getElementById("id_dia_nacimiento").value;
+            var month = document.getElementById("id_mes_nacimiento").value;
+            var year  = document.getElementById("id_ano_nacimiento").value;
+            var birth_date = year + '-' + month + '-' + day;
+            var isValidDate = Date.parse(birth_date)
+
+            console.log(birth_date)
+            console.log(isValidDate)
+
+            if(isNaN(isValidDate)){
+                alerta = createAlert("warning", "Debe ingresar una fecha de nacimiento válida.");
+                cardContainer = document.querySelector("#card-container");
+                cardContainer.insertAdjacentElement("beforebegin", alerta);
+                $(window).scrollTop(0);
+                return;
+            }
+
+            // se verifica que las fechas de vacunación ingresadas sean válidas.
+            var covid_1_date = document.getElementById("id_fecha_vacunacion_covid_1");
+            var covid_2_date = document.getElementById("id_fecha_vacunacion_covid_2");
+            var gripe_date = document.getElementById("id_fecha_vacunacion_gripe");
+            var fiebre_date = document.getElementById("id_fecha_vacunacion_fa");
+            
+            var throwAlert = (!covid_1_date.disabled && isNaN(Date.parse(covid_1_date.value))) ||
+                             (!covid_2_date.disabled && isNaN(Date.parse(covid_2_date.value))) ||
+                             (!gripe_date.disabled && isNaN(Date.parse(gripe_date.value))) ||
+                             (!fiebre_date.disabled && isNaN(Date.parse(fiebre_date.value)))
+
+            if(throwAlert){
+                alerta = createAlert("warning", "Debe ingresar fechas de vacunación válidas.");
+                cardContainer = document.querySelector("#card-container");
+                cardContainer.insertAdjacentElement("beforebegin", alerta);
+                $(window).scrollTop(0);
+
+                return;
+            }
+
+            // si se pasaron las validaciones anteriores, se realiza el submit del formulario.
+            this.submit();
+        }
+
+        
         // funciones para activar y desactivar campos de fecha de las vacunas
         function disableCovidField1() {
-            var field = document.getElementById("id_fecha_vacunacion_covid_1");
-            field.disabled = !field.disabled
+            var covid_1 = document.getElementById("id_fecha_vacunacion_covid_1");
+            covid_1.disabled = !covid_1.disabled
 
-            var field = document.getElementById("id_vacuna_covid_2");
-            field.disabled = !field.disabled
+            var covid_2 = document.getElementById("id_vacuna_covid_2");
+            covid_2.disabled = !covid_2.disabled
+
+            var covid_2_fecha = document.getElementById("id_fecha_vacunacion_covid_2");
+            if(!covid_2_fecha.disabled){
+                disableCovidField2()
+            }
+            else{
+                if(covid_2.checked){
+                    disableCovidField2()
+                }
+            }
         }
         function disableCovidField2() {
             var field = document.getElementById("id_fecha_vacunacion_covid_2");

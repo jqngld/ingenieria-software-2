@@ -19,6 +19,7 @@ class UsuariosManager(BaseUserManager):
     def create_superuser(self, email, password):
         user = self.create_user(email, password=password)
         user.is_admin = True
+        user.is_staff = True
         user.tipo_usuario = 'admin'
         user.save()
         return user
@@ -53,18 +54,12 @@ class Usuarios(AbstractBaseUser):
 
     def has_module_perms(self, app_label):
         return True
-    
-    @property
-    def is_admin(self):
-        return self.is_admin
-
-      
 
 
 class PacientesDetalles(models.Model):
 
-    paciente_id = models.AutoField(primary_key=True)
     user = models.OneToOneField(Usuarios, on_delete=models.CASCADE)
+    paciente_id = models.AutoField(primary_key=True)
     
     dni = models.IntegerField('DNI', unique=True, blank=False, null=False)
     token = models.IntegerField('Token', blank=False, null=False)
@@ -89,8 +84,8 @@ class VacunasDetalles(models.Model):
 
     vacuna_id = models.AutoField(primary_key=True)
     nombre = models.CharField('Nombre', max_length=100, blank=False, null=False)
-    efectividad = models.CharField('Efectividad', max_length=20, blank=False, null=False)
-    cantidad_dosis = models.CharField('Cantidad Dosis', max_length=50, blank=False, null=False)
+    efectividad = models.CharField('Efectividad', max_length=20, blank=True, null=True)
+    cantidad_dosis = models.CharField('Cantidad Dosis', max_length=50, blank=True, null=True)
 
     class Meta:
         verbose_name = 'Detalles Vacuna'
@@ -132,12 +127,14 @@ class PacientesTurnos(models.Model):
         db_table = 'pacientes_turnos'
 
     def __str__(self) -> str:
-        return '%s - %s: %s' % (self.solicitud.paciente, self.solicitud.paciente.dni, self.fecha_confirmada)
+        return '%s - %s: %s' % (self.solicitud.paciente, self.solicitud.paciente.dni, self.solicitud.vacuna.nombre)
 
 
 class VacunasAplicadas(models.Model):
     vacuna = models.ForeignKey(VacunasDetalles, on_delete=models.CASCADE)
     paciente = models.ForeignKey(PacientesDetalles, on_delete=models.CASCADE) 
+    lote = models.CharField('lote', max_length=100, blank=False, null=False, default=" ")
+    observacion = models.CharField('observacion', max_length=100, blank=True, null=True)
     fecha_vacunacion = models.DateField('Fecha de Vacunacion', blank=False)
 
     class Meta:

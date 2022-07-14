@@ -11,12 +11,27 @@ import random
 from email.mime.image import MIMEImage
 from datetime import date, datetime, timedelta
 from dateutil.relativedelta import relativedelta
+from django.template import loader
+from django.contrib.auth import authenticate, get_user_model, password_validation
+from django.contrib.auth.tokens import default_token_generator
+from django.contrib.sites.shortcuts import get_current_site
+from django.utils.http import urlsafe_base64_encode
+from django.utils.encoding import force_bytes
+import random
+
+
+
+
+
 
 
 class  UserSign(forms.Form):
    email = forms.EmailField(max_length=200, required=True)
    password = forms.CharField(label="Contraseña", widget=forms.PasswordInput())
    token = forms.IntegerField(label='token', required=True)
+   
+
+   
 
 class UserSignUpForm(UserCreationForm):
     """
@@ -71,7 +86,7 @@ class UserSignUpForm(UserCreationForm):
         widget=forms.Select(attrs={'class' : 'form-control', 'placeholder' : 'Sexo'}))
     dia_nacimiento = forms.IntegerField(
         label='Día',
-        widget=forms.NumberInput(attrs = {'class' : 'form-control','placeholder' : 'Día'}))
+        widget=forms.NumberInput(attrs = {'min' : 1,'class' : 'form-control','placeholder' : 'Día'}))
     mes_nacimiento = forms.ChoiceField(
         choices=meses,
         required=True,
@@ -79,7 +94,7 @@ class UserSignUpForm(UserCreationForm):
         widget=forms.Select(attrs={'class' : 'form-control','placeholder' : 'Mes'}))
     ano_nacimiento = forms.IntegerField(
         label='Año',
-        widget=forms.NumberInput(attrs = {'class' : 'form-control','placeholder' : 'Año'})
+        widget=forms.NumberInput(attrs = {'min' : 1,'class' : 'form-control','placeholder' : 'Año'})
     )
     centro_vacunatorio = forms.ChoiceField(
         choices=centros,
@@ -202,8 +217,12 @@ class UserSignUpForm(UserCreationForm):
 
         return patient_details
 
+
     def registrar_vacunaciones(self, paciente):
         '''Se registran aquellas vacunas que el usuario indicó haberse aplicado.'''
+
+        fecha_nacimiento = datetime(int(self.cleaned_data['ano_nacimiento']), int(self.cleaned_data['mes_nacimiento']), int(self.cleaned_data['dia_nacimiento']))
+        paciente_edad = relativedelta(datetime.now(), fecha_nacimiento).years
 
         if self.cleaned_data['vacuna_covid_1']:
             vacuna_covid_1 = VacunasAplicadas(
@@ -220,24 +239,47 @@ class UserSignUpForm(UserCreationForm):
                     fecha_vacunacion = self.cleaned_data['fecha_vacunacion_covid_2']
                 )
                 vacuna_covid_2.save()
-            else: 
-                solicitud_covid2 = PacientesSolicitudes(
+            else:
+                if paciente.es_paciente_riesgo and paciente_edad >= 18:
+                    solicitud_covid2 = PacientesSolicitudes(
+                        paciente_id = paciente.paciente_id,
+                        vacuna_id = 2,
+                        solicitud_aprobada = 0,
+                        fecha_estimada = datetime.today() + relativedelta(days=7),
+                        centro_vacunatorio = paciente.centro_vacunatorio
+                    )
+                    solicitud_covid2.save()
+                else:
+                    if paciente_edad >= 18:
+                        solicitud_covid2 = PacientesSolicitudes(
+                            paciente_id = paciente.paciente_id,
+                            vacuna_id = 2,
+                            solicitud_aprobada = 0,
+                            fecha_estimada = datetime.today() + relativedelta(days=random.randint(30,90)),  #Genera números aleatorios entre dos valores
+                            centro_vacunatorio = paciente.centro_vacunatorio
+                        )   
+                        solicitud_covid2.save()
+            
+        else:
+            if paciente.es_paciente_riesgo and paciente_edad >= 18:
+                solicitud_covid1 = PacientesSolicitudes(
                     paciente_id = paciente.paciente_id,
-                    vacuna_id = 2,
+                    vacuna_id = 1,
                     solicitud_aprobada = 0,
                     fecha_estimada = datetime.today() + relativedelta(days=7),
                     centro_vacunatorio = paciente.centro_vacunatorio
                 )
-                solicitud_covid2.save()
-        else:
-            solicitud_covid1 = PacientesSolicitudes(
-                paciente_id = paciente.paciente_id,
-                vacuna_id = 1,
-                solicitud_aprobada = 0,
-                fecha_estimada = datetime.today() + relativedelta(days=7),
-                centro_vacunatorio = paciente.centro_vacunatorio
-            )
-            solicitud_covid1.save()
+                solicitud_covid1.save()
+            else:
+                if paciente_edad >= 18:
+                    solicitud_covid1 = PacientesSolicitudes(
+                            paciente_id = paciente.paciente_id,
+                            vacuna_id = 1,
+                            solicitud_aprobada = 0,
+                            fecha_estimada = datetime.today() + relativedelta(days=random.randint(30,90)),  #Genera números aleatorios entre dos valores
+                            centro_vacunatorio = paciente.centro_vacunatorio
+                    )
+                    solicitud_covid1.save()
 
         if self.cleaned_data['vacuna_gripe']:
             vacuna_gripe = VacunasAplicadas(
@@ -252,7 +294,7 @@ class UserSignUpForm(UserCreationForm):
                 paciente_id = paciente.paciente_id,
                 vacuna_id = 3,
                 solicitud_aprobada = 0,
-                fecha_estimada = datetime.today() + relativedelta(months=6),
+                fecha_estimada = datetime.today() + relativedelta(months=3) if paciente.es_paciente_riesgo else datetime.today() + relativedelta(months=6),
                 centro_vacunatorio = paciente.centro_vacunatorio
             )
             solicitud_gripe.save()

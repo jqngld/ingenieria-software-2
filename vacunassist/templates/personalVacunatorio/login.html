@@ -1,0 +1,41 @@
+{% extends "personalVacunatorio/base.html" %}
+{% load static %}
+{% load crispy_forms_tags %}
+
+{% block title %} Crear cuenta paciente de VacunAssist {% endblock %}
+
+
+{% block content %} 
+
+{% if messages %}
+{% for message in messages %}
+<div class="{% if message.tags == 'error' %} alert alert-warning {% else %} alert alert-success {% endif %}" style="padding-top: 10px;">
+    <button class="close" data-dismiss="alert" aria-label="close">&times;</button>
+    {{ message }}
+</div>
+{% endfor %}
+{% endif %}
+<div class="container">
+    <div class="row justify-content-md-center">
+    <div class="col-md-6 my-4">
+        <div class="card">
+<form method="POST" style="  width: 100%; max-width: 600px; margin: 15 auto; display: flex;flex-direction: column; justify-content: center; align-items: center;">
+    {% csrf_token %}
+    {{ form|crispy}}
+    <a style="margin:15" href="{% url 'reset_passwordPer' %}">Olvidé mi contraseña</a>
+    <a style="margin:15" href="/pacientes/inicio_sesion/"> Soy Paciente</a>
+    <a style="margin:15" href="/admin/"> Soy Administrador</a>
+    <button type="submit" class="btn btn-primary" id="submit">iniciar sesi&oacute;n</button>
+</form>
+        </div>
+    </div>
+</div>
+</div>
+
+<script>
+    $(function () {
+        $(".alert").alert()
+    })
+</script>
+
+{% endblock %}

@@ -14,21 +14,22 @@
     <h1 style="text-align: center;">Comprobante de Vacunación {{ vacuna.vacuna_idnombre }}</h1>
     <h3 style="text-align: center;">Fecha: {{ fecha }} </h3>
 
-    <p>Nombre y apellido: <b>{{ paciente.apellido }}, {{ paciente.nombre }}</b></p>
+    <p>Nombre y apellido: <b>{{ paciente.apellido }}, {{ paciente.nombre }}</b>.</p>
     <p>Documento: <b>{{ paciente.dni }}</b></p>
     <p>Fecha de nacimiento: <b>{{ paciente.fecha_nacimiento }}</b></p>
 
-    <p>Vacuna: <b>{{ vacuna.vacuna_id__nombre }}</b></p>
+    <p>Vacuna: <b>{{ vacuna.vacuna_id__nombre }}</b>.</p>
+    <p>Número de Lote: <b>{{ vacuna.lote }}</b>.</p>
     <p>Fecha de vacunación: <b>{{ vacuna.fecha_vacunacion }}</b></p>
     <p>Lugar de aplicación:
         <b>
             {% if solicitud %}
-            {{ solicitud.centro_vacunatorio }}
+            {{ solicitud.centro_vacunatorio }}.
             {% else %}
             sin datos del centro vacunatorio de aplicación.
             {% endif %}
         </b>
     </p>
-
+    <p>Observaciones: <b>{{ vacuna.observacion }}</b>.</p>
 </body>
 </html>

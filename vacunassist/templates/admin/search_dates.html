@@ -1,0 +1,110 @@
+{% extends 'admin/index.html' %}
+{% load static %}
+{% load crispy_forms_tags %}
+
+{% block scripts %}
+{% endblock scripts %}
+
+{% block title %}Tablero Analítico{% endblock title %}
+
+{% block content %}
+
+<form action="" method="post">
+    {% csrf_token %}
+    {{search_form|crispy}}
+    <button class="btn btn-success" type="submit">Buscar</button>
+</form>
+
+<br>
+
+<div class="card" style="min-width: 1100px;">
+    <div class="card-header">
+
+        <div class="row" style="margin-top: 10px;">
+            <div class="col-md-12 text-center ">
+                <strong class="card-title">
+                    <h2>Cantidad de solicitudes por vacuna y fecha sugerida</h2>
+                </strong>
+            </div>
+        </div>
+
+        {% if solicitudes %}
+        <div class="row" style="margin: 10px">
+            {% if chart_solicitudes_1 %}
+            <img src="data:image/png;base64, {{chart_solicitudes_1|safe}}" alt="" id="img">
+            {% else %}
+            <h3>No hay solicitudes en las fechas ingresadas para el centro Terminal</h3>
+            {% endif %}
+        </div>
+    
+        <div class="row" style="margin: 10px">
+            {% if chart_solicitudes_2 %}
+            <img src="data:image/png;base64, {{chart_solicitudes_2|safe}}" alt="" id="img">
+            {% else %}
+            <h3>No hay solicitudes en las fechas ingresadas para el centro Cementerio</h3>
+            {% endif %}
+        </div>
+        
+        <div class="row" style="margin: 10px">
+            {% if chart_solicitudes_3 %}
+            <img src="data:image/png;base64, {{chart_solicitudes_3|safe}}" alt="" id="img">
+            {% else %}
+            <h3>No hay solicitudes en las fechas ingresadas para el centro Municipalidad</h3>
+            {% endif %}
+        </div>
+        {% else %}
+        <div class="row" style="margin: 10px">
+            <h3>No hay solicitudes en las fechas ingresadas.</h3>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<br>
+
+<div class="card" style="min-width: 1100px;">
+    <div class="card-header">
+
+        <div class="row" style="margin-top: 10px;">
+            <div class="col-md-12 text-center ">
+                <strong class="card-title">
+                    <h2>Cantidad de turnos esperados por vacuna y fecha confirmada.</h2>
+                </strong>
+            </div>
+        </div>
+
+        {% if turnos %}
+        <div class="row" style="margin: 10px">
+            {% if chart_turnos_1 %}
+            <img src="data:image/png;base64, {{chart_turnos_1|safe}}" alt="" id="img">
+            {% else %}
+            <h3>No hay solicitudes en las fechas ingresadas para el centro Terminal</h3>
+            {% endif %}
+        </div>
+    
+        <div class="row" style="margin: 10px">
+            {% if chart_turnos_2 %}
+            <img src="data:image/png;base64, {{chart_turnos_2|safe}}" alt="" id="img">
+            {% else %}
+            <h3>No hay solicitudes en las fechas ingresadas para el centro Cementerio</h3>
+            {% endif %}
+        </div>
+        
+        <div class="row" style="margin: 10px">
+            {% if chart_turnos_3 %}
+            <img src="data:image/png;base64, {{chart_turnos_3|safe}}" alt="" id="img">
+            {% else %}
+            <h3>No hay solicitudes en las fechas ingresadas para el centro Municipalidad</h3>
+            {% endif %}
+        </div>
+        {% else %}
+        <div class="row" style="margin: 10px">
+            <h3>No hay solicitudes en las fechas ingresadas.</h3>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+
+
+{% endblock content %}

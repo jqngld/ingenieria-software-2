@@ -1,0 +1,58 @@
+{% extends "admin/index.html" %}
+{% load static %}
+{% block title %} Vacunas del Paciente {% endblock %}
+{% block content %}
+
+
+<div class="card" style="min-width: 1280px;">
+    <div class="card-header" style="min-height: 224px;">
+        <div class="row" style="margin-top: 10px;">
+            <div class="col-md-12 text-center ">
+                <strong class="card-title">
+                    <h2>Listado de Vacunas Aplicadas: {{ paciente_apellido }}, {{ paciente_nombre }}</h2>
+                </strong>
+            </div>
+        </div>
+
+        {% if vacunas %}
+        <div class="container">
+            <div class="row">
+                {% for vacuna in vacunas %}
+                <div class="col-md-4 mt-4">
+                    <div class="card">
+                        <div class="card-body">
+                            <h4 class="card-title mb-2"><b>{{ vacuna.vacuna_id__nombre }}</b></h4>
+                            <p class="card-text">Día de vacunación: {{ vacuna.fecha_vacunacion }}</p>                       
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            <br>
+            <button type="button" class="btn btn-dark" onClick="window.location.href='/admin/pacientes/usuariospacientes/';">Atrás</button>
+        </div>
+        {% else %}
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12 mt-4">
+                    <div class="card">
+                        <div class="card-body">
+                            <p class="card-text">Por el momento este paciente no registra vacunas aplicadas.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <br>
+            <button type="button" class="btn btn-dark" onClick="window.location.href='/admin/pacientes/usuariospacientes/';">Atrás</button>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<script>
+    $(function () {
+        $('[data-toggle="tooltip"]').tooltip()
+    })
+</script>
+
+{% endblock %}
