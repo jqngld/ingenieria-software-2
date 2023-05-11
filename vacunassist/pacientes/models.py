@@ -71,7 +71,6 @@ class PacientesDetalles(models.Model):
     es_paciente_riesgo = models.BooleanField('Paciente de Riesgo', default=False)
     centro_vacunatorio = models.CharField('Centro Vacunatorio', max_length=50, blank=False, null=False)
 
-
     class Meta:
         verbose_name = 'Detalles Paciente'
         db_table = 'pacientes_detalles'

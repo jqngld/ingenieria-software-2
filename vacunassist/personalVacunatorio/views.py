@@ -15,6 +15,7 @@ from .forms import *
 from datetime import datetime 
 from dateutil.relativedelta import relativedelta
 
+
 def home_personal(request):
     return render(request, 'personalVacunatorio/index.html')
 
@@ -290,19 +291,15 @@ def marcar_inasistencias(request):
     return redirect('/personal_vacunatorio/turnos/')
 
 
-
-
-
 class LoginAfterPasswordChangeView(PasswordChangeView):
     @property
     def success_url(self):
         return reverse_lazy('inicio_sesion/')
 
+
 login_after_password_change = login_required(LoginAfterPasswordChangeView.as_view())
 
 
-     
-     
 def restPasswordPer(request):   
     if request.method == "POST":
         form = PasswordResetForm(data=request.POST)

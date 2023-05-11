@@ -14,6 +14,7 @@ class UsuariosAdministradores(Usuarios):
         proxy = True
         verbose_name_plural = 'Administradores de Vacunatorios'
 
+
 @admin.register(UsuariosAdministradores)
 class PersonalAdmin(admin.ModelAdmin):
 
@@ -21,7 +22,6 @@ class PersonalAdmin(admin.ModelAdmin):
     list_display = ('nombre', 'apellido', 'email', 'centro_vacunatorio', 'boton')
     search_fields = ('personaldetalles__nombre', 'personaldetalles__apellido', 'email', 'personaldetalles__centro_vacunatorio')
     list_display_links = None
-
 
     @admin.display(description='Acciones')
     def boton(self, obj):
@@ -51,8 +51,8 @@ class PersonalAdmin(admin.ModelAdmin):
     def centro_vacunatorio(self, obj):
         return obj.personaldetalles.centro_vacunatorio
 
-
     # función para no permitir que se elimine un elemento
+
     def has_delete_permission(self, request, obj=None):
         return False
 
@@ -82,14 +82,12 @@ class PersonalAdmin(admin.ModelAdmin):
 
         return form
 
-
     # sobreescribo el método de buscado de elementos para filtrar por criterios
     def get_search_results(self, request, queryset, search_term):
         queryset, use_distinct = super().get_search_results(request, queryset, search_term)
         queryset = queryset.filter(tipo_usuario='personal').select_related('personaldetalles')
 
         return queryset, use_distinct
-
 
     @admin.action(description='Eliminar usuarios seleccionados')
     def delete_multiple_users(self, request, queryset):

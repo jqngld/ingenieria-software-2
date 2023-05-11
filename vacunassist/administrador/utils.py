@@ -11,6 +11,7 @@ from matplotlib import pyplot
 def generate_code():
     return str(uuid.uuid4()).replace('-', '').upper()[:12]
 
+
 def get_key(res_by):
     if res_by == '#1':
         key = 'solicitud_id'
@@ -22,6 +23,7 @@ def get_key(res_by):
         key = 'solicitud_id'
     return key
 
+
 def get_graph():
     buffer = BytesIO()
     pyplot.savefig(buffer, format='png')
@@ -31,6 +33,7 @@ def get_graph():
     graph = graph.decode('utf-8')
     buffer.close()
     return graph
+
 
 def get_chart_solicitud(data, centro, **kwargs):
     pyplot.switch_backend('AGG')

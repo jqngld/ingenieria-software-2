@@ -24,7 +24,7 @@ class VacunaAdmin(admin.ModelAdmin):
 
         queryset = queryset.select_related("paciente")
         return queryset, use_distinct
-      
+
     def nombrePaciente(self,obj):
         return obj.paciente.nombre
     nombrePaciente.short_description = 'nombre'
@@ -33,6 +33,7 @@ class VacunaAdmin(admin.ModelAdmin):
         return obj.paciente.apellido
          
          # función para no permitir que se añada un elemento
+
     def has_add_permission(self, request):
          return False
 
@@ -50,6 +51,7 @@ class UsuariosPacientes(Usuarios):
         proxy = True
         verbose_name_plural = 'Pacientes'
 
+
 @admin.register(UsuariosPacientes)
 class PacienteAdmin(admin.ModelAdmin):
     
@@ -58,7 +60,6 @@ class PacienteAdmin(admin.ModelAdmin):
     fields = ('format_nombre','format_apellido','format_dni','edad','email','format_centro_vacunatorio','format_sexo','format_riesgo')
     search_fields = ('email','pacientesdetalles__nombre','pacientesdetalles__apellido','pacientesdetalles__dni', 'pacientesdetalles__centro_vacunatorio','pacientesdetalles__fecha_nacimiento')
     list_display_links = None
-
 
     @admin.action(description='Eliminar usuarios seleccionados')
     def delete_multiple_users(self, request, queryset):
@@ -71,17 +72,18 @@ class PacienteAdmin(admin.ModelAdmin):
 
         context = {'orders' : queryset}
         return render(request, 'admin/personal_multiple_delete.html', context)
-
-
     # función para no permitir que se añada un elemento
+
     def has_add_permission(self, request):
         return False
 
     # función para no permitir que se modifique un elemento
+
     def has_change_permission(self, request, obj=None):
         return False
 
     # función para no permitir que se elimine un elemento
+
     def has_delete_permission(self, request, obj=None):
         return False
 
@@ -91,7 +93,6 @@ class PacienteAdmin(admin.ModelAdmin):
 
         queryset = queryset.filter(tipo_usuario='paciente').select_related("pacientesdetalles")
         return queryset, use_distinct
-
 
     @admin.display(description='Acciones')
     def boton(self, obj):
@@ -143,6 +144,7 @@ class SolicitudesNoRiesgo(PacientesSolicitudes):
         verbose_name = 'solicitudes de pacientes'
         verbose_name_plural = 'Solicitudes de Pacientes'
 
+
 @admin.register(SolicitudesNoRiesgo)
 class SolicitudesNoRiesgoAdmin(admin.ModelAdmin):
 
@@ -154,7 +156,6 @@ class SolicitudesNoRiesgoAdmin(admin.ModelAdmin):
     list_display_links = None
     ordering = ['solicitud_id']
 
-
     @admin.display(description='Acciones')
     def boton(self, obj):
         # el parámetro 'obj.pk' es el id del objeto dentro de la línea, hay que pasarlo en
@@ -162,9 +163,9 @@ class SolicitudesNoRiesgoAdmin(admin.ModelAdmin):
 
         render_action_buttons = render_to_string('admin/pacientes_actions_buttons.html', {'pk' : obj.pk})
         return mark_safe(render_action_buttons)
-  
-  
+
     # función para no permitir que se añada un elemento
+
     def has_add_permission(self, request):
         return False
 
@@ -180,8 +181,8 @@ class SolicitudesNoRiesgoAdmin(admin.ModelAdmin):
 
         return queryset, use_distinct
 
-
     # aplico formatos a las fechas que se listan
+
     @admin.display(description='Fecha Solicitud')
     def format_fecha_solicitud(self, obj):
         return obj.fecha_solicitud.strftime('%d-%m-%Y')
@@ -228,6 +229,7 @@ class SolicitudesRiesgo(PacientesSolicitudes):
         verbose_name = 'solicitudes de pacientes de riesgo'
         verbose_name_plural = 'Solicitudes de Pacientes de Riesgo'
 
+
 @admin.register(SolicitudesRiesgo)
 class SolicitudesRiesgoAdmin(admin.ModelAdmin):
 
@@ -263,8 +265,8 @@ class SolicitudesRiesgoAdmin(admin.ModelAdmin):
 
         return queryset, use_distinct
 
-   
     # aplico formatos a las fechas que se listan
+
     @admin.display(description='Fecha Solicitud')
     def format_fecha_solicitud(self, obj):
         return obj.fecha_solicitud.strftime('%d-%m-%Y')
@@ -300,7 +302,6 @@ class SolicitudesRiesgoAdmin(admin.ModelAdmin):
             return redirect('%s' % (request.get_full_path()))
         context = {'orders' : queryset}
         return render(request, 'admin/asignar_turno_intermedio.html', context)
-    
     
 
 class format_estado_turno_Filter(admin.SimpleListFilter):
@@ -342,8 +343,8 @@ class TurnosAdmin(admin.ModelAdmin):
     readonly_fields = ('format_nombre','format_apellido','format_dni','format_vacuna','fecha_confirmada','format_estado_turno',)
     list_display_links = None
 
-
      # función para no permitir que se añada un elemento
+
     def has_add_permission(self, request):
         return False
 
@@ -387,8 +388,7 @@ class TurnosAdmin(admin.ModelAdmin):
             return "Pendiente"
         else:
             return "Completado"
-    
-    
+
     
 admin.site.register(VacunasAplicadas,VacunaAdmin)
    

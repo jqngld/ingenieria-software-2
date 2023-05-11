@@ -20,17 +20,10 @@ from django.utils.encoding import force_bytes
 import random
 
 
-
-
-
-
-
 class  UserSign(forms.Form):
    email = forms.EmailField(max_length=200, required=True)
    password = forms.CharField(label="Contraseña", widget=forms.PasswordInput())
    token = forms.IntegerField(label='token', required=True)
-   
-
    
 
 class UserSignUpForm(UserCreationForm):
@@ -217,7 +210,6 @@ class UserSignUpForm(UserCreationForm):
 
         return patient_details
 
-
     def registrar_vacunaciones(self, paciente):
         '''Se registran aquellas vacunas que el usuario indicó haberse aplicado.'''
 
@@ -356,6 +348,7 @@ class UserUpdateForm(forms.ModelForm):
         label = "Centro vacunatorio",
         widget = forms.Select(attrs = {'class' : 'form-control','placeholder' : 'Centro Vacunatorio'})
     )
+
     class Meta:
         model = PacientesDetalles
         fields = [
@@ -382,7 +375,6 @@ class UserSignUp1Form(UserCreationForm):
         max_length=200,
         required=True,
         widget=forms.EmailInput(attrs={'class' : 'form-control', 'placeholder' : 'Email'}))
-
 
     class Meta:
         model = Usuarios

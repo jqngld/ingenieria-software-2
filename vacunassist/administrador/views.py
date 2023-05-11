@@ -49,6 +49,7 @@ class PersonalPasswordChangeView(PasswordChangeView):
         messages.success(self.request, 'La contraseña del usuario "%s" fue correctamente modificada.' % (user_email))
         return super().form_valid(form)
 
+
 class PersonalChangePassword(PersonalPasswordChangeView):
     form_class = PasswordChangeForm
     template_name = 'admin/personal_password_change_form.html'
@@ -73,6 +74,7 @@ def admin_asignar_turno(request,**kwargs):
       return redirect('/admin/pacientes/solicitudesnoriesgo/')   
     else:
       return redirect('/admin/pacientes/solicitudesriesgo/')
+
 
 def paciente_detele_user(request, *args, **kwargs):
 
